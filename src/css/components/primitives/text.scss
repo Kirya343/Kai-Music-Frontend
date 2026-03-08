@@ -1,0 +1,12 @@
+.logo-text {
+    font-family: 'Cinzel Decorative', serif;
+    color: var(--accent);
+    text-shadow: 0 0 12px rgba(200, 190, 140, 0.6);
+    transition: all 0.3s ease;
+    letter-spacing: 2px;
+
+    &:hover {
+        color: rgba(255, 215, 125, 1);
+        text-shadow: 0 0 15px rgba(230, 210, 150, 0.8);
+    }
+}

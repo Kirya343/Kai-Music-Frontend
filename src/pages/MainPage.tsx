@@ -7,12 +7,12 @@ const MainPage = () => {
     const { user } = useAuth();
 
     return (
-        <>
+        <div className="main-page">
             <div>Пользователь: {user?.name}</div>
             <Link to="/login">Войти</Link>
 
             <Audio />
-        </>
+        </div>
     )
 }
 

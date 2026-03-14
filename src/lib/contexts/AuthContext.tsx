@@ -7,6 +7,7 @@ interface AuthContextType {
     shortUser: IShortUser | null;
     loading: boolean;
     isAdmin: boolean;
+    loadUser: () => void
 }
 
 export const AuthContext = createContext<AuthContextType | null>(null);

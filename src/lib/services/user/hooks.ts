@@ -1,5 +1,5 @@
 import { IShortUser, IUser } from "@/lib/types";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { userService } from ".";
 
 
@@ -16,20 +16,24 @@ export function useCurrentUser() {
         return { id: user.id, openId: user.openId, name: user.name, avatarUrl: user.avatarUrl ?? "" }
     }, [isAuthenticated, user])
 
-    useEffect(() => {
-        let cancelled = false;
-
+    const loadUser = useCallback(async (cancelled?: boolean) => {
         userService.getCurrent().then(data => {
             if (!cancelled) {
                 setUser(data);
                 setLoading(false);
             }
         });
+    }, [])
+
+    useEffect(() => {
+        let cancelled = false;
+
+        loadUser(cancelled);
 
         return () => {
             cancelled = true;
         };
     }, []);
 
-    return { user, isAuthenticated, isAdmin, shortUser, loading };
+    return { user, isAuthenticated, isAdmin, shortUser, loading, loadUser };
 }

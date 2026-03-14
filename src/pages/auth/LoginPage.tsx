@@ -4,8 +4,6 @@ import { useEffect, useState } from "react";
 
 const LoginPage = () => {
 
-    const { loadUser } = useAuth();
-
     const params = new URLSearchParams(window.location.search);
     const navigate = useNavigate();
     const error = params.get("error") || "";
@@ -60,11 +58,9 @@ const LoginPage = () => {
         const handleMessage = (event: MessageEvent) => {
             console.log(event)
             if (event.data?.type === 'oauthSuccess') {
-                loadUser();
                 setMessage({success: false, message: "Вы успешно авторизовались"});
                 navigate((event.data.isNewUser ? "/register/oauth" : "/login/success") + `?redirect=${encodeURIComponent(redirect)}` || '/');
             } else if (event.data?.type === 'oauthFailure') {
-                loadUser();
                 setMessage({success: false, message: "Ошибка авторизации"});
             }
         };

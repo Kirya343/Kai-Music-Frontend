@@ -1,13 +1,10 @@
 import Audio from "@/components/Audio";
-import { audioService } from "@/lib/services/audio";
-import { useState } from "react";
 import UserLibrary from "./UserLibrary";
+import { useListeningRoom } from "@/lib";
 
 const ListeningRoom = () => {
 
-    const { room, addToQueue } = audioService.useCurrentRoom();
-
-    const [currentAudioId, setCurrentAudioId] = useState<number | null>(null);
+    const { room, addToQueue, updateTrackPosition } = useListeningRoom();
 
     return (
         <div className="listening-room">
@@ -17,14 +14,14 @@ const ListeningRoom = () => {
             </div>
 
             <div className="audio-list">
-                {room?.queue.map(audio => (
-                    <div key={audio.id} className="audio-item" onClick={() => setCurrentAudioId(audio.audioId)}>
-                        <span className="audio-name">{audio.name}</span>
+                {room?.queue.map(queueItem => (
+                    <div key={queueItem.id} className="audio-item" onClick={() => updateTrackPosition(queueItem.audioId, 0, true)}>
+                        <span className="audio-name">{queueItem.name}</span>
                     </div>
                 ))}
             </div>
 
-            <Audio audioId={currentAudioId}/>
+            <Audio />
         </div>
     );
 }

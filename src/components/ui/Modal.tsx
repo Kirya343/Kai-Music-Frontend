@@ -32,8 +32,19 @@ const Modal = ({ isOpen, onClose, title, id = 'normalModal', children }: ModalPr
         return () => dialog.removeEventListener("cancel", handleCancel);
     }, [isOpen, onClose]);
 
+    const handleBackdropClick = (e: React.MouseEvent<HTMLDialogElement>) => {
+        if (e.target === dialogRef.current) {
+            onClose();
+        }
+    };
+
     return (
-        <dialog ref={dialogRef} className="modal fade-down" onClick={(e) => e.stopPropagation()} id={id}>
+        <dialog 
+            ref={dialogRef} 
+            className="modal fade-down" 
+            id={id}
+            onClick={handleBackdropClick}
+        >
             <span className="close-modal hover" onClick={onClose}><i className="fa-solid fa-xmark"></i></span>
             {title && <h2>{title}</h2>}
             {children}

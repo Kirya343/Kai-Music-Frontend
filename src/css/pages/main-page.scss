@@ -39,11 +39,12 @@
                 width: 100%;
                 text-overflow: ellipsis;
                 overflow: hidden;
+                cursor: pointer;
 
             }
         }
 
-        audio {
+        .audio {
             width: 100%;
             background-color: #000000;
         }

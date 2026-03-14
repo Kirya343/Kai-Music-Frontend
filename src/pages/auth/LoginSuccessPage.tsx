@@ -4,13 +4,9 @@ import { useAuth } from "@/lib";
 import { useNavigate, useLocation } from "react-router-dom";
 
 const LoginSuccessPage = () => {
-    const { user, loadUser, loading } = useAuth();
+    const { user, loading } = useAuth();
     const navigate = useNavigate();
     const location = useLocation();
-
-    useEffect(() => {
-        loadUser();
-    }, [loadUser]);
 
     useEffect(() => {
         if (!loading && user) {

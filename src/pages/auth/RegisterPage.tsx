@@ -13,7 +13,6 @@ const RegisterPage = () => {
     const error = params.get("error") || "";
     const navigate = useNavigate();
 
-    const [termsAccepted, setTermsAccepted] = useState<boolean>(false);
     const [name, setName] = useState<string>('');
     const [email, setEmail] = useState<string>('');
     const [password, setPassword] = useState<string>('');
@@ -108,7 +107,7 @@ const RegisterPage = () => {
 
                 {message?.message && <div className={'message' + message?.success ? "success" : "error"}>{message?.message}</div>}
 
-                <div>
+                <div className="inputs">
                     <input 
                         type="text"
                         placeholder="Имя пользователя" 

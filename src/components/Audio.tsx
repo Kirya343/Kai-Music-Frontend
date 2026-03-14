@@ -1,11 +1,25 @@
 import { API_BASE } from "@/config";
+import { useEffect, useRef } from "react";
 
-export default function Audio() {
+const Audio = ({ audioId }: { audioId: number | null }) => {
+    const audioRef = useRef<HTMLAudioElement>(null);
+
+    useEffect(() => {
+        if (!audioRef.current) return;
+
+        audioRef.current.pause();
+        audioRef.current.currentTime = 0;
+        audioRef.current.load();
+    }, [audioId]);
+
+    if (!audioId) return null;
 
     return (
-        <audio controls autoPlay>
-            <source src={`${API_BASE}/audio/room/1`} type="audio/mpeg" />
+        <audio ref={audioRef} controls>
+            <source src={`${API_BASE}/audio/${audioId}`} type="audio/mpeg" />
             Your browser does not support the audio element.
         </audio>
     );
-}
+};
+
+export default Audio;

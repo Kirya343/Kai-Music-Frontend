@@ -2,6 +2,7 @@
     box-sizing: border-box;
     margin: 0;
     padding: 0;
+    color: var(--text-color);
 }
 
 html, body {
@@ -10,14 +11,8 @@ html, body {
     height: 100%;
     scrollbar-color: var(--scrollbar-color) var(--scrollbar-background);
     scrollbar-width: thin;
-
-    &:has(.section-body) {
-        scrollbar-color: var(--scrollbar-color) #000000;
-    }
-
-    &:has(.article-page) {
-        scrollbar-color: var(--scrollbar-color) var(--article-background);
-    }
+    background: linear-gradient(120deg, #1d1d1d, #000000);
+    font-family: 'Montserrat', sans-serif;
 
     #root {
         min-height: 100vh;

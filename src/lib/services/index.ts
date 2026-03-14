@@ -1,4 +1,4 @@
-export * from './apiClient'
+export * from './utils/apiClient'
 
-export * from './permissionsService'
-export * from './userService'
+export * from './permission/api'
+export * from './user'

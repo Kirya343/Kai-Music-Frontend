@@ -1,12 +1,11 @@
 import { createContext, useContext } from "react";
-import { IUser } from "../types";
+import { IShortUser, IUser } from "../types";
 
 interface AuthContextType {
     isAuthenticated: boolean;
     user: IUser | null;
-    setUser: React.Dispatch<React.SetStateAction<IUser | null>>;
+    shortUser: IShortUser | null;
     loading: boolean;
-    loadUser: () => Promise<boolean>;
     isAdmin: boolean;
 }
 

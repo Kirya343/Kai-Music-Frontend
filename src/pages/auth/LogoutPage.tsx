@@ -14,7 +14,7 @@ const LogoutPage = () => {
         } catch (e) {
             console.error("Logout failed", e);
         } finally {
-            navigate("/main");
+            navigate("/");
             loadUser();
         }
     }, [navigate, loadUser]);

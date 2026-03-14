@@ -9,7 +9,7 @@ const LoginPage = () => {
     const params = new URLSearchParams(window.location.search);
     const navigate = useNavigate();
     const error = params.get("error") || "";
-    const redirect = params.get("redirect") || `/main`;
+    const redirect = params.get("redirect") || `/`;
     const [email, setEmail] = useState<string>('');
     const [password, setPassword] = useState<string>('');
     const [message, setMessage] = useState<{message: string, success: boolean} | null>(null);
@@ -62,7 +62,7 @@ const LoginPage = () => {
             if (event.data?.type === 'oauthSuccess') {
                 loadUser();
                 setMessage({success: false, message: "Вы успешно авторизовались"});
-                navigate((event.data.isNewUser ? "/register/oauth" : "/login/success") + `?redirect=${encodeURIComponent(redirect)}` || '/main');
+                navigate((event.data.isNewUser ? "/register/oauth" : "/login/success") + `?redirect=${encodeURIComponent(redirect)}` || '/');
             } else if (event.data?.type === 'oauthFailure') {
                 loadUser();
                 setMessage({success: false, message: "Ошибка авторизации"});
@@ -81,9 +81,9 @@ const LoginPage = () => {
                     <img src="/image/logo.png"/>
                 </div>
 
-                {message?.message && <div className={'message' + message?.success ? "success" : "error"}>{message?.message}</div>}
+                {message?.message && <div className={`message ${message?.success ? "success" : "error"}`}>{message?.message}</div>}
 
-                <div>
+                <div className="inputs">
                     <input 
                         type="text"
                         placeholder="Почта" 

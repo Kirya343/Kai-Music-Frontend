@@ -1,8 +1,11 @@
+import { PlaybackMode } from "@/pages/MainPage/PlaybackModeToggle";
+
 export interface IListeningRoom {
     id: number;
     title: string;
     ownerId: number;
     membersCount: number;
+    mode: PlaybackMode;
     queue: IQueueItem[]
 }
 

@@ -17,6 +17,18 @@ export const useCurrentRoom = () => {
         });
     }, [room])
 
+    const removeFromQueue = useCallback(async (queueItemId: number) => {
+        if (!room) return;
+        const data = await audioService.removeFromQueue(room.id, queueItemId);
+        setRoom(p => {
+            if (!p) return p;
+            return {
+                ...p,
+                queue: [...p.queue.filter(qi => qi.id != queueItemId)] // добавляем новый элемент в конец массива
+            };
+        });
+    }, [room])
+
     useEffect(() => {
         async function loadRoom() {
             const data = await audioService.loadCurrentRoom();
@@ -26,5 +38,5 @@ export const useCurrentRoom = () => {
         loadRoom();
     }, [])
 
-    return { room, addToQueue }
+    return { room, addToQueue, removeFromQueue }
 }

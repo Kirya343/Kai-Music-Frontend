@@ -1,12 +1,15 @@
-import { PlaybackMode } from "@/pages/MainPage/PlaybackModeToggle";
+import { PlaybackMode } from "@/pages/MainPage/player/PlaybackModeToggle";
 
-export interface IListeningRoom {
+export interface IListeningRoom extends IShortRoom{
+    mode: PlaybackMode;
+    queue: IQueueItem[]
+}
+
+export interface IShortRoom {
     id: number;
     title: string;
     ownerId: number;
     membersCount: number;
-    mode: PlaybackMode;
-    queue: IQueueItem[]
 }
 
 export interface IQueueItem {

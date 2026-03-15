@@ -1,24 +1,24 @@
 
-import Audio from "./Audio";
+import Audio from "./player/Audio";
 import UserLibrary from "./UserLibrary";
 import { useListeningRoom } from "@/lib";
 
 const ListeningRoom = () => {
 
-    const { room, addToQueue, removeFromQueue, updateTrackPosition } = useListeningRoom();
+    const { room, addToQueue, removeFromQueue, updateTrackPosition, playbackState } = useListeningRoom();
 
     return (
-        <div className="listening-room">
-            <div className="room-header">
+        <div className="box">
+            <div className="box-header">
                 <span className="room-name">{room?.title}</span>
                 <UserLibrary addToQueue={addToQueue} />
             </div>
 
-            <div className="audio-list">
+            <div className="box-list">
                 {room?.queue.map(queueItem => (
                     <div 
                         key={queueItem.id} 
-                        className="audio-item" 
+                        className={`box-list-item ${queueItem.audioId == playbackState?.audioId ? "active" : ""}`} 
                         onClick={() => updateTrackPosition(queueItem.audioId, 0, true)}
                         onDoubleClick={() => removeFromQueue(queueItem.id)}
                     >

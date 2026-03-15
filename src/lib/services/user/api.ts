@@ -9,3 +9,4 @@ export const getRecentUsers = (count: number) => apiFetchJson(`/user/recent/${co
 export const getFullInfo = (userOpenId: string) => apiFetchJson(`/user/${userOpenId}/full-info`)
 export const updateProfile = (name: string) => apiFetch('/user/update-profile', { method: "POST" }, {name})
 export const setStatus = (status: string, userId: number) => apiFetch(`/user/status/set/${userId}`, {method: 'POST'}, {status})
+export const setUserRoom = (roomId: number) => apiFetch(`/user/room`, {method: "PATCH"}, {roomId})

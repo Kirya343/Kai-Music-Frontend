@@ -7,6 +7,7 @@ interface ListeningRoomContextType {
     updateTrackPosition: (audioId: number, position: number, pause: boolean) => void;
     addToQueue: (audioId: number) => void;
     removeFromQueue: (audioId: number) => void;
+    loadRoom: () => void;
 }
 
 export const ListeningRoomContext = createContext<ListeningRoomContextType | null>(null);

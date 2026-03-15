@@ -29,14 +29,14 @@ export const useCurrentRoom = () => {
         });
     }, [room])
 
-    useEffect(() => {
-        async function loadRoom() {
-            const data = await audioService.loadCurrentRoom();
+    const loadRoom = useCallback(async() => {
+        const data = await audioService.loadCurrentRoom();
             setRoom(data);
-        }
-    
+    }, [])
+
+    useEffect(() => {
         loadRoom();
     }, [])
 
-    return { room, addToQueue, removeFromQueue }
+    return { room, addToQueue, removeFromQueue, loadRoom }
 }

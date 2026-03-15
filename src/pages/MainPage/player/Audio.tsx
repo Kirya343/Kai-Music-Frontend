@@ -1,7 +1,9 @@
 import { API_BASE } from "@/config";
-import { IPlaybackState, useListeningRoom } from "@/lib";
+import { IAudio, IPlaybackState, useListeningRoom } from "@/lib";
 import React, { useEffect, useRef, useState } from "react";
 import { PlaybackModeToggle } from "./PlaybackModeToggle";
+import VolumeSlider from "./VolumeSlider";
+import { audioService } from "@/lib/services/audio";
 
 interface AudioTrackerProps {
     src: string;
@@ -19,6 +21,17 @@ const AudioTracker: React.FC<AudioTrackerProps> = ({ src, playbackState, updateT
     const [position, setPosition] = useState(0);
     const [duration, setDuration] = useState(0);
     const [currentAudioId, setCurrentAudioId] = useState<number | null>(null);
+
+    const [audioInfo, setAudioInfo] = useState<IAudio | null>(null);
+
+    useEffect(() => {
+        async function loadAudioInfo(audioId: number) {
+            const data = await audioService.loadAudioInfo(audioId);
+            setAudioInfo(data);
+        }
+
+        if (playbackState.audioId) loadAudioInfo(playbackState.audioId);
+    }, [playbackState.audioId])
 
     // Разрешаем play после первого клика
     useEffect(() => {
@@ -91,17 +104,14 @@ const AudioTracker: React.FC<AudioTrackerProps> = ({ src, playbackState, updateT
         };
 
         const handleTimeUpdate = () => sendUpdate(false);
-        const handleSeeked = () => sendUpdate(false);
 
         audio.addEventListener("timeupdate", handleTimeUpdate);
-        audio.addEventListener("seeked", handleSeeked);
 
         const handleLoadedMetadata = () => setDuration(audio.duration);
         audio.addEventListener("loadedmetadata", handleLoadedMetadata);
 
         return () => {
             audio.removeEventListener("timeupdate", handleTimeUpdate);
-            audio.removeEventListener("seeked", handleSeeked);
             audio.removeEventListener("loadedmetadata", handleLoadedMetadata);
         };
     }, [playbackState, updateTrackPosition, paused]);
@@ -121,31 +131,73 @@ const AudioTracker: React.FC<AudioTrackerProps> = ({ src, playbackState, updateT
             audio.pause();
         }
 
-        setPaused(nextPaused);
-        sendUserUpdate(nextPaused);
+        sendUserUpdate(position, nextPaused);
     };
+
+    const debounceTimeoutRef = useRef<number | null>(null);
 
     const handleSeek = (e: React.ChangeEvent<HTMLInputElement>) => {
         const audio = audioRef.current;
         if (!audio) return;
 
         const newTime = Number(e.target.value);
+        audio.pause();
         audio.currentTime = newTime;
         setPosition(newTime);
-        sendUserUpdate();
+
+        // отменяем предыдущий таймаут, если был
+        if (debounceTimeoutRef.current) {
+            clearTimeout(debounceTimeoutRef.current);
+        }
+
+        // ставим новый таймаут на 300 мс
+        debounceTimeoutRef.current = setTimeout(() => {
+            sendUserUpdate(newTime, paused);
+            debounceTimeoutRef.current = null;
+        }, 300);
     };
 
-    const sendUserUpdate = (pausedState?: boolean) => {
+    useEffect(() => {
+        console.log("Позиция: ", position)
+    }, [position])
+
+    const sendUserUpdate = (position: number, pausedState: boolean) => {
         const audio = audioRef.current;
         if (!audio) return;
-        updateTrackPosition(playbackState.audioId, audio.currentTime, pausedState ?? paused);
+        updateTrackPosition(playbackState.audioId, position, pausedState);
     };
 
     return (
-        <div style={{ width: 300, padding: 10, border: "1px solid #ccc" }}>
+        <div className="audio-tracker">
             <audio ref={audioRef} preload="metadata" />
-            <button onClick={togglePlay}>{paused ? "Play" : "Pause"}</button>
-            <div>
+            <div className="tracker-header">
+                {audioInfo?.name}
+            </div>
+            <div className="tracker-main">
+                <button onClick={togglePlay}>
+                    {paused ? (
+                        <svg
+                            width="24"
+                            height="24"
+                            viewBox="0 0 24 24"
+                            fill="currentColor"
+                            xmlns="http://www.w3.org/2000/svg"
+                        >
+                            <polygon points="5,3 19,12 5,21" />
+                        </svg>
+                    ) : (
+                        <svg
+                            width="24"
+                            height="24"
+                            viewBox="0 0 24 24"
+                            fill="currentColor"
+                            xmlns="http://www.w3.org/2000/svg"
+                        >
+                            <rect x="5" y="3" width="5" height="18" />
+                            <rect x="14" y="3" width="5" height="18" />
+                        </svg>
+                    )}
+                </button>
                 <input
                     type="range"
                     min={0}
@@ -154,11 +206,17 @@ const AudioTracker: React.FC<AudioTrackerProps> = ({ src, playbackState, updateT
                     onChange={handleSeek}
                     style={{ width: "100%" }}
                 />
+                <div className="track-position">
+                    <span>{Math.floor(position / 60)}:{Math.floor(position % 60).toString().padStart(2, '0')}</span>
+                    <span>/</span>
+                    <span>{Math.floor(duration / 60)}:{Math.floor(duration % 60).toString().padStart(2, '0')}</span>
+                </div>
             </div>
-            <div>
-                {Math.floor(position)} / {Math.floor(duration)} sec
+                    
+            <div className="track-settings">
+                <PlaybackModeToggle />
+                <VolumeSlider audioRef={audioRef} />
             </div>
-            <PlaybackModeToggle />
         </div>
     );
 };

@@ -61,6 +61,7 @@ const UserLibrary = ({addToQueue}: {addToQueue: (audioId: number) => void}) => {
                 <div className="music-library">
                     {audios?.map(audio => (
                         <div key={audio.id} className="audio-item" onClick={() => addToQueue(audio?.id)}>
+                            <span className="audio-id">#{audio.id}</span>
                             <span className="audio-name">{audio.name}</span>
                         </div>
                     ))}

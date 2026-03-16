@@ -6,6 +6,7 @@ import { Client } from "@stomp/stompjs";
 interface WebSocketContextProps {
     client: Client | null;
     connected: boolean;
+    error: boolean;
 }
 
 export const WebSocketContext = createContext<WebSocketContextProps | null>(null);

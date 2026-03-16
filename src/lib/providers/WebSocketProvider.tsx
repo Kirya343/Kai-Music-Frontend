@@ -9,10 +9,10 @@ interface WebSocketProviderProps {
 }
 
 export const WebSocketProvider = ({ children }: WebSocketProviderProps) => {
-    const { client, connected } = useStompClient();
+    const { client, connected, error } = useStompClient();
 
     return (
-        <WebSocketContext.Provider value={{ client, connected }}>
+        <WebSocketContext.Provider value={{ client, connected, error }}>
             {children}
         </WebSocketContext.Provider>
     );

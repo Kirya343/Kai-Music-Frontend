@@ -4,6 +4,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { PlaybackModeToggle } from "./PlaybackModeToggle";
 import VolumeSlider from "./VolumeSlider";
 import { audioService } from "@/lib/services/audio";
+import { countPosition } from "@/lib/services/utils/interfaceFunctions";
 
 interface AudioTrackerProps {
     src: string;
@@ -16,6 +17,7 @@ const AudioTracker: React.FC<AudioTrackerProps> = ({ src, playbackState, updateT
     const lastTimeRef = useRef(0);
     const isProgrammaticRef = useRef(false);
     const hasUserInteractedRef = useRef(false);
+    const [updateMessage, setUpdateMessage] = useState<string | null>(null);
 
     const [paused, setPaused] = useState(true);
     const [position, setPosition] = useState(0);
@@ -79,6 +81,24 @@ const AudioTracker: React.FC<AudioTrackerProps> = ({ src, playbackState, updateT
 
         return () => clearTimeout(timeout);
     }, [playbackState, src, currentAudioId]);
+
+    useEffect(() => {
+        const writeUpdateMessage = (newState: IPlaybackState) => {
+
+            console.log(newState)
+            if (newState.audioId != currentAudioId) {
+                setUpdateMessage(`${newState.user} включил трек #${newState.audioId}`);
+            } else if (newState.pause != paused && newState.pause) {
+                setUpdateMessage(`${newState.user} поставил на паузу`);
+            } else if (newState.pause != paused && !newState.pause) {
+                setUpdateMessage(`${newState.user} включил воспроизведение`);
+            } else if (newState.position != position) {
+                setUpdateMessage(`${newState.user} перемотал на ${countPosition(newState.position)}`);
+            }
+        }
+
+        writeUpdateMessage(playbackState);
+    }, [playbackState])
 
     // События пользователя
     useEffect(() => {
@@ -157,10 +177,6 @@ const AudioTracker: React.FC<AudioTrackerProps> = ({ src, playbackState, updateT
         }, 300);
     };
 
-    useEffect(() => {
-        console.log("Позиция: ", position)
-    }, [position])
-
     const sendUserUpdate = (position: number, pausedState: boolean) => {
         const audio = audioRef.current;
         if (!audio) return;
@@ -169,6 +185,9 @@ const AudioTracker: React.FC<AudioTrackerProps> = ({ src, playbackState, updateT
 
     return (
         <div className="audio-tracker">
+
+            {updateMessage && <div className="player-update">{updateMessage}</div>}
+
             <audio ref={audioRef} preload="metadata" />
             <div className="tracker-header">
                 {audioInfo?.name}
@@ -207,9 +226,9 @@ const AudioTracker: React.FC<AudioTrackerProps> = ({ src, playbackState, updateT
                     style={{ width: "100%" }}
                 />
                 <div className="track-position">
-                    <span>{Math.floor(position / 60)}:{Math.floor(position % 60).toString().padStart(2, '0')}</span>
+                    <span>{countPosition(position)}</span>
                     <span>/</span>
-                    <span>{Math.floor(duration / 60)}:{Math.floor(duration % 60).toString().padStart(2, '0')}</span>
+                    <span>{countPosition(duration)}</span>
                 </div>
             </div>
                     

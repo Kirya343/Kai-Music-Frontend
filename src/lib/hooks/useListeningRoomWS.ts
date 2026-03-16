@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { useAuth, useWebSocket } from "../contexts";
 import { IPlaybackState } from "../types";
 import { audioService } from "../services/audio";
+import { countPosition } from "../services/utils/interfaceFunctions";
 
 export const useListeningRoomWS = (roomId: number | null) => {
     
@@ -43,7 +44,7 @@ export const useListeningRoomWS = (roomId: number | null) => {
         const roomSub = client.subscribe(`/topic/room/${roomId}`, (message) => {
             const state: IPlaybackState = JSON.parse(message.body);
             //console.log("Пришло обновление комнаты: ", roomId, state)
-
+            
             setPlaybackState(state);
         });
 

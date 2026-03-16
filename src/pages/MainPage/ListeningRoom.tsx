@@ -1,18 +1,21 @@
 
 import Audio from "./player/Audio";
 import UserLibrary from "./UserLibrary";
-import { useListeningRoom } from "@/lib";
+import { useListeningRoom, useWebSocket } from "@/lib";
 
 const ListeningRoom = () => {
 
     const { room, addToQueue, removeFromQueue, updateTrackPosition, playbackState } = useListeningRoom();
+    const { error } = useWebSocket();
 
     return (
-        <div className="box">
+        <>
             <div className="box-header">
                 <span className="room-name">{room?.title}</span>
                 <UserLibrary addToQueue={addToQueue} />
             </div>
+
+            {error && (<div className="error">Ошибка подключения к комнате</div>)}
 
             <div className="box-list">
                 {room?.queue.map(queueItem => (
@@ -28,7 +31,7 @@ const ListeningRoom = () => {
             </div>
 
             <Audio />
-        </div>
+        </>
     );
 }
 

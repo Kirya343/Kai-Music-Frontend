@@ -8,7 +8,14 @@ export const ListeningRoomProvider = ({ children }: { children?: React.ReactNode
     const { playbackState, updateTrackPosition } = useListeningRoomWS(room?.id || null);
 
     return (
-        <ListeningRoomContext.Provider value={{ playbackState, room, updateTrackPosition, addToQueue, removeFromQueue, loadRoom}}>
+        <ListeningRoomContext.Provider value={{ 
+            playbackState, 
+            room, 
+            updateTrackPosition, 
+            addToQueue, 
+            removeFromQueue, 
+            loadRoom,
+        }}>
             {children}
         </ListeningRoomContext.Provider>
     );

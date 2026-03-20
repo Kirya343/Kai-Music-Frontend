@@ -21,8 +21,8 @@ const ListeningRoom = () => {
                 {room?.queue.map(queueItem => (
                     <div 
                         key={queueItem.id} 
-                        className={`box-list-item ${queueItem.audioId == playbackState?.audioId ? "active" : ""}`} 
-                        onClick={() => updateTrackPosition(queueItem.audioId, 0, true)}
+                        className={`box-list-item ${queueItem.id == playbackState?.entryId ? "active" : ""}`} 
+                        onClick={() => updateTrackPosition(queueItem.id, 0, false)}
                         onDoubleClick={() => removeFromQueue(queueItem.id)}
                     >
                         <span className="audio-name">{queueItem.name}</span>

@@ -2,7 +2,6 @@ import { useCallback, useEffect, useState } from "react";
 import { useAuth, useWebSocket } from "../contexts";
 import { IPlaybackState } from "../types";
 import { audioService } from "../services/audio";
-import { countPosition } from "../services/utils/interfaceFunctions";
 
 export const useListeningRoomWS = (roomId: number | null) => {
     
@@ -19,12 +18,12 @@ export const useListeningRoomWS = (roomId: number | null) => {
         if (roomId) loadState(roomId)
     }, [roomId])
 
-    const updateTrackPosition = useCallback(async (audioId: number, position: number, pause: boolean) => {
+    const updateTrackPosition = useCallback(async (entryId: number, position: number, pause: boolean) => {
         if (!client || !connected || !isAuthenticated) return;
 
-        if (!audioId) return;
+        if (!entryId) return;
 
-        const state: IPlaybackState = {audioId, position, pause};
+        const state: IPlaybackState = {entryId, position, pause};
 
         //console.log("Отправляем обновление позиции: ", state)
         client.publish({

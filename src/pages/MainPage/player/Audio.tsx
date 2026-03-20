@@ -9,7 +9,7 @@ import { countPosition } from "@/lib/services/utils/interfaceFunctions";
 interface AudioTrackerProps {
     src: string;
     playbackState: IPlaybackState;
-    updateTrackPosition: (audioId: number, position: number, pause: boolean) => void;
+    updateTrackPosition: (entryId: number, position: number, pause: boolean) => void;
 }
 
 const AudioTracker: React.FC<AudioTrackerProps> = ({ src, playbackState, updateTrackPosition }) => {
@@ -27,13 +27,13 @@ const AudioTracker: React.FC<AudioTrackerProps> = ({ src, playbackState, updateT
     const [audioInfo, setAudioInfo] = useState<IAudio | null>(null);
 
     useEffect(() => {
-        async function loadAudioInfo(audioId: number) {
-            const data = await audioService.loadAudioInfo(audioId);
+        async function loadAudioInfo(entryId: number) {
+            const data = await audioService.loadAudioInfo(entryId);
             setAudioInfo(data);
         }
 
-        if (playbackState.audioId) loadAudioInfo(playbackState.audioId);
-    }, [playbackState.audioId])
+        if (playbackState.entryId) loadAudioInfo(playbackState.entryId);
+    }, [playbackState.entryId])
 
     // Разрешаем play после первого клика
     useEffect(() => {
@@ -58,8 +58,8 @@ const AudioTracker: React.FC<AudioTrackerProps> = ({ src, playbackState, updateT
         isProgrammaticRef.current = true;
 
         // Если трек сменился
-        if (currentAudioId !== playbackState.audioId) {
-            setCurrentAudioId(playbackState.audioId);
+        if (currentAudioId !== playbackState.entryId) {
+            setCurrentAudioId(playbackState.entryId);
             audio.src = src;
             audio.load();
         }
@@ -86,8 +86,8 @@ const AudioTracker: React.FC<AudioTrackerProps> = ({ src, playbackState, updateT
         const writeUpdateMessage = (newState: IPlaybackState) => {
 
             console.log(newState)
-            if (newState.audioId != currentAudioId) {
-                setUpdateMessage(`${newState.user} включил трек #${newState.audioId}`);
+            if (newState.entryId != currentAudioId) {
+                setUpdateMessage(`${newState.user} включил трек #${newState.entryId}`);
             } else if (newState.pause != paused && newState.pause) {
                 setUpdateMessage(`${newState.user} поставил на паузу`);
             } else if (newState.pause != paused && !newState.pause) {
@@ -105,26 +105,7 @@ const AudioTracker: React.FC<AudioTrackerProps> = ({ src, playbackState, updateT
         const audio = audioRef.current;
         if (!audio) return;
 
-        const sendUpdate = (pause: boolean) => {
-            if (isProgrammaticRef.current) return;
-
-            const current = audio.currentTime;
-            const diff = Math.abs(current - lastTimeRef.current);
-
-            const positionChanged = diff > 1;
-            const pauseChanged = pause !== paused;
-
-            if (positionChanged || pauseChanged) {
-                updateTrackPosition(playbackState.audioId, current, pause);
-            }
-
-            lastTimeRef.current = current;
-            setPosition(current);
-            setPaused(pause);
-        };
-
-        const handleTimeUpdate = () => sendUpdate(false);
-
+        const handleTimeUpdate = () => setPosition(audio.currentTime);
         audio.addEventListener("timeupdate", handleTimeUpdate);
 
         const handleLoadedMetadata = () => setDuration(audio.duration);
@@ -180,8 +161,24 @@ const AudioTracker: React.FC<AudioTrackerProps> = ({ src, playbackState, updateT
     const sendUserUpdate = (position: number, pausedState: boolean) => {
         const audio = audioRef.current;
         if (!audio) return;
-        updateTrackPosition(playbackState.audioId, position, pausedState);
+        updateTrackPosition(playbackState.entryId, position, pausedState);
     };
+
+    const headerRef = useRef<HTMLDivElement | null>(null);
+    const textRef = useRef<HTMLDivElement | null>(null);
+
+    useEffect(() => {
+        const header = headerRef.current;
+        const text = textRef.current;
+
+        if (!header || !text) return;
+
+        if (text.scrollWidth > header.clientWidth) {
+            text.classList.add("animate");
+        } else {
+            text.classList.remove("animate");
+        }
+    }, [audioInfo]);
 
     return (
         <div className="audio-tracker">
@@ -189,8 +186,10 @@ const AudioTracker: React.FC<AudioTrackerProps> = ({ src, playbackState, updateT
             {updateMessage && <div className="player-update">{updateMessage}</div>}
 
             <audio ref={audioRef} preload="metadata" />
-            <div className="tracker-header">
-                {audioInfo?.name}
+            <div ref={headerRef} className="tracker-header">
+                <div ref={textRef} className="tracker-header-text">
+                    {audioInfo?.name}
+                </div>
             </div>
             <div className="tracker-main">
                 <button onClick={togglePlay}>
@@ -246,7 +245,7 @@ export default function Audio() {
 
     return (
         <AudioTracker
-            src={`${API_BASE}/audio/${playbackState.audioId}`}
+            src={`${API_BASE}/audio/${playbackState.entryId}`}
             playbackState={playbackState}
             updateTrackPosition={updateTrackPosition}
         />

@@ -26,7 +26,7 @@ export interface IAudio {
 
 export interface IPlaybackState {
     user?: string;
-    audioId: number;
+    entryId: number;
     position: number;
     pause: boolean;
 }

@@ -4,9 +4,9 @@ import { IListeningRoom, IPlaybackState } from "../types";
 interface ListeningRoomContextType {
     playbackState: IPlaybackState | null;
     room: IListeningRoom | null;
-    updateTrackPosition: (audioId: number, position: number, pause: boolean) => void;
-    addToQueue: (audioId: number) => void;
-    removeFromQueue: (audioId: number) => void;
+    updateTrackPosition: (entryId: number, position: number, pause: boolean) => void;
+    addToQueue: (entryId: number) => void;
+    removeFromQueue: (entryId: number) => void;
     loadRoom: () => void;
 }
 

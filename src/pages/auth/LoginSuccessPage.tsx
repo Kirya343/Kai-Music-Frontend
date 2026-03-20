@@ -4,7 +4,7 @@ import { useAuth } from "@/lib";
 import { useNavigate, useLocation } from "react-router-dom";
 
 const LoginSuccessPage = () => {
-    const { user, loading } = useAuth();
+    const { user, loading, loadUser } = useAuth();
     const navigate = useNavigate();
     const location = useLocation();
 
@@ -13,6 +13,8 @@ const LoginSuccessPage = () => {
             const from = new URLSearchParams(location.search).get("redirect") || "/";
             navigate(from, { replace: true });
         }
+
+        loadUser()
     }, [loading, user, location.search, navigate]);
 
     return null;

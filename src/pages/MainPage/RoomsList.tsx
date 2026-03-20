@@ -54,7 +54,11 @@ const RoomsList = () => {
             </div>
             <div className="box-list">
                 {rooms?.map(r => (
-                    <div className={`box-list-item room-item ${r.id == room?.id ? "active" : ""}`} onClick={() => onSelect(r.id)}>
+                    <div 
+                        key={r.id}
+                        className={`box-list-item room-item ${r.id == room?.id ? "active" : ""}`} 
+                        onClick={() => onSelect(r.id)}
+                    >
                         <span>#{r.id}</span>
                         <span>{r.title}</span>
                         <span>{r.membersCount}</span>

@@ -1,7 +1,7 @@
 import { PlaybackMode } from "@/pages/MainPage/player/PlaybackModeToggle";
 import { apiFetch, apiFetchJson } from "../utils/apiClient";
 
-export const loadAudioInfo = (audioId: number) => apiFetchJson(`/audio/${audioId}/info`)
+export const loadAudioInfo = (entryId: number) => apiFetchJson(`/audio/${entryId}/info`)
 export const loadCurrentRoom = () => apiFetchJson("/audio/room")
 export const setRoomPlaybackMode = (roomId: number, mode: PlaybackMode) => apiFetch(`/audio/room/${roomId}/mode`, {method: "PATCH"}, {mode})
 export const loadLibrary = () => apiFetchJson("/audio/library")

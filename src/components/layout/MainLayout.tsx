@@ -12,8 +12,10 @@ const MainLayout = () => {
             <header className="header">
                 <div className="header-container">
                     <img className="logo" src="/image/logo.png"/>
-                    <Link to="/library">Библиотека</Link>
-                    {room && <Link to="/room">Вернуться в комнату</Link>}
+                    <div className="navigation">
+                        <Link to="/library">Библиотека</Link>
+                        {room && <Link to="/room">Вернуться в комнату</Link>}
+                    </div>
                     {isAuthenticated ? (
                         <div className="header-auth">Пользователь: <span id="userName">{user?.name}</span></div>
                     ) : (

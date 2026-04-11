@@ -1,3 +1,5 @@
+@use "@/css/components/mixins/" as *;
+
 .main-layout {
     flex: 1;
     display: flex;
@@ -22,7 +24,23 @@
             .logo {
                 height: 60px;
                 border-radius: 1rem;
-                border: 3px solid #666666
+                border: 3px solid #666666;
+
+                @include mobile {
+                    display: none;
+                }
+            }
+
+            .navigation {
+                display: flex;
+                flex-direction: row;
+                gap: 1rem;
+                align-items: center;
+
+                @include mobile {
+                    flex-direction: column;
+                    gap: 1rem;
+                }
             }
 
             .header-auth {

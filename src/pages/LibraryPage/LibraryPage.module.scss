@@ -32,6 +32,10 @@
         letter-spacing: 1px;
         position: relative;
 
+        @include mobile {
+            padding: 10px 10px;
+        }
+
         svg {
             position: absolute;
             top: 40%;

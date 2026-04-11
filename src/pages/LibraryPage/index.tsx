@@ -1,6 +1,6 @@
 import { IAudio, useListeningRoom } from "@/lib";
 import { audioService } from "@/lib/services/audio";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import styles from "./LibraryPage.module.scss"
 import CirclePlusIcon from "@/components/icons/CirclePlusIcon";
 import PlaylistIcon from "@/components/icons/PlaylistIcon";
@@ -29,6 +29,23 @@ const LibraryPage = () => {
     useEffect(() => {
         if (roomId) setRoomTopUpMode(true);
     }, [roomId])
+
+    const timeoutRef = useRef<number | null>(null);
+
+    const handleMouseDown = (id: number) => {
+        timeoutRef.current = setTimeout(() => {
+            setSelectedTracks([id]);
+            setRoomTopUpMode(true);
+        }, 300);
+    };
+
+    const clearTimer = () => {
+        if (timeoutRef.current) {
+            clearTimeout(timeoutRef.current);
+            timeoutRef.current = null;
+        }
+    };
+    
 
     const toggleTrack = (id: number) => {
         setSelectedTracks(prev =>
@@ -150,7 +167,10 @@ const LibraryPage = () => {
 
             <div className={styles.trackList}>
                 {audios?.map(audio => (
-                    <div key={audio.id} className={styles.track} onClick={() => toggleTrack(audio.id)}>
+                    <div 
+                        key={audio.id} className={styles.track} 
+                        onClick={() => toggleTrack(audio.id)}
+                    >
                         {roomTopUpMode && (
                             <input
                                 type="checkbox"
@@ -174,6 +194,13 @@ const LibraryPage = () => {
                         style={{backgroundColor: "#156451"}}
                         onClick={() => setSelectedTracks([])}
                     >Очистить список</button>
+                    <button 
+                        style={{backgroundColor: "#156451"}}
+                        onClick={() =>  {
+                            setRoomTopUpMode(false)
+                            setSelectedTracks([])
+                        }}
+                    >Отменить</button>
                 </div>
             )}
 

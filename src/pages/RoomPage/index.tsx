@@ -20,19 +20,19 @@ const RoomPage = () => {
         }, 300);
     };
 
+    const clearTimer = () => {
+        if (timeoutRef.current) {
+            clearTimeout(timeoutRef.current);
+            timeoutRef.current = null;
+        }
+    };
+
     const toggleTrack = (id: number) => {
         setSelectedTracks(prev =>
             prev?.includes(id)
                 ? prev.filter(trackId => trackId !== id)
                 : [...prev, id]
         );
-    };
-
-    const clearTimer = () => {
-        if (timeoutRef.current) {
-            clearTimeout(timeoutRef.current);
-            timeoutRef.current = null;
-        }
     };
 
     const deleteFromRoom = () => {
@@ -75,6 +75,8 @@ const RoomPage = () => {
                                 onMouseDown={() => handleMouseDown(queueItem.id)}
                                 onMouseUp={clearTimer}
                                 onMouseLeave={clearTimer}
+                                onTouchStart={() => handleMouseDown(queueItem.id)}
+                                onTouchEnd={clearTimer}
                             >
                                 {selectMode && (
                                     <input

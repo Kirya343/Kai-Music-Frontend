@@ -1,10 +1,12 @@
 import { IShortRoom, useListeningRoom, userService } from "@/lib";
 import { audioService } from "@/lib/services/audio";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const RoomsList = () => {
 
     const { room, loadRoom } = useListeningRoom();
+    const navigate = useNavigate();
 
     const [rooms, setRooms] = useState<IShortRoom[] | null>(null);
 
@@ -22,6 +24,7 @@ const RoomsList = () => {
             await userService.setUserRoom(roomId);
         } finally {
             loadRoom();
+            navigate("/room");
         }
     }
 

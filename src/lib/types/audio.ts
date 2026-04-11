@@ -1,4 +1,4 @@
-import { PlaybackMode } from "@/pages/MainPage/player/PlaybackModeToggle";
+import { PlaybackMode } from "@/components/ui/player/PlaybackModeToggle";
 
 export interface IListeningRoom extends IShortRoom{
     mode: PlaybackMode;

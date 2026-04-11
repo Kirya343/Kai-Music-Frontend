@@ -43,7 +43,7 @@ export async function apiFetch(url: string, options: IApiRequest = {}, extraPara
 
         const separator = url.includes("?") ? "&" : "?";
 
-        return fetch(`${API_BASE ? API_BASE : "https://api.latair-rp.com"}${url}${separator}${queryString}`, {
+        return fetch(`${API_BASE ? API_BASE : "https://music.workswap.org"}${url}${separator}${queryString}`, {
             ...options,
             headers,
             credentials: "include",

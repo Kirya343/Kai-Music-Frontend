@@ -1,0 +1,152 @@
+@use "@/css/components/mixins/" as *;
+
+.library {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    position: relative;
+}
+
+.trackList {
+    display: flex;
+    flex-direction: column;
+
+    @include mobile {
+        width: 100%;;
+    }
+}
+
+.topPanel {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+
+    .action {
+        padding: 10px 20px;
+        aspect-ratio: 1.5;
+        display: flex;
+        justify-content: center;
+        border-radius: 10px;
+        cursor: pointer;
+        font-weight: 600;
+        letter-spacing: 1px;
+        position: relative;
+
+        svg {
+            position: absolute;
+            top: 40%;
+            translate: 0 -50%;
+        }
+
+        .subtitle {
+            margin-top: auto;
+            height: fit-content;
+        }
+    }
+}
+
+.track {
+    padding: 10px;
+    background-color: #0000001a;
+    cursor: pointer;
+    display: flex;
+    gap: 1rem;
+    justify-content: left;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+    .trackId {
+        color: #5f5f5f;
+        font-weight: 800;
+    }
+
+    /* .trackName {
+
+    } */
+
+    &:hover {
+        background-color: #0000003b;
+    }
+}
+
+.uploadingList {
+    display: flex;
+    flex-direction: column;
+}
+
+.uploadItem {
+    padding: 10px;
+    background-color: #0000001a;
+    display: flex;
+    align-items: center;
+    justify-content: left;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    position: relative;
+
+    .progressBar {
+        position: absolute;
+        left: 0;
+        top: 0;
+        z-index: 1;
+        width: 0px;
+        height: 100%;
+        background-color: #80808050;
+    }
+
+    span {
+        z-index: 2;
+    }
+
+    .percent {
+        position: absolute;
+        right: 3rem;
+    }
+
+    .status {
+        position: absolute;
+        right: .5rem;
+
+        &.success {
+            *, &::before, &::after {
+                color: #25c417fd !important;
+            }
+        }
+
+        &.error {
+            *, &::before, &::after {
+                color: #c4172e !important;
+            }
+        }
+    }
+}
+
+.header {
+    text-align: center;
+    font-weight: 400;
+    margin: 0.5rem 0;
+}
+
+input.uploadAudio {
+    display: none;
+}
+
+.roomTopUpActions {
+    display: flex;
+    gap: 1rem;
+    position: fixed;
+    bottom: 150px;
+    z-index: 100;
+    justify-content: center;
+    width: 100%;
+    max-width: 1000px;
+
+    button {
+        padding: 10px;
+        border-radius: 10px;
+        font-weight: 600;
+        cursor: pointer;
+    }
+}

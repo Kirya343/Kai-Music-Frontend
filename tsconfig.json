@@ -24,7 +24,7 @@
     },
     "include": [
         "src"
-    ],
+, "src/components/icons/CrossIcon.tsx"    ],
     "exclude": [
         "node_modules",
         "**/node_modules/*",

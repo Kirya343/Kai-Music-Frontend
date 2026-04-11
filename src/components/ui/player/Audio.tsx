@@ -5,6 +5,10 @@ import { PlaybackModeToggle } from "./PlaybackModeToggle";
 import VolumeSlider from "./VolumeSlider";
 import { audioService } from "@/lib/services/audio";
 import { countPosition } from "@/lib/services/utils/interfaceFunctions";
+import PauseIcon from "@/components/icons/PauseIcon";
+import PlayIcon from "@/components/icons/PlayIcon";
+import LeftIcon from "@/components/icons/LeftIcon";
+import RightIcon from "@/components/icons/RightIcon";
 
 interface AudioTrackerProps {
     src: string;
@@ -164,6 +168,10 @@ const AudioTracker: React.FC<AudioTrackerProps> = ({ src, playbackState, updateT
         updateTrackPosition(playbackState.entryId, position, pausedState);
     };
 
+    useEffect(() => {
+        console.log("paused: ", paused)
+    }, [paused])
+
     const headerRef = useRef<HTMLDivElement | null>(null);
     const textRef = useRef<HTMLDivElement | null>(null);
 
@@ -183,39 +191,28 @@ const AudioTracker: React.FC<AudioTrackerProps> = ({ src, playbackState, updateT
     return (
         <div className="audio-tracker">
 
-            {updateMessage && <div className="player-update">{updateMessage}</div>}
+            {updateMessage && <div className="player-update" onDoubleClick={() => setUpdateMessage("")}>{updateMessage}</div>}
 
             <audio ref={audioRef} preload="metadata" />
+            
             <div ref={headerRef} className="tracker-header">
                 <div ref={textRef} className="tracker-header-text">
                     {audioInfo?.name}
                 </div>
             </div>
+
             <div className="tracker-main">
-                <button onClick={togglePlay}>
-                    {paused ? (
-                        <svg
-                            width="24"
-                            height="24"
-                            viewBox="0 0 24 24"
-                            fill="currentColor"
-                            xmlns="http://www.w3.org/2000/svg"
-                        >
-                            <polygon points="5,3 19,12 5,21" />
-                        </svg>
-                    ) : (
-                        <svg
-                            width="24"
-                            height="24"
-                            viewBox="0 0 24 24"
-                            fill="currentColor"
-                            xmlns="http://www.w3.org/2000/svg"
-                        >
-                            <rect x="5" y="3" width="5" height="18" />
-                            <rect x="14" y="3" width="5" height="18" />
-                        </svg>
-                    )}
-                </button>
+                <div className="navigation">
+                    <button>
+                        <LeftIcon />
+                    </button>
+                    <button onClick={togglePlay}>
+                        {paused ? <PlayIcon /> : <PauseIcon />}
+                    </button>
+                    <button>
+                        <RightIcon />
+                    </button>
+                </div>
                 <input
                     type="range"
                     min={0}

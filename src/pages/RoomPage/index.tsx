@@ -17,7 +17,7 @@ const RoomPage = () => {
         timeoutRef.current = setTimeout(() => {
             setSelectedTracks([id]);
             setSelectMode(true);
-        }, 300);
+        }, 1200);
     };
 
     const clearTimer = () => {

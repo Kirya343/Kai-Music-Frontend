@@ -11,6 +11,7 @@ import LeftIcon from "@/components/icons/LeftIcon";
 import RightIcon from "@/components/icons/RightIcon";
 import styles from "./Audio.module.scss";
 import PlusIcon from "@/components/icons/PlusIcon";
+import DownIcon from "@/components/icons/DownIcon";
 
 interface AudioTrackerProps {
     src: string;
@@ -203,7 +204,7 @@ const AudioTracker: React.FC<AudioTrackerProps> = ({ src, playbackState, updateT
             {fullPlayerOpen ? (
                 <div className={styles.audioPlayer}>
                     <div className={styles.playerHeader}>
-                        <button onClick={() => setFullPlayerOpen(false)}>🞃</button>
+                        <button onClick={() => setFullPlayerOpen(false)}><DownIcon/></button>
                         <button>⋮</button>
                     </div>
                     <img src="/image/player.gif"/>

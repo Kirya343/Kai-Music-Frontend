@@ -1,0 +1,54 @@
+@use "@/css/components/mixins/" as *;
+
+.header {
+    padding: 15px 10px;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+
+.list {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    max-height: 100%;
+    height: 100%;
+    overflow: auto;
+    scrollbar-width: thin;
+
+    .room {
+        background-color: #00000031;
+        flex-shrink: 0;
+        padding: 15px 10px;
+        width: 100%;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        cursor: pointer;
+        display: flex;
+        justify-content: space-between;
+
+        &:hover {
+            background-color: #00000075;
+        }
+
+        &.active {
+            background-color: #2c3f2c75;
+        }
+
+        &:first-child {
+            margin-right: 10px;
+        }
+
+        &:last-child {
+            margin-left: auto;
+        }
+
+        .users {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+    }
+}

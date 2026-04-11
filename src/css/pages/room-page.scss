@@ -52,6 +52,13 @@
             }
         }
 
+        .audio-name {
+            max-width: 85%;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            white-space: nowrap;
+        }
+
         button {
             width: 40px;
             height: 40px;

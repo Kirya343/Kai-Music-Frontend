@@ -6,7 +6,7 @@ import { audioService } from "../services/audio";
 export const ListeningRoomProvider = ({ children }: { children?: React.ReactNode }) => {
 
     const { room, addToQueue, removeFromQueue, loadRoom } = audioService.useCurrentRoom();
-    const { playbackState, updateTrackPosition } = useListeningRoomWS(room?.id || null);
+    const { playbackState, updateTrackPosition, playNext, playPrev} = useListeningRoomWS(room?.id || null);
     const [localPosition, setLocalPosition] = useState<number>(0);
 
     return (
@@ -18,7 +18,9 @@ export const ListeningRoomProvider = ({ children }: { children?: React.ReactNode
             removeFromQueue, 
             loadRoom,
             localPosition,
-            setLocalPosition
+            setLocalPosition,
+            playNext, 
+            playPrev
         }}>
             {children}
         </ListeningRoomContext.Provider>

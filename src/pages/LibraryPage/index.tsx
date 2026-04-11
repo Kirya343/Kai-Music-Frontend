@@ -28,24 +28,7 @@ const LibraryPage = () => {
 
     useEffect(() => {
         if (roomId) setRoomTopUpMode(true);
-    }, [roomId])
-
-    const timeoutRef = useRef<number | null>(null);
-
-    const handleMouseDown = (id: number) => {
-        timeoutRef.current = setTimeout(() => {
-            setSelectedTracks([id]);
-            setRoomTopUpMode(true);
-        }, 300);
-    };
-
-    const clearTimer = () => {
-        if (timeoutRef.current) {
-            clearTimeout(timeoutRef.current);
-            timeoutRef.current = null;
-        }
-    };
-    
+    }, [roomId]);
 
     const toggleTrack = (id: number) => {
         setSelectedTracks(prev =>

@@ -24,12 +24,3 @@ dialog#musicLibrary {
     }
 
 }
-
-@keyframes trackerScroll {
-    0% {
-        transform: translateX(calc(50% - 120px));
-    }
-    100% {
-        transform: translateX(calc(-50% + 120px));
-    }
-}

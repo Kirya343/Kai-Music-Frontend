@@ -1,3 +1,39 @@
 @use './variables';
 @use './components';
 @use './pages';
+
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    color: var(--text-color);
+}
+
+html, body {
+    scroll-behavior: smooth;
+    scrollbar-gutter: auto;
+    height: 100%;
+    scrollbar-color: var(--scrollbar-color) var(--scrollbar-background);
+    scrollbar-width: thin;
+    font-family: 'Montserrat', sans-serif;
+
+    #root {
+        min-height: 100vh;
+        height: 100vh;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        background: linear-gradient(120deg, #1d1d1d, #000000);
+    }
+}
+
+button {
+    background-color: transparent;
+    border: 0px solid transparent;
+}
+
+a {
+    text-decoration: none;
+    transition: all 0.3s ease;
+    color: inherit;
+}

@@ -32,6 +32,23 @@ export const useListeningRoomWS = (roomId: number | null) => {
         });
     }, [client, connected, isAuthenticated, roomId])
 
+    const playNext = () => {
+        console.log("попытка переключить песню вперёд")
+        if (!client || !connected || !isAuthenticated) return;
+        client.publish({
+            destination: `/app/room/${roomId}/next`,
+            body: ""
+        });
+    }
+    const playPrev = () => {
+        console.log("попытка переключить песню назад")
+        if (!client || !connected || !isAuthenticated) return;
+        client.publish({
+            destination: `/app/room/${roomId}/prev`,
+            body: ""
+        });
+    }
+
     useEffect(() => {
 
         if (!client || !connected || !isAuthenticated) return;
@@ -52,5 +69,5 @@ export const useListeningRoomWS = (roomId: number | null) => {
         }
     }, [client, connected, isAuthenticated, roomId]);
 
-    return {playbackState, updateTrackPosition};
+    return {playbackState, updateTrackPosition, playNext, playPrev};
 }

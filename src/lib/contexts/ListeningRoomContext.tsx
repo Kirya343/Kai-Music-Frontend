@@ -9,7 +9,9 @@ interface ListeningRoomContextType {
     removeFromQueue: (entryId: number) => void;
     loadRoom: () => void;
     localPosition: number;
-    setLocalPosition: Dispatch<SetStateAction<number>>
+    setLocalPosition: Dispatch<SetStateAction<number>>;
+    playNext: () => void;
+    playPrev: () => void;
 }
 
 export const ListeningRoomContext = createContext<ListeningRoomContextType | null>(null);

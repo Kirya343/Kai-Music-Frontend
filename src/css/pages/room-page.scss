@@ -20,18 +20,21 @@
     .track {
         background-color: #00000031;
         flex-shrink: 0;
-        padding: 15px 10px;
+        padding: 5px 10px;
         width: 100%;
         text-overflow: ellipsis;
         overflow: hidden;
         cursor: pointer;
+        position: relative;
+        align-items: center;
+        display: flex;
 
         &:hover {
             background-color: #00000075;
         }
 
         &.active {
-            background-color: #22272275;
+            background-color: #50505085;
         }
 
         &.room-item {
@@ -46,6 +49,19 @@
                 &:last-child {
                     margin-left: auto;
                 }
+            }
+        }
+
+        button {
+            width: 40px;
+            height: 40px;
+            position: relative;
+
+            svg {
+                position: absolute;
+                top: 50% 50%;
+                translate: -50% -50%;
+                width: 15px;
             }
         }
     }
@@ -74,4 +90,22 @@
     padding: 10%;
     text-align: center;
     font-size: large;
+}
+
+.selected-tracks-actions {
+    display: flex;
+    gap: 1rem;
+    position: fixed;
+    bottom: 150px;
+    z-index: 100;
+    justify-content: center;
+    width: 100%;
+    max-width: 1000px;
+
+    button {
+        padding: 10px;
+        border-radius: 10px;
+        font-weight: 600;
+        cursor: pointer;
+    }
 }

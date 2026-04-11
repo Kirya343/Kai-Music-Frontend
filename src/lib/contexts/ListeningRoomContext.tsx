@@ -1,4 +1,4 @@
-import { createContext, useContext } from "react";
+import { createContext, Dispatch, SetStateAction, useContext } from "react";
 import { IListeningRoom, IPlaybackState } from "../types";
 
 interface ListeningRoomContextType {
@@ -8,6 +8,8 @@ interface ListeningRoomContextType {
     addToQueue: (entryId: number) => void;
     removeFromQueue: (entryId: number) => void;
     loadRoom: () => void;
+    localPosition: number;
+    setLocalPosition: Dispatch<SetStateAction<number>>
 }
 
 export const ListeningRoomContext = createContext<ListeningRoomContextType | null>(null);

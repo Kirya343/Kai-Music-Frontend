@@ -17,15 +17,17 @@ interface AudioTrackerProps {
 }
 
 const AudioTracker: React.FC<AudioTrackerProps> = ({ src, playbackState, updateTrackPosition }) => {
+    const { localPosition, setLocalPosition } = useListeningRoom();
+
     const audioRef = useRef<HTMLAudioElement>(null);
     const lastTimeRef = useRef(0);
     const isProgrammaticRef = useRef(false);
     const hasUserInteractedRef = useRef(false);
     const [updateMessage, setUpdateMessage] = useState<string | null>(null);
 
-    const [paused, setPaused] = useState(true);
-    const [position, setPosition] = useState(0);
     const [duration, setDuration] = useState(0);
+
+    const [paused, setPaused] = useState(true);
     const [currentAudioId, setCurrentAudioId] = useState<number | null>(null);
 
     const [audioInfo, setAudioInfo] = useState<IAudio | null>(null);
@@ -69,7 +71,7 @@ const AudioTracker: React.FC<AudioTrackerProps> = ({ src, playbackState, updateT
         }
 
         audio.currentTime = playbackState.position;
-        setPosition(playbackState.position);
+        setLocalPosition(playbackState.position);
 
         if (playbackState.pause) {
             audio.pause();
@@ -96,7 +98,7 @@ const AudioTracker: React.FC<AudioTrackerProps> = ({ src, playbackState, updateT
                 setUpdateMessage(`${newState.user} поставил на паузу`);
             } else if (newState.pause != paused && !newState.pause) {
                 setUpdateMessage(`${newState.user} включил воспроизведение`);
-            } else if (newState.position != position) {
+            } else if (newState.position != localPosition) {
                 setUpdateMessage(`${newState.user} перемотал на ${countPosition(newState.position)}`);
             }
         }
@@ -109,7 +111,7 @@ const AudioTracker: React.FC<AudioTrackerProps> = ({ src, playbackState, updateT
         const audio = audioRef.current;
         if (!audio) return;
 
-        const handleTimeUpdate = () => setPosition(audio.currentTime);
+        const handleTimeUpdate = () => setLocalPosition(audio.currentTime);
         audio.addEventListener("timeupdate", handleTimeUpdate);
 
         const handleLoadedMetadata = () => setDuration(audio.duration);
@@ -136,7 +138,7 @@ const AudioTracker: React.FC<AudioTrackerProps> = ({ src, playbackState, updateT
             audio.pause();
         }
 
-        sendUserUpdate(position, nextPaused);
+        sendUserUpdate(localPosition, nextPaused);
     };
 
     const debounceTimeoutRef = useRef<number | null>(null);
@@ -148,7 +150,7 @@ const AudioTracker: React.FC<AudioTrackerProps> = ({ src, playbackState, updateT
         const newTime = Number(e.target.value);
         audio.pause();
         audio.currentTime = newTime;
-        setPosition(newTime);
+        setLocalPosition(newTime);
 
         // отменяем предыдущий таймаут, если был
         if (debounceTimeoutRef.current) {
@@ -217,12 +219,12 @@ const AudioTracker: React.FC<AudioTrackerProps> = ({ src, playbackState, updateT
                     type="range"
                     min={0}
                     max={duration}
-                    value={position}
+                    value={localPosition}
                     onChange={handleSeek}
                     style={{ width: "100%" }}
                 />
                 <div className="track-position">
-                    <span>{countPosition(position)}</span>
+                    <span>{countPosition(localPosition)}</span>
                     <span>/</span>
                     <span>{countPosition(duration)}</span>
                 </div>

@@ -6,7 +6,6 @@
     box-sizing: border-box;
     margin: 0;
     padding: 0;
-    color: var(--text-color);
 }
 
 html, body {
@@ -16,6 +15,7 @@ html, body {
     scrollbar-color: var(--scrollbar-color) var(--scrollbar-background);
     scrollbar-width: thin;
     font-family: 'Montserrat', sans-serif;
+    color: var(--text-color);
 
     #root {
         min-height: 100vh;
@@ -30,6 +30,7 @@ html, body {
 button {
     background-color: transparent;
     border: 0px solid transparent;
+    color: var(--text-color);
 }
 
 a {

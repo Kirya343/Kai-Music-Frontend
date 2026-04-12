@@ -24,7 +24,7 @@
     justify-content: space-between;
 
     @include mobile {
-        padding: 0.5rem;
+        padding: 0.5rem 1.5rem;
     }
 }
 
@@ -41,19 +41,38 @@
     align-items: center;
     text-align: center;
 
-    @include mobile {
+    .link {
+        display: flex;
         flex-direction: column;
-        gap: 1rem;
+        align-items: center;
+        gap: 0.4rem;
+        transition: all 0.2s ease-in;
+
+        &:global(.active) {
+            color: #77da77;
+        }
+
+        .linkIcon {
+            width: 30px;
+            height: 30px;
+        }
+
+        .subtitle {
+            font-size: 0.7rem;
+        }
     }
 }
 
 .auth {
     color: var(--text-color-l1);
+    display: flex;
+    align-items: center;
+    gap: 5px;
 
     .userName {
-        margin-left: 2px;
         color: var(--text-color);
         font-weight: 600;
+        margin-top: 3px;
     }
 }
 

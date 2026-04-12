@@ -22,6 +22,12 @@ export interface IQueueItem {
 export interface IAudio {
     id: number;
     name: string;
+    format: string;
+    title: string;
+    artist: string;
+    album: string;
+    duration: number;
+    coverUrl: string;
 }
 
 export interface IPlaybackState {

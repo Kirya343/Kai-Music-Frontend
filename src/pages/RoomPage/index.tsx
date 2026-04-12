@@ -5,10 +5,9 @@ import PlayIcon from "@/components/icons/PlayIcon";
 import PauseIcon from "@/components/icons/PauseIcon";
 
 const RoomPage = () => {
-    const [loaded, setLoaded] = useState<boolean>(false);
     const [selectedTracks, setSelectedTracks] = useState<number[]>([]);
     const [selectMode, setSelectMode] = useState<boolean>(false);
-    const { room, removeFromQueue, updateTrackPosition, playbackState, localPosition } = useListeningRoom();
+    const { room, removeFromQueue, updateTrackPosition, playbackState, localPosition, roomLoaded, setRoomLoaded } = useListeningRoom();
     const { error } = useWebSocket();
 
     const timeoutRef = useRef<number | null>(null);
@@ -44,7 +43,7 @@ const RoomPage = () => {
 
     return (
         <>
-            {loaded ? (
+            {roomLoaded ? (
                 <>
                     <div className="room-header">
                         <span className="room-name">#{room?.id} {room?.title}</span>
@@ -103,7 +102,7 @@ const RoomPage = () => {
                         ))}
                     </div>
                 </>
-                ) : <div className="click-overlay" onClick={() => setLoaded(true)}>Нажмите чтобы подключиться к комнате</div>
+                ) : <div className="click-overlay" onClick={() => setRoomLoaded(true)}>Нажмите чтобы подключиться к комнате</div>
             }
 
             {selectMode && selectedTracks.length > 0 && (
@@ -117,7 +116,7 @@ const RoomPage = () => {
                         onClick={() => setSelectedTracks([])}
                     >Очистить список</button>
                     <button 
-                        style={{backgroundColor: "#156451"}}
+                        style={{backgroundColor: "#58161f"}}
                         onClick={() =>  {
                             setSelectMode(false)
                             setSelectedTracks([])

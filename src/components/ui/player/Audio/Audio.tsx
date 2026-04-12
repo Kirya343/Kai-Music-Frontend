@@ -210,7 +210,7 @@ const AudioTracker: React.FC<AudioTrackerProps> = ({ src, playbackState, updateT
                     <img src="/image/player.gif"/>
                     <div ref={headerRef} className={styles.header}>
                         <div ref={textRef} className={styles.headerText}>
-                            {audioInfo?.name}
+                            {audioInfo?.title ?? audioInfo?.name}
                         </div>
                     </div>
                     <div className={styles.tracker}>
@@ -248,7 +248,7 @@ const AudioTracker: React.FC<AudioTrackerProps> = ({ src, playbackState, updateT
                 <div className={styles.audioTracker} onClick={() => setFullPlayerOpen(true)}>
                     <div ref={headerRef} className={styles.header}>
                         <div ref={textRef} className={styles.headerText}>
-                            {audioInfo?.name}
+                            {audioInfo?.title ?? audioInfo?.name}
                         </div>
                     </div>
                     <div 

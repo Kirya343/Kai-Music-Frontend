@@ -162,23 +162,23 @@ const LibraryPage = () => {
                             />
                         )}
                         <span className={styles.trackId}>#{audio.id}</span>
-                        <span className={styles.trackName}>{audio.name}</span>
+                        <span className={styles.trackName}>{audio?.title ?? audio?.name}</span>
                     </div>
                 ))}
             </div>
 
             {roomTopUpMode && selectedTracks.length > 0 && (
                 <div className={styles.roomTopUpActions}>
-                    <button 
+                    {roomId && <button 
                         onClick={addSelectedToRoom}
                         style={{backgroundColor: "#1f4e21"}}
-                    >Добавить в комнату #{roomId}</button>
+                    >Добавить в комнату #{roomId}</button>}
                     <button 
                         style={{backgroundColor: "#156451"}}
                         onClick={() => setSelectedTracks([])}
                     >Очистить список</button>
                     <button 
-                        style={{backgroundColor: "#156451"}}
+                        style={{backgroundColor: "#58161f"}}
                         onClick={() =>  {
                             setRoomTopUpMode(false)
                             setSelectedTracks([])

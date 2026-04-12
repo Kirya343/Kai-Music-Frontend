@@ -1,7 +1,10 @@
 import { useAuth, useListeningRoom } from "@/lib";
 import Audio from "@/components/ui/player/Audio/Audio";
-import { Link, Outlet, useNavigate } from "react-router-dom";
+import { Link, NavLink, Outlet, useNavigate } from "react-router-dom";
 import styles from "./MainLayout.module.scss"
+import LibraryIcon from "../icons/LibraryIcon";
+import DoorIcon from "../icons/DoorIcon";
+import UserIcon from "../icons/UserIcon";
 
 const MainLayout = () => {
 
@@ -15,11 +18,19 @@ const MainLayout = () => {
                 <div className={styles.headerContainer}>
                     <img className={styles.logo} src="/image/logo.png" onClick={() => navigate("/")}/>
                     <div className={styles.navigation}>
-                        <Link to="/library">Библиотека</Link>
-                        {room && <Link to="/room">Вернуться в комнату</Link>}
+                        {room && (
+                            <NavLink to="/room" className={styles.link}>
+                                <DoorIcon className={styles.linkIcon}/>
+                                <span className={styles.subtitle}>В комнату</span>
+                            </NavLink>
+                        )}
+                        <NavLink to="/library" className={styles.link}>
+                            <LibraryIcon className={styles.linkIcon}/>
+                            <span className={styles.subtitle}>Библиотека</span>
+                        </NavLink>
                     </div>
                     {isAuthenticated ? (
-                        <div className={styles.auth}>Пользователь: <span className={styles.userName}>{user?.name}</span></div>
+                        <div className={styles.auth}><UserIcon/><span className={styles.userName}>{user?.name}</span></div>
                     ) : (
                         <Link to="/login">Войти</Link>
                     )}

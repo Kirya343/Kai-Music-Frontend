@@ -102,9 +102,10 @@
 
 .selected-tracks-actions {
     display: flex;
+    flex-wrap: wrap;
     gap: 1rem;
     position: fixed;
-    bottom: 150px;
+    bottom: 70px;
     z-index: 100;
     justify-content: center;
     width: 100%;

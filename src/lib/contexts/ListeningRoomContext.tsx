@@ -12,6 +12,8 @@ interface ListeningRoomContextType {
     setLocalPosition: Dispatch<SetStateAction<number>>;
     playNext: () => void;
     playPrev: () => void;
+    roomLoaded: boolean;
+    setRoomLoaded: Dispatch<SetStateAction<boolean>>;
 }
 
 export const ListeningRoomContext = createContext<ListeningRoomContextType | null>(null);

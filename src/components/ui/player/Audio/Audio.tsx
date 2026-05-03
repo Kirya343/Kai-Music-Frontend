@@ -1,9 +1,7 @@
-import { API_BASE } from "@/config";
-import { IAudio, IPlaybackState, useListeningRoom } from "@/lib";
+import { IPlaybackState, useListeningRoom } from "@/lib";
 import React, { useEffect, useRef, useState } from "react";
 import { PlaybackModeToggle } from "../PlaybackModeToggle";
 import VolumeSlider from "../VolumeSlider/VolumeSlider";
-import { audioService } from "@/lib/services/audio";
 import { countPosition } from "@/lib/services/utils/interfaceFunctions";
 import PauseIcon from "@/components/icons/PauseIcon";
 import PlayIcon from "@/components/icons/PlayIcon";
@@ -13,84 +11,19 @@ import styles from "./Audio.module.scss";
 import PlusIcon from "@/components/icons/PlusIcon";
 import DownIcon from "@/components/icons/DownIcon";
 
-interface AudioTrackerProps {
-    src: string;
-    playbackState: IPlaybackState;
-    updateTrackPosition: (entryId: number, position: number, pause: boolean) => void;
-}
+const Audio = () => {
+    const { 
+        localPosition, setLocalPosition, 
+        playNext, playPrev, duration, 
+        paused, currentAudioId, 
+        audioInfo, fullPlayerOpen, 
+        setFullPlayerOpen, audioRef,
+        togglePlay, sendUserUpdate, 
+        playbackState
+    } = useListeningRoom();
 
-const AudioTracker: React.FC<AudioTrackerProps> = ({ src, playbackState, updateTrackPosition }) => {
-    const { localPosition, setLocalPosition, playNext, playPrev } = useListeningRoom();
-
-    const audioRef = useRef<HTMLAudioElement>(null);
     const lastTimeRef = useRef(0);
-    const isProgrammaticRef = useRef(false);
-    const hasUserInteractedRef = useRef(false);
     const [updateMessage, setUpdateMessage] = useState<string | null>(null);
-    const [fullPlayerOpen, setFullPlayerOpen] = useState<boolean>(false);
-
-    const [duration, setDuration] = useState(0);
-
-    const [paused, setPaused] = useState(true);
-    const [currentAudioId, setCurrentAudioId] = useState<number | null>(null);
-
-    const [audioInfo, setAudioInfo] = useState<IAudio | null>(null);
-
-    useEffect(() => {
-        async function loadAudioInfo(entryId: number) {
-            const data = await audioService.loadAudioInfo(entryId);
-            setAudioInfo(data);
-        }
-
-        if (playbackState.entryId) loadAudioInfo(playbackState.entryId);
-    }, [playbackState.entryId])
-
-    // Разрешаем play после первого клика
-    useEffect(() => {
-        const handleInteraction = () => {
-            hasUserInteractedRef.current = true;
-            window.removeEventListener("click", handleInteraction);
-            window.removeEventListener("keydown", handleInteraction);
-        };
-        window.addEventListener("click", handleInteraction);
-        window.addEventListener("keydown", handleInteraction);
-        return () => {
-            window.removeEventListener("click", handleInteraction);
-            window.removeEventListener("keydown", handleInteraction);
-        };
-    }, []);
-
-    // Обновление позиции и паузы от сервера
-    useEffect(() => {
-        const audio = audioRef.current;
-        if (!audio) return;
-
-        isProgrammaticRef.current = true;
-
-        // Если трек сменился
-        if (currentAudioId !== playbackState.entryId) {
-            setCurrentAudioId(playbackState.entryId);
-            audio.src = src;
-            audio.load();
-        }
-
-        audio.currentTime = playbackState.position;
-        setLocalPosition(playbackState.position);
-
-        if (playbackState.pause) {
-            audio.pause();
-            setPaused(true);
-        } else if (hasUserInteractedRef.current) {
-            audio.play().catch(console.warn);
-            setPaused(false);
-        }
-
-        const timeout = setTimeout(() => {
-            isProgrammaticRef.current = false;
-        }, 50);
-
-        return () => clearTimeout(timeout);
-    }, [playbackState, src, currentAudioId]);
 
     useEffect(() => {
         const writeUpdateMessage = (newState: IPlaybackState) => {
@@ -107,43 +40,8 @@ const AudioTracker: React.FC<AudioTrackerProps> = ({ src, playbackState, updateT
             }
         }
 
-        writeUpdateMessage(playbackState);
+        if (playbackState) writeUpdateMessage(playbackState);
     }, [playbackState])
-
-    // События пользователя
-    useEffect(() => {
-        const audio = audioRef.current;
-        if (!audio) return;
-
-        const handleTimeUpdate = () => setLocalPosition(audio.currentTime);
-        audio.addEventListener("timeupdate", handleTimeUpdate);
-
-        const handleLoadedMetadata = () => setDuration(audio.duration);
-        audio.addEventListener("loadedmetadata", handleLoadedMetadata);
-
-        return () => {
-            audio.removeEventListener("timeupdate", handleTimeUpdate);
-            audio.removeEventListener("loadedmetadata", handleLoadedMetadata);
-        };
-    }, [playbackState, updateTrackPosition, paused]);
-
-    // Play / Pause кнопка
-    const togglePlay = () => {
-        const audio = audioRef.current;
-        if (!audio) return;
-
-        const nextPaused = !paused; // это то, что будет после клика
-
-        if (nextPaused === false) {
-            console.log("включаем трек");
-            audio.play().catch(console.warn);
-        } else {
-            console.log("ставим на паузу");
-            audio.pause();
-        }
-
-        sendUserUpdate(localPosition, nextPaused);
-    };
 
     const debounceTimeoutRef = useRef<number | null>(null);
 
@@ -168,16 +66,6 @@ const AudioTracker: React.FC<AudioTrackerProps> = ({ src, playbackState, updateT
         }, 300);
     };
 
-    const sendUserUpdate = (position: number, pausedState: boolean) => {
-        const audio = audioRef.current;
-        if (!audio) return;
-        updateTrackPosition(playbackState.entryId, position, pausedState);
-    };
-
-    useEffect(() => {
-        console.log("paused: ", paused)
-    }, [paused])
-
     const headerRef = useRef<HTMLDivElement | null>(null);
     const textRef = useRef<HTMLDivElement | null>(null);
 
@@ -194,14 +82,11 @@ const AudioTracker: React.FC<AudioTrackerProps> = ({ src, playbackState, updateT
         }
     }, [audioInfo, fullPlayerOpen]);
 
-    
-
     return (
         <>
-            <audio ref={audioRef} preload="metadata" />
             <VolumeSlider audioRef={audioRef} visible={false}/>
 
-            {fullPlayerOpen ? (
+            {fullPlayerOpen && (
                 <div className={styles.audioPlayer}>
                     <div className={styles.playerHeader}>
                         <button onClick={() => setFullPlayerOpen(false)}><DownIcon/></button>
@@ -244,40 +129,9 @@ const AudioTracker: React.FC<AudioTrackerProps> = ({ src, playbackState, updateT
                     <VolumeSlider audioRef={audioRef} />
                     {updateMessage && <div className={styles.update} onDoubleClick={() => setUpdateMessage("")}>{updateMessage}</div>}
                 </div>
-            ) : (
-                <div className={styles.audioTracker} onClick={() => setFullPlayerOpen(true)}>
-                    <div ref={headerRef} className={styles.header}>
-                        <div ref={textRef} className={styles.headerText}>
-                            {audioInfo?.title ?? audioInfo?.name}
-                        </div>
-                    </div>
-                    <div 
-                        className={styles.trackPosition}
-                        style={{ background: `linear-gradient(to right, #ffffff ${(localPosition / duration) * 100}%, #444 ${(localPosition / duration) * 100}%)`}}/>
-                    
-                    <div className={styles.navigation} onClick={(e) => e.stopPropagation()}>
-                        <button onClick={togglePlay}>
-                            {paused ? <PlayIcon /> : <PauseIcon />}
-                        </button>
-                        <button onClick={playNext}>
-                            <RightIcon />
-                        </button>
-                    </div>
-                </div>
             )}
         </>
     )
 };
 
-export default function Audio() {
-    const { playbackState, updateTrackPosition } = useListeningRoom();
-    if (!playbackState) return null;
-
-    return (
-        <AudioTracker
-            src={`${API_BASE}/audio/${playbackState.entryId}`}
-            playbackState={playbackState}
-            updateTrackPosition={updateTrackPosition}
-        />
-    );
-}
+export default Audio;

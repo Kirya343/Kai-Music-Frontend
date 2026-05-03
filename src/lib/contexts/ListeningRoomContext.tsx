@@ -1,5 +1,5 @@
-import { createContext, Dispatch, SetStateAction, useContext } from "react";
-import { IListeningRoom, IPlaybackState } from "../types";
+import { createContext, Dispatch, Ref, SetStateAction, useContext } from "react";
+import { IAudio, IListeningRoom, IPlaybackState } from "../types";
 
 interface ListeningRoomContextType {
     playbackState: IPlaybackState | null;
@@ -14,6 +14,18 @@ interface ListeningRoomContextType {
     playPrev: () => void;
     roomLoaded: boolean;
     setRoomLoaded: Dispatch<SetStateAction<boolean>>;
+    duration: number;
+    setDuration: Dispatch<SetStateAction<number>>;
+    paused: boolean;
+    setPaused: Dispatch<SetStateAction<boolean>>;
+    audioInfo: IAudio | null;
+    fullPlayerOpen: boolean;
+    setFullPlayerOpen: Dispatch<SetStateAction<boolean>>;
+    currentAudioId: number | null;
+    setCurrentAudioId: Dispatch<SetStateAction<number | null>>;
+    audioRef: React.RefObject<HTMLAudioElement | null>;
+    togglePlay: () => void;
+    sendUserUpdate: (position: number, pausedState: boolean) => void;
 }
 
 export const ListeningRoomContext = createContext<ListeningRoomContextType | null>(null);

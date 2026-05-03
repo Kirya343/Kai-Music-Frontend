@@ -3,10 +3,9 @@
 .messageInputContainer {
     display: flex;
     padding: 0.7rem;
-    background-color: var(--background-l1);
     border-top: 1px solid var(--border-color);
 
-    @include mobile {
+    /* @include mobile {
         position: absolute;
         bottom: 0;
         left: 0;
@@ -15,7 +14,7 @@
         flex-direction: row;
         padding: 0.5rem;
         box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
-    }
+    } */
 }
 
 .input {
@@ -47,7 +46,8 @@
     background: none;
     border: none;
 
-    img {
+    .icon {
         width: 30px;
+        color: #bbbbbb;
     }
 }

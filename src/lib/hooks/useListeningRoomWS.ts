@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { useAuth, useWebSocket } from "../contexts";
-import { IPlaybackState } from "../types";
+import { IAudio, IPlaybackState } from "../types";
 import { audioService } from "../services/audio";
 
 export const useListeningRoomWS = (roomId: number | null) => {
@@ -8,6 +8,7 @@ export const useListeningRoomWS = (roomId: number | null) => {
     const { client, connected } = useWebSocket();
     const { isAuthenticated } = useAuth();
     const [playbackState, setPlaybackState] = useState<IPlaybackState | null>(null);
+    const [audioInfo, setAudioInfo] = useState<IAudio | null>(null);
 
     useEffect(() => {
         async function loadState(roomId: number) {
@@ -68,6 +69,15 @@ export const useListeningRoomWS = (roomId: number | null) => {
             roomSub.unsubscribe();
         }
     }, [client, connected, isAuthenticated, roomId]);
+    
+    useEffect(() => {
+        async function loadAudioInfo(entryId: number) {
+            const data = await audioService.loadAudioInfo(entryId);
+            setAudioInfo(data);
+        }
 
-    return {playbackState, updateTrackPosition, playNext, playPrev};
+        if (playbackState?.entryId) loadAudioInfo(playbackState.entryId);
+    }, [playbackState?.entryId]);
+
+    return {playbackState, updateTrackPosition, playNext, playPrev, audioInfo};
 }

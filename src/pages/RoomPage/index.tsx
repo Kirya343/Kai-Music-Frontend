@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import PlayIcon from "@/components/icons/PlayIcon";
 import PauseIcon from "@/components/icons/PauseIcon";
 import styles from "./RoomPage.module.scss";
+import AudioPlayerOpener from "@/components/ui/player/AudioPlayerOpener/AudioPlayerOpener";
 
 const RoomPage = () => {
     const [selectedTracks, setSelectedTracks] = useState<number[]>([]);
@@ -125,6 +126,8 @@ const RoomPage = () => {
                     >Отменить</button>
                 </div>
             )}
+
+            {roomLoaded && <AudioPlayerOpener />}
         </>
     )
 }

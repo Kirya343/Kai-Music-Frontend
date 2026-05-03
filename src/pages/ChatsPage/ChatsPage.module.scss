@@ -1,12 +1,29 @@
+@use "@/css/components/mixins/" as *;
+
 .layout {
     display: flex;
     flex: 1;
+    overflow: hidden;
+    translate: 0;
+    transition: translate 0.3s ease;
+
+    @include mobile {
+        width: 200vw;
+
+        &.chatOpened {
+            translate: -50%;
+        }
+    }
 }
 
 .chats {
     display: flex;
     flex-direction: column;
     flex: 0 0 250px;
+
+    @include mobile {
+        flex: 0 0 100vw;
+    }
 }
 
 .chatConteiner {
@@ -14,4 +31,25 @@
     flex-direction: column;
     flex: 1;
     border-left: 1px solid var(--border-color);
+    overflow: hidden;
+
+    @include mobile {
+        width: 100vw;
+    }
+}
+
+.noSelectedChat {
+    margin: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    h2 {
+        font-size: 1.1rem;
+    }
+
+    .subTitle {
+        color: var(--text-color-l1);
+        font-size: 0.9rem;
+    }
 }

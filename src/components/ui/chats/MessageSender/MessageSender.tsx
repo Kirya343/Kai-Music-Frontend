@@ -4,6 +4,7 @@ import styles from "./MessageSender.module.scss"
 import { useAuth, useChats, useWebSocket } from "@/lib";
 import { IChatMessage } from "@/lib/types/chat";
 import TextareaRT1 from "../../TextareaRT1/TextareaRT1";
+import PaperPlaneIcon from "@/components/icons/PaperPlaneIcon";
 
 const MessageSender = () => {
     const { user } = useAuth();
@@ -75,7 +76,7 @@ const MessageSender = () => {
                 onClick={sendMessage}
                 disabled={isDisabled}
             >
-                <img src="/images/icons/send-btn.png" alt="Отправить" />
+                <PaperPlaneIcon className={styles.icon} />
             </button>
         </div>
     );

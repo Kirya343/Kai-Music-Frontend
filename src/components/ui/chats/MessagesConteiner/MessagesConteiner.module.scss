@@ -1,3 +1,20 @@
 .messagesContainer {
     flex: 1;
+    padding: 0.5rem;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    scrollbar-width: thin;
+}
+
+.header {
+    padding: 0.7rem;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+
+    .icon {
+        width: 25px;
+    }
 }

@@ -1,7 +1,9 @@
+import { ChatTypeValue } from "../constants/chatTypes";
 import { IShortUser } from "./user";
 
 export interface IChat {
-    chatName: string;
+    name: string;
+    type: ChatTypeValue;
     openId: string;
     interlocutors: IShortUser[];
     lastMessage: IChatMessage | null;

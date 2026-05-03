@@ -22,7 +22,6 @@ const Audio = () => {
         playbackState
     } = useListeningRoom();
 
-    const lastTimeRef = useRef(0);
     const [updateMessage, setUpdateMessage] = useState<string | null>(null);
 
     useEffect(() => {

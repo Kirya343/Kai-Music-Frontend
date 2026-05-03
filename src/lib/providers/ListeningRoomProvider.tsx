@@ -9,19 +9,20 @@ export const ListeningRoomProvider = ({ children }: { children?: React.ReactNode
     const { room, addToQueue, removeFromQueue, loadRoom } = audioService.useCurrentRoom();
     const { playbackState, updateTrackPosition, playNext, playPrev, audioInfo} = useListeningRoomWS(room?.id || null);
     const [localPosition, setLocalPosition] = useState<number>(0);
-    const [roomLoaded, setRoomLoaded] = useState<boolean>(false);
+    const [roomLoaded, setRoomLoaded] = useState<boolean>(true);
     const [duration, setDuration] = useState(0);
     const [paused, setPaused] = useState(true);
     const [fullPlayerOpen, setFullPlayerOpen] = useState<boolean>(false);
     const [currentAudioId, setCurrentAudioId] = useState<number | null>(null);
     const audioRef = useRef<HTMLAudioElement | null>(null);
     const isProgrammaticRef = useRef(false);
-    const hasUserInteractedRef = useRef(false);
 
     // Обновление позиции и паузы от сервера
     useEffect(() => {
         const audio = audioRef.current;
         if (!audio || !playbackState) return;
+
+        console.log(`Обновляем позицию: ${playbackState.entryId}, paused: ${playbackState.pause}, position: ${playbackState.position}`);
 
         isProgrammaticRef.current = true;
 
@@ -37,8 +38,10 @@ export const ListeningRoomProvider = ({ children }: { children?: React.ReactNode
 
         if (playbackState.pause) {
             audio.pause();
+            console.log(`Ставим на паузу`);
             setPaused(true);
-        } else if (hasUserInteractedRef.current) {
+            
+        } else {
             audio.play().catch(console.warn);
             setPaused(false);
         }
@@ -67,16 +70,19 @@ export const ListeningRoomProvider = ({ children }: { children?: React.ReactNode
         };
     }, [playbackState, updateTrackPosition, paused]);
 
-    const sendUserUpdate = (position: number, pausedState: boolean) => {
+    const sendUserUpdate = useCallback((position: number, pausedState: boolean) => {
+        console.log(`Отправляем апдейт на position: ${position}, paused: ${pausedState}`);
         const audio = audioRef.current;
         if (!audio || !playbackState) return;
         updateTrackPosition(playbackState.entryId, position, pausedState);
-    };
+    }, [playbackState]);
 
     // Play / Pause кнопка
     const togglePlay = useCallback(() => {
         const audio = audioRef.current;
         if (!audio) return;
+
+        console.log("трек на паузе? ", paused)
 
         const nextPaused = !paused; // это то, что будет после клика
 
@@ -89,7 +95,7 @@ export const ListeningRoomProvider = ({ children }: { children?: React.ReactNode
         }
 
         sendUserUpdate(localPosition, nextPaused);
-    }, [paused]);
+    }, [localPosition, paused]);
 
     return (
         <ListeningRoomContext.Provider value={{ 

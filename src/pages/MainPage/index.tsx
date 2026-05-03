@@ -5,10 +5,11 @@ import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { audioService } from "@/lib/services/audio";
 import UserIcon from "@/components/icons/UserIcon";
+import AudioPlayerOpener from "@/components/ui/player/AudioPlayerOpener/AudioPlayerOpener";
 
 const MainPage = () => {
 
-    const { room, loadRoom } = useListeningRoom();
+    const { room, loadRoom, roomLoaded } = useListeningRoom();
     const navigate = useNavigate();
 
     const [rooms, setRooms] = useState<IShortRoom[] | null>(null);
@@ -60,6 +61,8 @@ const MainPage = () => {
                     </div>
                 ))}
             </div>
+
+            {roomLoaded && <AudioPlayerOpener />}
         </>
     )
 }

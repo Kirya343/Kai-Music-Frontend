@@ -9,10 +9,11 @@ const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 
 export default defineConfig({
+    base: './',
     plugins: [
         react({
             jsxRuntime: 'automatic'
-        }), 
+        }),
         tsconfigPaths()
     ],
     resolve: {
@@ -20,15 +21,14 @@ export default defineConfig({
             "@": path.resolve(__dirname, "./src"),
         },
     },
+    build: {
+        outDir: 'dist',
+        assetsDir: 'assets'
+    },
     server: {
         host: '0.0.0.0',
-        allowedHosts: [
-            'music.workswap.org'
-        ],
+        allowedHosts: ['music.workswap.org'],
         port: 30000,
-    },
-    define: {
-        global: 'window'
     },
     preview: {
         port: 30000

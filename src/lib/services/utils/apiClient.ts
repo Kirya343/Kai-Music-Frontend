@@ -15,6 +15,12 @@ export async function apiFetchJson(url: string, options: IApiRequest = {}, extra
     return res.json();
 }
 
+export async function apiFetchJsonDebug(url: string, options: IApiRequest = {}, extraParams = {}) {
+    const res = await apiFetch(url, options, extraParams);
+    const body = await res.json();
+    return { body, response: res };
+}
+
 export async function apiFetchText(url: string, options: IApiRequest = {}, extraParams = {}) {
     const res = await apiFetch(url, options, extraParams);
     return res.text();

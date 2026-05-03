@@ -5,6 +5,7 @@ import styles from "./MainLayout.module.scss"
 import LibraryIcon from "../icons/LibraryIcon";
 import DoorIcon from "../icons/DoorIcon";
 import UserIcon from "../icons/UserIcon";
+import ChatsIcon from "../icons/ChatsIcon";
 
 const MainLayout = () => {
 
@@ -27,6 +28,10 @@ const MainLayout = () => {
                         <NavLink to="/library" className={styles.link}>
                             <LibraryIcon className={styles.linkIcon}/>
                             <span className={styles.subtitle}>Библиотека</span>
+                        </NavLink>
+                        <NavLink to="/chats" className={styles.link}>
+                            <ChatsIcon className={styles.linkIcon} />
+                            <span className={styles.subtitle}>Сообщения</span>
                         </NavLink>
                     </div>
                     {isAuthenticated ? (

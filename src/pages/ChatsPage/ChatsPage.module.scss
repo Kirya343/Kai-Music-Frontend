@@ -1,0 +1,17 @@
+.layout {
+    display: flex;
+    flex: 1;
+}
+
+.chats {
+    display: flex;
+    flex-direction: column;
+    flex: 0 0 250px;
+}
+
+.chatConteiner {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    border-left: 1px solid var(--border-color);
+}

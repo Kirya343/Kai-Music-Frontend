@@ -3,6 +3,7 @@ import { useListeningRoom, useWebSocket } from "@/lib";
 import { Link } from "react-router-dom";
 import PlayIcon from "@/components/icons/PlayIcon";
 import PauseIcon from "@/components/icons/PauseIcon";
+import styles from "./RoomPage.module.scss";
 
 const RoomPage = () => {
     const [selectedTracks, setSelectedTracks] = useState<number[]>([]);
@@ -45,8 +46,8 @@ const RoomPage = () => {
         <>
             {roomLoaded ? (
                 <>
-                    <div className="room-header">
-                        <span className="room-name">#{room?.id} {room?.title}</span>
+                    <div className={styles.header}>
+                        <span className={styles.roomName}>#{room?.id} {room?.title}</span>
                         <Link to={`/library?roomId=${room?.id}`}>
                             <svg 
                                 xmlns="http://www.w3.org/2000/svg" 
@@ -63,13 +64,13 @@ const RoomPage = () => {
                         </Link>
                     </div>
 
-                    {error && (<div className="error">Ошибка подключения к комнате</div>)}
+                    {error && (<div className={styles.error}>Ошибка подключения к комнате</div>)}
 
-                    <div className="track-list">
+                    <div className={styles.trackList}>
                         {room?.queue.map(queueItem => (
                             <div 
                                 key={queueItem.id} 
-                                className={`track ${queueItem.id == playbackState?.entryId ? "active" : ""}`}
+                                className={`${styles.track} ${queueItem.id == playbackState?.entryId ? styles.active : ""}`}
                                 onClick={() => toggleTrack(queueItem.id)}
                                 onMouseDown={() => handleMouseDown(queueItem.id)}
                                 onMouseUp={clearTimer}
@@ -97,16 +98,16 @@ const RoomPage = () => {
                                         <PlayIcon />
                                     </button>
                                 )}
-                                <span className="audio-name">{queueItem.name}</span>
+                                <span className={styles.audioName}>{queueItem.name}</span>
                             </div>
                         ))}
                     </div>
                 </>
-                ) : <div className="click-overlay" onClick={() => setRoomLoaded(true)}>Нажмите чтобы подключиться к комнате</div>
+                ) : <div className={styles.clickOverlay} onClick={() => setRoomLoaded(true)}>Нажмите чтобы подключиться к комнате</div>
             }
 
             {selectMode && selectedTracks.length > 0 && (
-                <div className="selected-tracks-actions">
+                <div className={styles.selectedTracksActions}>
                     <button 
                         onClick={deleteFromRoom}
                         style={{backgroundColor: "#4b1129"}}

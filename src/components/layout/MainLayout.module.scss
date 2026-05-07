@@ -24,7 +24,7 @@
     justify-content: space-between;
 
     @include mobile {
-        padding: 0.5rem 1.5rem;
+        padding: 0.5rem 1rem;
     }
 }
 
@@ -47,6 +47,11 @@
         align-items: center;
         gap: 0.4rem;
         transition: all 0.2s ease-in;
+        position: relative;
+
+        @include mobile {
+            gap: 0.2rem;
+        }
 
         &:global(.active) {
             color: #77da77;
@@ -55,10 +60,16 @@
         .linkIcon {
             width: 30px;
             height: 30px;
+
+            @include mobile {
+                width: 25px;
+                height: 25px;
+            }
         }
 
         .subtitle {
             font-size: 0.7rem;
+            white-space: nowrap;
         }
     }
 }
@@ -73,6 +84,17 @@
         color: var(--text-color);
         font-weight: 600;
         margin-top: 3px;
+    }
+
+    .icon {
+        width: 20px;
+        height: 20px;
+    }
+
+    @include mobile {
+        svg: {
+
+        }
     }
 }
 

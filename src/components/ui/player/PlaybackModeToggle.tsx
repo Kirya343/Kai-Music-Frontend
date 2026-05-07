@@ -1,6 +1,6 @@
-import CycleIcon from "@/components/icons/player/CycleIcon";
-import NoCycleIcon from "@/components/icons/player/NoCycleIcon";
-import RepeatIcon from "@/components/icons/player/RepeatIcon";
+import RepeatAllIcon from "@/components/icons/player/RepeatAllIcon";
+import NoRepeatIcon from "@/components/icons/player/NoRepeatIcon";
+import RepeatOneIcon from "@/components/icons/player/RepeatOneIcon";
 import ShuffleIcon from "@/components/icons/player/ShuffleIcon";
 import { useListeningRoom } from "@/lib";
 import { audioService } from "@/lib/services/audio";
@@ -35,10 +35,10 @@ export const PlaybackModeToggle = () => {
 
     return (
         <button onClick={nextMode}>
-            {currentMode == PlaybackMode.NORMAL && <NoCycleIcon />}
-            {currentMode == PlaybackMode.REPEAT_ALL && <CycleIcon />}
+            {currentMode == PlaybackMode.NORMAL && <NoRepeatIcon />}
+            {currentMode == PlaybackMode.REPEAT_ALL && <RepeatAllIcon />}
             {currentMode == PlaybackMode.SHUFFLE && <ShuffleIcon />}
-            {currentMode == PlaybackMode.REPEAT_ONE && <RepeatIcon />}
+            {currentMode == PlaybackMode.REPEAT_ONE && <RepeatOneIcon />}
         </button>
     );
 };

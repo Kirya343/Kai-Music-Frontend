@@ -5,16 +5,9 @@
     padding: 0.7rem;
     border-top: 1px solid var(--border-color);
 
-    /* @include mobile {
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        background: var(--background-l1);
-        flex-direction: row;
+    @include mobile {
         padding: 0.5rem;
-        box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
-    } */
+    }
 }
 
 .input {
@@ -27,17 +20,18 @@
     resize: none;
     height: 45px;
     max-height: 120px;
-    font-size: 1rem;
+    font-size: 1rem !important;
     transition: all 0.2s;
 
     &:focus {
         outline: none;
-        border-color: var(--primary);
-        box-shadow: 0 0 0 2px var(--primary-light);
+        /* border-color: var(--primary); */
+        box-shadow: 0 0 5px 2px #535353;
     }
 
     @include mobile {
         width: 100%;
+        font-size: 1.1rem;
     }
 }
 

@@ -1,4 +1,4 @@
-import { useAuth, useListeningRoom } from "@/lib";
+import { useAuth, useChats, useListeningRoom } from "@/lib";
 import Audio from "@/components/ui/player/Audio/Audio";
 import { Link, NavLink, Outlet, useNavigate } from "react-router-dom";
 import styles from "./MainLayout.module.scss"
@@ -7,11 +7,13 @@ import DoorIcon from "../icons/DoorIcon";
 import UserIcon from "../icons/UserIcon";
 import ChatsIcon from "../icons/ChatsIcon";
 import { useState } from "react";
+import UnreadNotifications from "../ui/notifications/UnreadNotifications/UnreadNotifications";
 
 const MainLayout = () => {
 
     const { user, isAuthenticated } = useAuth();
     const { room } = useListeningRoom();
+    const { unreadMessages } = useChats();
     const navigate = useNavigate();
 
     const [started, setStarted] = useState<boolean>(false);
@@ -20,7 +22,7 @@ const MainLayout = () => {
         <div className={styles.layout}>
             {!started ? (
                 <>
-                    <img src="/image/splash.jpg" style={{objectFit: "cover"}}/>
+                    {/* <img src="/image/splash.jpg" style={{objectFit: "cover"}}/> */}
                     <button className={styles.start} onClick={() => setStarted(true)}>Открыть</button>
                 </>
             ) : (
@@ -42,10 +44,11 @@ const MainLayout = () => {
                                 <NavLink to="/chats" className={styles.link}>
                                     <ChatsIcon className={styles.linkIcon} />
                                     <span className={styles.subtitle}>Сообщения</span>
+                                    <UnreadNotifications count={unreadMessages?.length || 0}/>
                                 </NavLink>
                             </div>
                             {isAuthenticated ? (
-                                <div className={styles.auth}><UserIcon/><span className={styles.userName}>{user?.name}</span></div>
+                                <div className={styles.auth}><UserIcon className={styles.icon}/><span className={styles.userName}>{user?.name}</span></div>
                             ) : (
                                 <Link to="/login">Войти</Link>
                             )}

@@ -13,6 +13,7 @@ const MessageSender = () => {
 
     const { client, connected } = useWebSocket();
     const [message, setMessage] = useState("");
+    const isMobile = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
 
     // Проверка, можно ли писать сообщение
     const isDisabled = !currentChatOpenId;
@@ -55,6 +56,9 @@ const MessageSender = () => {
     };
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+
+        if (isMobile) return;
+
         if (e.key === "Enter" && !e.shiftKey) {
             e.preventDefault();
             sendMessage();
@@ -68,16 +72,16 @@ const MessageSender = () => {
                 setValue={setMessage} 
                 onKeyDown={handleKeyDown}
                 disabled={isDisabled}
-                className="" 
+                className={styles.input}
                 placeholder={isDisabled ? "" : "Введите сообщение..."}
             />
-            <button
+            {message.length > 0 && <button
                 className={styles.sendBtn}
                 onClick={sendMessage}
                 disabled={isDisabled}
             >
                 <PaperPlaneIcon className={styles.icon} />
-            </button>
+            </button>}
         </div>
     );
 };

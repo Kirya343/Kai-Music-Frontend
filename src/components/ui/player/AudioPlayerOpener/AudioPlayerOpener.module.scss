@@ -9,29 +9,35 @@
     border-radius: 10px;
     justify-content: space-between;
     align-items: center;
+    cursor: pointer;
+    transition: background-color 0.2s ease-in;
 
-    .trackPosition {
-        width: calc(100% - 20px);
-        height: 3px;
-        position: absolute;
-        bottom: 0;
+    &:hover {
+        background-color: #251818;
     }
+}
 
-    .navigation {
+.trackPosition {
+    width: calc(100% - 20px);
+    height: 3px;
+    position: absolute;
+    bottom: 0;
+}
+
+.navigation {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    button {
+        padding: 3px;
+        border-radius: 3px;
         display: flex;
         align-items: center;
-        gap: 0.5rem;
+        cursor: pointer;
 
-        button {
-            padding: 3px;
-            border-radius: 3px;
-            display: flex;
-            align-items: center;
-            cursor: pointer;
-
-            &:hover {
-                background-color: #9b9b9b77;
-            }
+        &:hover {
+            background-color: #9b9b9b77;
         }
     }
 }

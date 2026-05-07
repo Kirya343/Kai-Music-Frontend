@@ -8,6 +8,7 @@ import UserIcon from "../icons/UserIcon";
 import ChatsIcon from "../icons/ChatsIcon";
 import { useState } from "react";
 import UnreadNotifications from "../ui/notifications/UnreadNotifications/UnreadNotifications";
+import { useGlobal } from "@/lib/contexts/GlobalContext";
 
 const MainLayout = () => {
 
@@ -16,7 +17,7 @@ const MainLayout = () => {
     const { unreadMessages } = useChats();
     const navigate = useNavigate();
 
-    const [started, setStarted] = useState<boolean>(false);
+    const { started, setStarted } = useGlobal();
 
     return (
         <div className={styles.layout}>

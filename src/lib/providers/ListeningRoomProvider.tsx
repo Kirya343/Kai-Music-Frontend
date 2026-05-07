@@ -3,6 +3,7 @@ import { ListeningRoomContext } from "../contexts";
 import { useListeningRoomWS } from "../hooks/useListeningRoomWS";
 import { audioService } from "../services/audio";
 import { API_BASE } from "@/config";
+import { useGlobal } from "../contexts/GlobalContext";
 
 export const ListeningRoomProvider = ({ children }: { children?: React.ReactNode }) => {
 
@@ -16,7 +17,7 @@ export const ListeningRoomProvider = ({ children }: { children?: React.ReactNode
     const [currentAudioId, setCurrentAudioId] = useState<number | null>(null);
     const audioRef = useRef<HTMLAudioElement | null>(null);
     const isProgrammaticRef = useRef(false);
-
+    const { started } = useGlobal();
     // Обновление позиции и паузы от сервера
     useEffect(() => {
         const audio = audioRef.current;
@@ -51,7 +52,7 @@ export const ListeningRoomProvider = ({ children }: { children?: React.ReactNode
         }, 50);
 
         return () => clearTimeout(timeout);
-    }, [playbackState, currentAudioId]);
+    }, [playbackState, currentAudioId, started]);
 
     // События пользователя
     useEffect(() => {

@@ -9,6 +9,7 @@ import { AxiosProgressEvent } from "axios";
 import CheckmarkIcon from "@/components/icons/CheckmarkIcon";
 import CrossIcon from "@/components/icons/CrossIcon";
 import { useSearchParams } from "react-router-dom";
+import AudioFileModal from "@/components/ui/library/AudioFileModal/AudioFileModal";
 
 interface IUploadingAudio {
     file: File;
@@ -24,18 +25,25 @@ const LibraryPage = () => {
     const [uploading, setUploading] = useState<IUploadingAudio[]>([]);
     const [roomTopUpMode, setRoomTopUpMode] = useState<boolean>(false);
     const [searchParams] = useSearchParams();
+    const [audioFileView, setAudioFileView] = useState<IAudio | null>(null);
     const roomId = searchParams.get("roomId");
 
     useEffect(() => {
         if (roomId) setRoomTopUpMode(true);
     }, [roomId]);
 
-    const toggleTrack = (id: number) => {
-        setSelectedTracks(prev =>
-            prev?.includes(id)
-                ? prev.filter(trackId => trackId !== id)
-                : [...prev, id]
-        );
+    const handleClick = (id: number) => {
+        if (roomTopUpMode) {
+            setSelectedTracks(prev =>
+                prev?.includes(id)
+                    ? prev.filter(trackId => trackId !== id)
+                    : [...prev, id]
+            );
+        } else {
+            const audio = audios?.find(a => a.id == id);
+            console.log("audio для просмотра: ", audio)
+            setAudioFileView(audio || null)
+        }
     };
 
     const { addToQueue } = useListeningRoom();
@@ -152,7 +160,7 @@ const LibraryPage = () => {
                 {audios?.map(audio => (
                     <div 
                         key={audio.id} className={styles.track} 
-                        onClick={() => toggleTrack(audio.id)}
+                        onClick={() => handleClick(audio.id)}
                     >
                         {roomTopUpMode && (
                             <input
@@ -195,6 +203,8 @@ const LibraryPage = () => {
                 multiple
                 onChange={handleAudioUpload}
             />
+
+            <AudioFileModal audioFile={audioFileView} setAudioFile={setAudioFileView} setAudios={setAudios}/>
         </div>
     )
 }

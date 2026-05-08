@@ -1,11 +1,41 @@
 
 
 .header {
-    padding: 15px 10px;
+    padding: 0 10px;
+    height: 65px;
     border-bottom: 1px solid var(--border-color);
     display: flex;
     align-items: center;
     justify-content: space-between;
+}
+
+.roomName {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+
+    .newRoomNameInput {
+        font-size: 1rem;
+        padding: 8px;
+        background-color: transparent;
+        color: var(--text-color);
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+
+        &:focus {
+            outline: 2px solid var(--blue);
+        }
+    }
+
+    .submitBtn {
+        cursor: pointer;
+        padding: 10px;
+        border-radius: 8px;
+
+        &:hover {
+            background-color: #00000071;
+        }
+    }
 }
 
 .trackList {

@@ -1,3 +1,5 @@
+@use "@/css/components/mixins/" as *;
+
 dialog.modal {
     transition: all 0.2s ease;
     border: 2px solid var(--border-color);
@@ -11,6 +13,12 @@ dialog.modal {
     display: flex;
     flex-direction: column;
     gap: 1rem;
+    color: var(--text-color);
+
+    @include mobile {
+        margin: auto auto 10px auto;
+        width: calc(100vw - 20px);
+    }
 
     &::backdrop {
         background-color: rgba(56, 56, 56, 0.548);
@@ -20,11 +28,7 @@ dialog.modal {
         display: none;
     }
 
-    .navbar-btn {
-        padding-left: 1rem;
-    }
-
-    .close-modal {
+    .close {
         position: absolute;
         right: 1rem;
         top: 1rem;

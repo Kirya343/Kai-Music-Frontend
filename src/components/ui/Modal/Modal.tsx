@@ -1,6 +1,7 @@
 "use client"
 
 import { ReactNode, useEffect, useRef } from 'react';
+import styles from "./Modal.module.scss"
 
 interface ModalProps {
     isOpen: boolean;
@@ -33,7 +34,21 @@ const Modal = ({ isOpen, onClose, title, id = 'normalModal', children }: ModalPr
     }, [isOpen, onClose]);
 
     const handleBackdropClick = (e: React.MouseEvent<HTMLDialogElement>) => {
-        if (e.target === dialogRef.current) {
+        const dialog = dialogRef.current;
+
+        if (!dialog) {
+            return;
+        }
+
+        const rect = dialog.getBoundingClientRect();
+
+        const clickedInDialog =
+            rect.top <= e.clientY &&
+            e.clientY <= rect.top + rect.height &&
+            rect.left <= e.clientX &&
+            e.clientX <= rect.left + rect.width;
+
+        if (!clickedInDialog) {
             onClose();
         }
     };
@@ -41,11 +56,11 @@ const Modal = ({ isOpen, onClose, title, id = 'normalModal', children }: ModalPr
     return (
         <dialog 
             ref={dialogRef} 
-            className="modal fade-down" 
+            className={`${styles.modal} fade-down`} 
             id={id}
             onClick={handleBackdropClick}
         >
-            <span className="close-modal hover" onClick={onClose}><i className="fa-solid fa-xmark"></i></span>
+            <span className={`${styles.close} hover`} onClick={onClose}>✖</span>
             {title && <h2>{title}</h2>}
             {children}
         </dialog>

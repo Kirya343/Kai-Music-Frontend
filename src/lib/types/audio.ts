@@ -12,6 +12,10 @@ export interface IShortRoom {
     membersCount: number;
 }
 
+export interface IRoomUpdate {
+    title: string;
+}
+
 export interface IQueueItem {
     id: number;
     audioId: number;
@@ -27,6 +31,13 @@ export interface IAudio {
     artist: string;
     album: string;
     duration: number;
+    coverUrl: string;
+}
+
+export interface IAudioUpdate {
+    title: string;
+    artist: string;
+    album: string;
     coverUrl: string;
 }
 

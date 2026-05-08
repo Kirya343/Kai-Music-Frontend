@@ -1,0 +1,44 @@
+@use "@/css/components/mixins/" as *;
+
+.submitBtn {
+    background-color: #373ae6;
+    width: fit-content;
+    margin: 0 auto;
+    padding: 10px 17px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background-color 0.2s ease-in;
+
+    &:hover {
+        background-color: #272ab8;
+    }
+}
+
+.label {
+    color: var(--text-color-l1);
+}
+
+.input {
+    font-size: 1rem;
+    padding: 8px;
+    background-color: transparent;
+    color: var(--text-color);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+
+    &:focus {
+        outline: 2px solid var(--blue);
+    }
+
+    @include mobile {
+        width: 100%;
+    }
+}
+
+.section {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    align-items: flex-start;
+
+}

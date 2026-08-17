@@ -31,6 +31,6 @@ export default defineConfig({
         port: 30000,
     },
     preview: {
-        port: 30000
+        port: 30004
     },
 })

@@ -1,9 +1,10 @@
+@use "@/css/components/mixins/" as *;
+
 .audioTracker {
     position: sticky;
-    bottom: 10px;
+    bottom: 1rem;
     margin: 0 10px;
     width: calc(100% - 20px);
-    background-color: #352323;
     display: flex;
     padding: 10px;
     border-radius: 10px;
@@ -11,10 +12,13 @@
     align-items: center;
     cursor: pointer;
     transition: background-color 0.2s ease-in;
+    border: 1px solid;
 
     &:hover {
         background-color: #251818;
     }
+
+    @include glass(true);
 }
 
 .trackPosition {

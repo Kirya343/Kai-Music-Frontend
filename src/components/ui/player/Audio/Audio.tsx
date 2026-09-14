@@ -29,13 +29,13 @@ const Audio = () => {
 
             console.log(newState)
             if (newState.entryId != currentAudioId) {
-                setUpdateMessage(`${newState.user} включил трек #${newState.entryId}`);
+                setUpdateMessage(`${newState.user} started playing track #${newState.entryId}`);
             } else if (newState.pause != paused && newState.pause) {
-                setUpdateMessage(`${newState.user} поставил на паузу`);
+                setUpdateMessage(`${newState.user} paused the playback`);
             } else if (newState.pause != paused && !newState.pause) {
-                setUpdateMessage(`${newState.user} включил воспроизведение`);
+                setUpdateMessage(`${newState.user} resumed playback`);
             } else if (newState.position != localPosition) {
-                setUpdateMessage(`${newState.user} перемотал на ${countPosition(newState.position)}`);
+                setUpdateMessage(`${newState.user} seeked to ${countPosition(newState.position)}`);
             }
         }
 

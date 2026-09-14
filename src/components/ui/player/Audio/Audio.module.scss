@@ -69,6 +69,9 @@
             display: flex;
             align-items: center;
             cursor: pointer;
+            width: 30px;
+            justify-content: center;
+
 
             &:hover {
                 background-color: #9b9b9b77;
@@ -102,6 +105,9 @@
     
     button {
         font-size: 1.3rem;
+        cursor: pointer;
+        width: 40px;
+        height: 40px;
     }
 }
 

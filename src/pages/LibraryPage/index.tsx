@@ -8,8 +8,10 @@ import HeartIcon from "@/components/icons/HeartIcon";
 import { AxiosProgressEvent } from "axios";
 import CheckmarkIcon from "@/components/icons/CheckmarkIcon";
 import CrossIcon from "@/components/icons/CrossIcon";
-import { useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import AudioFileModal from "@/components/ui/library/AudioFileModal/AudioFileModal";
+import MusicNoteIcon from "@/components/icons/MusicNoteIcon";
+import { countPosition } from "@/lib/services/utils/interfaceFunctions";
 
 interface IUploadingAudio {
     file: File;
@@ -27,6 +29,7 @@ const LibraryPage = () => {
     const [searchParams] = useSearchParams();
     const [audioFileView, setAudioFileView] = useState<IAudio | null>(null);
     const roomId = searchParams.get("roomId");
+    const navigate = useNavigate()
 
     useEffect(() => {
         if (roomId) setRoomTopUpMode(true);
@@ -55,6 +58,8 @@ const LibraryPage = () => {
             addToQueue(trackId)
             setSelectedTracks(prev => prev.filter(id => id !== trackId))
         }
+
+        navigate("/room");
     }
 
     const loadLibrary = useCallback(async () => {
@@ -130,15 +135,15 @@ const LibraryPage = () => {
         <div className={styles.library}>
             <h1 className={styles.header}>Библиотека треков</h1>
             <div className={styles.topPanel}>
-                <label htmlFor="uploadAudio" className={styles.action} style={{backgroundColor: "#215f3d"}}>
-                    <CirclePlusIcon />
+                <label htmlFor="uploadAudio" className={styles.action}>
+                    <CirclePlusIcon solid />
                     <span className={styles.subtitle}>Upload new</span>
                 </label>
-                <button className={styles.action} style={{backgroundColor: "#40125a"}}>
+                <button className={styles.action}>
                     <PlaylistIcon />
                     <span className={styles.subtitle}>Playlists</span>
                 </button>
-                <button className={styles.action} style={{backgroundColor: "#6d2652"}}>
+                <button className={styles.action}>
                     <HeartIcon filled={false}/>
                     <span className={styles.subtitle}>Favorite</span>
                 </button>
@@ -159,7 +164,8 @@ const LibraryPage = () => {
             <div className={styles.trackList}>
                 {audios?.map(audio => (
                     <div 
-                        key={audio.id} className={styles.track} 
+                        key={audio.id} 
+                        className={styles.track} 
                         onClick={() => handleClick(audio.id)}
                     >
                         {roomTopUpMode && (
@@ -169,29 +175,51 @@ const LibraryPage = () => {
                                 readOnly
                             />
                         )}
-                        <span className={styles.trackId}>#{audio.id}</span>
-                        <span className={styles.trackName}>{audio?.title ?? audio?.name}</span>
+
+                        <div className={styles.audioCover}>
+                            <MusicNoteIcon/>
+                        </div>
+
+                        <div className={styles.meta}>
+                            <span className={styles.id}>#{audio.id}</span>
+                            <span className={styles.name}>{audio?.title ?? audio?.name}</span>
+                            <span className={styles.artist}>{audio?.artist}</span>
+                            <span className={styles.info}>
+                                {audio?.album && (<>{audio?.album} • </>)}
+                                {audio?.duration && (<>{countPosition(audio?.duration)}</>)}
+                            </span>
+                        </div>
                     </div>
                 ))}
             </div>
 
             {roomTopUpMode && selectedTracks.length > 0 && (
                 <div className={styles.roomTopUpActions}>
-                    {roomId && <button 
-                        onClick={addSelectedToRoom}
-                        style={{backgroundColor: "#1f4e21"}}
-                    >Add to room #{roomId}</button>}
+                    {roomId && (
+                        <button 
+                            onClick={addSelectedToRoom}
+                            className={styles.listAction}
+                        >
+                            Add to room #{roomId}
+                        </button>
+                    )}
+
                     <button 
-                        style={{backgroundColor: "#156451"}}
                         onClick={() => setSelectedTracks([])}
-                    >Clean list</button>
+                        className={styles.listAction}
+                    >
+                        Clean list
+                    </button>
+
                     <button 
-                        style={{backgroundColor: "#58161f"}}
                         onClick={() =>  {
                             setRoomTopUpMode(false)
                             setSelectedTracks([])
                         }}
-                    >Cancel</button>
+                        className={styles.listAction}
+                    >
+                        Cancel
+                    </button>
                 </div>
             )}
 

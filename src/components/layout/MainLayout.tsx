@@ -35,6 +35,7 @@ const MainLayout = () => {
                         </main>
 
                         <Audio />
+
                     </motion.div>
                 )}
             </AnimatePresence>

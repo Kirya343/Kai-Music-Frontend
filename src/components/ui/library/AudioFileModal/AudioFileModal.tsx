@@ -59,56 +59,72 @@ const AudioFileModal = ({
         <Modal 
             isOpen={!!audioFile} 
             onClose={() => setAudioFile(null)} 
-            title={`Информация о треке ${audioFile?.title || audioFile?.name}`}
+            title={`Info of track: ${audioFile?.title || audioFile?.name}`}
         >
             <div className={styles.section}>
-                <span className={styles.label}>Название:</span> 
+                <span className={styles.label}>Title:</span> 
                 {editMode ? (
                     <input
-                        className={styles.input}
+                        className={styles.editable}
                         value={title || ""} 
                         onChange={(e) => setTitle(e.target.value)} 
                         placeholder={audioFile?.title}
                     />
-                ) : ( title || "отсутствует" )}
+                ) : ( 
+                    <span className={styles.editable}>
+                        {title || "Unknown"}
+                    </span> 
+                )}
             </div>
             <div className={styles.section}>
-                <span className={styles.label}>Исполнитель: </span> 
+                <span className={styles.label}>Artist: </span> 
                 {editMode ? (
                     <input
-                        className={styles.input}
+                        className={styles.editable}
                         value={artist || ""} 
                         onChange={(e) => setArtist(e.target.value)} 
                         placeholder={audioFile?.artist}
                     />
-                ) : ( album || "отсутствует" )}
+                ) : ( 
+                    <span className={styles.editable}>
+                        {artist || "Unknown"}
+                    </span> 
+                )}
             </div>
             <div className={styles.section}>
-                <span className={styles.label}>Альбом:</span> 
+                <span className={styles.label}>Album:</span> 
                 {editMode ? (
                     <input
-                        className={styles.input}
+                        className={styles.editable}
                         value={album || ""} 
                         onChange={(e) => setAlbum(e.target.value)} 
                         placeholder={audioFile?.album}
                     />
-                ) : ( artist || "отсутствует" )}
+                ) : ( 
+                    <span className={styles.editable}>
+                        {album || "Unknown"}
+                    </span> 
+                )}
             </div>
             <div className={styles.section}>
-                <span className={styles.label}>Изображение:</span> 
+                <span className={styles.label}>Cover URL:</span> 
                 {editMode ? (
                     <input
-                        className={styles.input}
+                        className={styles.editable}
                         value={coverUrl || ""} 
                         onChange={(e) => setCoverUrl(e.target.value)} 
                         placeholder={audioFile?.coverUrl}
                     />
-                ) : ( coverUrl || "отсутствует" )}
+                ) : ( 
+                    <span className={styles.editable}>
+                        {coverUrl || "Unknown"}
+                    </span> 
+                )}
             </div>
             {editMode ? (
-                <button className={styles.submitBtn} onClick={save}>Сохранить</button>
+                <button className={styles.submitBtn} onClick={save}>Save</button>
             ) : (
-                <button className={styles.submitBtn} onClick={() => setEditMode(true)}>Изменить</button>
+                <button className={styles.submitBtn} onClick={() => setEditMode(true)}>Edit</button>
             )}
         </Modal>
     )

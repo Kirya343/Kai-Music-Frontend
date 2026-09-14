@@ -16,7 +16,7 @@
         content: "";
         position: absolute;
         inset: 0;
-        background: rgba(0, 0, 0, 0.7);
+        background: rgba(0, 0, 0, 0.75);
         opacity: 0;
         transition: opacity 0.5s ease;
         z-index: 0;
@@ -78,8 +78,8 @@
     font-size: 1.5rem;
     cursor: pointer;
     text-shadow: 
-        0 0 5px #fff,     /* лёгкое синее свечение */
-        0 0 10px #fff,    /* более широкое */
+        0 0 5px #4b4b4b,     /* лёгкое синее свечение */
+        0 0 8px #fff,    /* более широкое */
         0 0 20px #000,    /* голубое свечение */
         0 0 40px #000;    /* сильное свечение */
     

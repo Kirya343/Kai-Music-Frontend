@@ -4,8 +4,9 @@
     height: 100px;
     display: flex;
     justify-content: center;
-    background-color: #c5c5c503;
-    border-bottom: 1px solid #ffffff10;
+    border-bottom: 1px solid;
+
+    @include glass;
 }
 
 .headerContainer {
@@ -23,8 +24,10 @@
 
 .logo {
     height: 60px;
+    aspect-ratio: 1;
     border-radius: 1rem;
     border: 3px solid #666666;
+    cursor: pointer;
 }
 
 .navigation {
@@ -68,7 +71,7 @@
 }
 
 .auth {
-    color: var(--text-color-l1);
+    color: var(--text-color-l2);
     display: flex;
     align-items: center;
     gap: 5px;

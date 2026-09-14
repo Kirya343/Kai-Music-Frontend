@@ -1,30 +1,39 @@
+@use "@/css/components/mixins/" as *;
 
-
-.header {
-    padding: 0 10px;
-    height: 65px;
-    border-bottom: 1px solid var(--border-color);
+.page {
     display: flex;
+    flex-direction: column;
+    padding: 1rem 0;
+    gap: 0.5rem;
+
+    flex: 1;
+
     align-items: center;
-    justify-content: space-between;
 }
 
-.roomName {
+.room {
+    border: 1px solid;
+    border-radius: 10px;
+    padding: 5px 20px;
     display: flex;
-    gap: 0.5rem;
     align-items: center;
+    gap: 0.5rem;
 
-    .newRoomNameInput {
+    @include glass;
+
+    .roomName {
         font-size: 1rem;
         padding: 8px;
         background-color: transparent;
         color: var(--text-color);
-        border: 1px solid var(--border-color);
+        border: 1px solid transparent;
         border-radius: 8px;
+    }
 
-        &:focus {
-            outline: 2px solid var(--blue);
-        }
+    input.roomName {
+        border: 1px solid;
+
+        @include glass;
     }
 
     .submitBtn {
@@ -38,18 +47,53 @@
     }
 }
 
+.members {
+    border: 1px solid;
+    border-radius: 10px;
+    padding: 10px 20px;
+
+    @include glass;
+}
+
+.queue {
+    border: 1px solid;
+    border-radius: 1rem;
+    padding: 10px 20px;
+    width: 500px;
+    padding: 1rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+
+    @include glass;
+
+    .header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .addTrack {
+        border: 1px solid;
+        border-radius: 10px;
+        padding: 10px 20px;
+        text-align: center;
+
+        @include glass;
+    }
+}
+
 .trackList {
     display: flex;
     flex-direction: column;
     min-height: 0;
-    max-height: 100%;
-    height: 100%;
+    //max-height: 100%;
+    //height: 100%;
     overflow: auto;
     scrollbar-width: thin;
 }
 
 .track {
-    background-color: #00000031;
     flex-shrink: 0;
     padding: 5px 10px;
     width: 100%;
@@ -60,13 +104,12 @@
     align-items: center;
     display: flex;
     gap: 10px;
+    position: relative;
 
-    &:hover {
-        background-color: #00000075;
-    }
+    border-bottom: 1px solid var(--glass-border);
 
-    &.active {
-        background-color: #50505085;
+    &:last-child {
+        border-bottom: none;
     }
 
     &.roomItem {
@@ -84,30 +127,69 @@
         }
     }
 
-    .audioName {
-        max-width: 85%;
-        text-overflow: ellipsis;
-        overflow: hidden;
-        white-space: nowrap;
+    .action {
+        background-color: #00000000;
+        transition: background-color 0.2s ease;
     }
 
-    button {
-        width: 40px;
-        height: 40px;
-        position: relative;
-        cursor: pointer;
+    .play {
+        transition: opacity 0.2s ease-in;
+        opacity: 0;
+    }
+
+    &:hover {
+        .play, .action {
+            opacity: 1;
+            background-color: #00000083;
+        }
+    }
+
+    .audioCover {
         border-radius: 8px;
+        border: 1px solid;
+        padding: 5px;
+        width: fit-content;
+        aspect-ratio: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        @include glass;
 
         svg {
-            position: absolute;
-            top: 50% 50%;
-            translate: -50% -50%;
-            width: 15px;
+            aspect-ratio: 1;
+            width: 40px;
         }
 
-        &:hover {
-            background-color: #0000005d;
+        .action {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+            border-radius: 8px;
+
+            svg {
+                position: absolute;
+                top: 50% 50%;
+                translate: -50% -50%;
+                width: 15px;
+            }
         }
+    }
+
+    .meta {
+        display: flex;
+        flex-direction: column;
+        gap: 1px;
+    }
+
+    .name {
+        font-size: 0.9rem;
+    }
+
+    .artist {
+        font-size: 0.9rem;
+        color: var(--text-color-l1);
     }
 }
 

@@ -23,10 +23,12 @@ const Header = () => {
                             <span className={styles.subtitle}>Room</span>
                         </NavLink>
                     )}
-                    <NavLink to="/library" className={styles.link}>
-                        <LibraryIcon className={styles.linkIcon}/>
-                        <span className={styles.subtitle}>Library</span>
-                    </NavLink>
+                    {isAuthenticated && (
+                        <NavLink to="/library" className={styles.link}>
+                            <LibraryIcon className={styles.linkIcon}/>
+                            <span className={styles.subtitle}>Library</span>
+                        </NavLink>
+                    )}
 
                     {/* <NavLink to="/chats" className={styles.link}>
                         <ChatsIcon className={styles.linkIcon} />

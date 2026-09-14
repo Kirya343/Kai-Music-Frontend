@@ -1,6 +1,7 @@
 :root {
     --text-color: #fff;
-    --text-color-l1: #777777;
+    --text-color-l1: #a7a7a7;
+    --text-color-l2: #777777;
 
     --hover-overlay: rgba(99, 102, 241, 0.11);
     
@@ -17,4 +18,8 @@
 
     --message-in: #2d2d2e;
     --message-out: #2b2c2cb6;
+
+    --glass-border: #ffffff34;
+    --glass-background: #a1a1a123;
+    --glass-background-hover: #a1a1a131;
 }

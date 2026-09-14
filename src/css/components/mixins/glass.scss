@@ -1,0 +1,40 @@
+@mixin glass($hover: false) {
+    background-color: var(--glass-background);
+    border-color: var(--glass-border);
+    backdrop-filter: blur(3px);
+    -webkit-backdrop-filter: blur(3px);
+    transition: 
+        outline-color 0.1s ease,
+        background-color 0.2s ease;
+
+    outline: 2px solid transparent;
+
+    &:focus {
+        outline-color: var(--glass-border);
+    }
+
+    @if $hover {
+        cursor: pointer;
+
+        &:hover {
+            background-color: var(--glass-background-hover);
+            
+        }
+    }
+}
+
+@mixin dirty-glass($hover: false) {
+    background-color: rgb(221, 221, 221);
+    color: #000;
+    backdrop-filter: blur(3px);
+    -webkit-backdrop-filter: blur(3px);
+
+    @if $hover {
+        cursor: pointer;
+        transition: background-color 0.15s ease-out;
+        
+        &:hover {
+            background-color: rgb(150, 150, 150);
+        }
+    }
+}

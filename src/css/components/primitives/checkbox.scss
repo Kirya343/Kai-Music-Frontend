@@ -15,22 +15,8 @@
             background-color: var(--accent);
         }
 
-        &:checked + .slider:before {
+        &:checked + .slider::before {
             transform: translateX(26px);
-
-            .fa-moon { 
-                display: none; 
-            }
-        }
-
-        &:checked + .slider .fa-sun { 
-            visibility: hidden;
-            transition: .1s;
-        }
-
-        &:not(:checked) + .slider .fa-moon { 
-            visibility: hidden;
-            transition: .1s;
         }
     }
 

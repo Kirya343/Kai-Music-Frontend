@@ -1,0 +1,92 @@
+@use "@/css/components/mixins/" as *;
+
+.header {
+    height: 100px;
+    display: flex;
+    justify-content: center;
+    background-color: #c5c5c503;
+    border-bottom: 1px solid #ffffff10;
+}
+
+.headerContainer {
+    max-width: 1200px;
+    width: 100%;
+    padding: 0.5rem 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    @include mobile {
+        padding: 0.5rem 1rem;
+    }
+}
+
+.logo {
+    height: 60px;
+    border-radius: 1rem;
+    border: 3px solid #666666;
+}
+
+.navigation {
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+    align-items: center;
+    text-align: center;
+
+    .link {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.4rem;
+        transition: all 0.2s ease-in;
+        position: relative;
+
+        @include mobile {
+            gap: 0.2rem;
+        }
+
+        &:global(.active) {
+            color: #77da77;
+        }
+
+        .linkIcon {
+            width: 30px;
+            height: 30px;
+
+            @include mobile {
+                width: 25px;
+                height: 25px;
+            }
+        }
+
+        .subtitle {
+            font-size: 0.7rem;
+            white-space: nowrap;
+        }
+    }
+}
+
+.auth {
+    color: var(--text-color-l1);
+    display: flex;
+    align-items: center;
+    gap: 5px;
+
+    .userName {
+        color: var(--text-color);
+        font-weight: 600;
+        margin-top: 3px;
+    }
+
+    .icon {
+        width: 20px;
+        height: 20px;
+    }
+
+    @include mobile {
+        svg: {
+
+        }
+    }
+}

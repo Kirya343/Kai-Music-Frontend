@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { audioService } from "@/lib/services/audio";
 import UserIcon from "@/components/icons/UserIcon";
 import AudioPlayerOpener from "@/components/ui/player/AudioPlayerOpener/AudioPlayerOpener";
+import clsx from "clsx";
 
 const MainPage = () => {
 
@@ -52,7 +53,7 @@ const MainPage = () => {
                 {rooms?.map(r => (
                     <div 
                         key={r.id}
-                        className={`${styles.room} ${r.id == room?.id ? styles.active : ""}`} 
+                        className={clsx(styles.room, r.id == room?.id ? styles.active : "")} 
                         onClick={() => onSelect(r.id)}
                     >
                         <span>#{r.id}</span>

@@ -132,15 +132,15 @@ const LibraryPage = () => {
             <div className={styles.topPanel}>
                 <label htmlFor="uploadAudio" className={styles.action} style={{backgroundColor: "#215f3d"}}>
                     <CirclePlusIcon />
-                    <span className={styles.subtitle}>Загрузить</span>
+                    <span className={styles.subtitle}>Upload new</span>
                 </label>
                 <button className={styles.action} style={{backgroundColor: "#40125a"}}>
                     <PlaylistIcon />
-                    <span className={styles.subtitle}>Плейлисты</span>
+                    <span className={styles.subtitle}>Playlists</span>
                 </button>
                 <button className={styles.action} style={{backgroundColor: "#6d2652"}}>
                     <HeartIcon filled={false}/>
-                    <span className={styles.subtitle}>Избранное</span>
+                    <span className={styles.subtitle}>Favorite</span>
                 </button>
             </div>
 
@@ -180,18 +180,18 @@ const LibraryPage = () => {
                     {roomId && <button 
                         onClick={addSelectedToRoom}
                         style={{backgroundColor: "#1f4e21"}}
-                    >Добавить в комнату #{roomId}</button>}
+                    >Add to room #{roomId}</button>}
                     <button 
                         style={{backgroundColor: "#156451"}}
                         onClick={() => setSelectedTracks([])}
-                    >Очистить список</button>
+                    >Clean list</button>
                     <button 
                         style={{backgroundColor: "#58161f"}}
                         onClick={() =>  {
                             setRoomTopUpMode(false)
                             setSelectedTracks([])
                         }}
-                    >Отменить</button>
+                    >Cancel</button>
                 </div>
             )}
 

@@ -31,7 +31,7 @@ const AudioPlayerOpener = () => {
     }, [audioInfo, fullPlayerOpen]);
 
     return (
-        <div className={`${styles.audioTracker}`} onClick={() => setFullPlayerOpen(true)}>
+        <div className={styles.audioTracker} onClick={() => setFullPlayerOpen(true)}>
             <div ref={headerRef} className={styles.header}>
                 <div ref={textRef} className={styles.headerText}>
                     {audioInfo?.title ?? audioInfo?.name}

@@ -1,6 +1,7 @@
 import { apiFetchJson, apiFetchJsonDebug } from "@/lib"
 import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
+import clsx from "clsx";
 
 const LoginPage = () => {
 
@@ -14,7 +15,7 @@ const LoginPage = () => {
 
     function validateEmail(name: string) {
         if (!name) {
-            setMessage({success: false, message: "Введите email"});
+            setMessage({success: false, message: "Enter email"});
             return false;
         }
         return true;
@@ -23,7 +24,7 @@ const LoginPage = () => {
     function validatePassword(password: string) {
 
         if (!password) {
-            setMessage({success: false, message: "Введите пароль"});
+            setMessage({success: false, message: "Enter password"});
             return false;
         }
         return true;
@@ -58,10 +59,10 @@ const LoginPage = () => {
         const handleMessage = (event: MessageEvent) => {
             console.log(event)
             if (event.data?.type === 'oauthSuccess') {
-                setMessage({success: false, message: "Вы успешно авторизовались"});
+                setMessage({success: false, message: "Successfuly signed in"});
                 navigate((event.data.isNewUser ? "/register/oauth" : "/login/success") + `?redirect=${encodeURIComponent(redirect)}` || '/');
             } else if (event.data?.type === 'oauthFailure') {
-                setMessage({success: false, message: "Ошибка авторизации"});
+                setMessage({success: false, message: "Unable to sign in"});
             }
         };
 
@@ -77,27 +78,31 @@ const LoginPage = () => {
                     <img src="/image/logo.png"/>
                 </div>
 
-                {message?.message && <div className={`message ${message?.success ? "success" : "error"}`}>{message?.message}</div>}
+                {message?.message && 
+                    <div className={clsx("message", message?.success ? "success" : "error")}>
+                        {message?.message}
+                    </div>
+                }
 
                 <div className="inputs">
                     <input 
                         type="text"
-                        placeholder="Почта" 
+                        placeholder="Email" 
                         value={email} 
                         onChange={(e) => setEmail(e.target.value)}
                     />
                     <input 
                         type="password" 
-                        placeholder="Пароль" 
+                        placeholder="Password" 
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                     />
-                    <button className="btn" onClick={handleLogin}>Войти</button>
+                    <button className="btn" onClick={handleLogin}>Sign In</button>
                 </div>
 
                 <div className="links">
-                    <Link to="/register">Регистрация</Link> &nbsp;|&nbsp;
-                    <a href="#">Забыли пароль?</a>
+                    <Link to="/register">Sign Up</Link>{/*  &nbsp;|&nbsp;
+                    <a href="#">Забыли пароль?</a> */}
                 </div>
             </div>
         </div>

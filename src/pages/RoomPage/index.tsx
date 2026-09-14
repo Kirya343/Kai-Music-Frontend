@@ -7,6 +7,7 @@ import styles from "./RoomPage.module.scss";
 import AudioPlayerOpener from "@/components/ui/player/AudioPlayerOpener/AudioPlayerOpener";
 import { useGlobal } from "@/lib/contexts/GlobalContext";
 import { audioService } from "@/lib/services/audio";
+import clsx from "clsx";
 
 const RoomPage = () => {
     const [selectedTracks, setSelectedTracks] = useState<number[]>([]);
@@ -95,13 +96,13 @@ const RoomPage = () => {
                 </Link>
             </div>
 
-            {error && (<div className={styles.error}>Ошибка подключения к комнате</div>)}
+            {error && (<div className={styles.error}>Error while connecting to room</div>)}
 
             <div className={styles.trackList}>
                 {room?.queue.map(queueItem => (
                     <div 
                         key={queueItem.id} 
-                        className={`${styles.track} ${queueItem.id == playbackState?.entryId ? styles.active : ""}`}
+                        className={clsx(styles.track, queueItem.id == playbackState?.entryId ? styles.active : "")}
                         onClick={() => toggleTrack(queueItem.id)}
                         onMouseDown={() => handleMouseDown(queueItem.id)}
                         onMouseUp={clearTimer}
@@ -139,18 +140,18 @@ const RoomPage = () => {
                     <button 
                         onClick={deleteFromRoom}
                         style={{backgroundColor: "#4b1129"}}
-                    >Удалить из очереди</button>
+                    >Remove from queue</button>
                     <button 
                         style={{backgroundColor: "#156451"}}
                         onClick={() => setSelectedTracks([])}
-                    >Очистить список</button>
+                    >Clean selected</button>
                     <button 
                         style={{backgroundColor: "#58161f"}}
                         onClick={() =>  {
                             setSelectMode(false)
                             setSelectedTracks([])
                         }}
-                    >Отменить</button>
+                    >Cancel</button>
                 </div>
             )}
 

@@ -55,12 +55,12 @@ const RegisterPage = () => {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
         if (!email) {
-            setMessage({success: false, message: "Введине email"});
+            setMessage({success: false, message: "Enter email"});
             return false;
         }
 
         if (!emailRegex.test(email)) {
-            setMessage({success: false, message: "Это не похоже на email"});
+            setMessage({success: false, message: "This doesn't look like an email"});
             return false;
         }
         return true;
@@ -68,12 +68,12 @@ const RegisterPage = () => {
 
     function validateName(name: string) {
         if (!name) {
-            setMessage({success: false, message: "Введите имя"});
+            setMessage({success: false, message: "Enter name"});
             return false;
         }
         const pattern = /^[A-Za-z0-9_]{3,16}$/;
         if(!pattern.test(name.trim())) {
-            setMessage({success: false, message: "Имя может содержать только латинские символы и цифры"});
+            setMessage({success: false, message: "The name can only contain Latin letters and numbers"});
             return false;
         }
         return true;
@@ -82,17 +82,17 @@ const RegisterPage = () => {
     function validatePassword(password: string) {
 
         if (!password) {
-            setMessage({success: false, message: "Введите пароль"});
+            setMessage({success: false, message: "Enter Password"});
             return false;
         }
 
         if (password.length < 8) {
-            setMessage({success: false, message: "Пароль должен быть не короче 8ми символов"});
+            setMessage({success: false, message: "The password must be at least 8 characters long"});
             return false;
         }
 
         if (password != passwordConfirm) {
-            setMessage({success: false, message: "Пароли не совпадают"});
+            setMessage({success: false, message: "The passwords do not match"});
             return false;
         }
         return true;
@@ -110,7 +110,7 @@ const RegisterPage = () => {
                 <div className="inputs">
                     <input 
                         type="text"
-                        placeholder="Имя пользователя" 
+                        placeholder="Your name" 
                         value={name} 
                         onChange={(e) => setName(e.target.value)}
                     />
@@ -122,22 +122,22 @@ const RegisterPage = () => {
                     />
                     <input 
                         type="password" 
-                        placeholder="Пароль" 
+                        placeholder="Password" 
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                     />
                     <input 
                         type="password" 
-                        placeholder="Повторите пароль" 
+                        placeholder="Repeat password" 
                         value={passwordConfirm}
                         onChange={(e) => setPasswordConfirm(e.target.value)}
                     />
-                    <button className="btn" onClick={register}>Зарегистрироваться</button>
+                    <button className="btn" onClick={register}>Sign Up</button>
                 </div>
 
                 <div className="links">
-                    <Link to="/login">Вход</Link> &nbsp;|&nbsp;
-                    <a href="#">Забыли пароль?</a>
+                    <Link to="/login">Sign In</Link>{/*  &nbsp;|&nbsp;
+                    <a href="#">Забыли пароль?</a> */}
                 </div>
             </div>
         </div>

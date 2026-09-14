@@ -14,12 +14,12 @@ const AppRouter = () => {
                     <Route path="room" element={<RoomPage />} />
                     <Route path="library" element={<LibraryPage />}/>
                     <Route path="chats" element={<ChatsPage />}/>
-                </Route>
 
-                <Route path="login" element={<LoginPage />} />
-                <Route path="register" element={<RegisterPage />} />
-                <Route path="login/success" element={<LoginSuccessPage />} />
-                <Route path="logout" element={<LogoutPage />} />
+                    <Route path="login" element={<LoginPage />} />
+                    <Route path="register" element={<RegisterPage />} />
+                    <Route path="login/success" element={<LoginSuccessPage />} />
+                    <Route path="logout" element={<LogoutPage />} />
+                </Route>
             </Routes>
         </>
     );

@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { useAuth, useWebSocket } from "../contexts";
 import { IAudio, IPlaybackState } from "../types";
 import { audioService } from "../services/audio";
+import { roomService } from "../services/room";
 
 export const useListeningRoomWS = (roomId: number | null) => {
     
@@ -12,7 +13,7 @@ export const useListeningRoomWS = (roomId: number | null) => {
 
     useEffect(() => {
         async function loadState(roomId: number) {
-            const data: IPlaybackState = await audioService.getCurrentRoomState(roomId);
+            const data: IPlaybackState = await roomService.getCurrentRoomState(roomId);
             setPlaybackState(data);
         }
 

@@ -9,8 +9,9 @@ export const addToQueue = (roomId: number, audioId: number) => apiFetchJson(`/ro
 export const removeFromQueue = (roomId: number, queueItemId: number) => apiFetch(`/room/${roomId}/queue`, {method: "DELETE"}, {queueItemId})
 
 export const getCurrentRoomState = (roomId: number) => apiFetchJson(`/room/${roomId}/playback-state`);
-export const getRoomsList = () => apiFetchJson(`/room/all`)
+export const getRoomsPage = () => apiFetchJson(`/room/list/page`)
 export const createRoom = () => apiFetch(`/room`, {method: "POST"})
+export const joinRoom = (code: string) => apiFetch(`/room/join`, {method: "POST"}, {code})
 
 export const updateRoom = (roomId: number, room: IRoomUpdate) => 
     apiFetch(`/room/${roomId}`, 

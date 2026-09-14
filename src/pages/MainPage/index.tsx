@@ -1,6 +1,5 @@
 import styles from "./MainPage.module.scss";
-import { IShortRoom, useListeningRoom, userService } from "@/lib";
-import { useNavigate } from "react-router-dom";
+import { IShortRoom, useListeningRoom } from "@/lib";
 import { useEffect, useState } from "react";
 import AudioPlayerOpener from "@/components/ui/player/AudioPlayerOpener/AudioPlayerOpener";
 import clsx from "clsx";
@@ -8,37 +7,48 @@ import DoorIcon from "@/components/icons/DoorIcon";
 import CirclePlusIcon from "@/components/icons/CirclePlusIcon";
 import MusicNoteIcon from "@/components/icons/MusicNoteIcon";
 import { roomService } from "@/lib/services/room";
+import UserGroupIcon from "@/components/icons/UserGroupIcon";
+import DiscIcon from "@/components/icons/DiscIcon";
+import JoinRoomModal from "@/components/pages/main/JoinRoomModal/JoinRoomModal";
+import { useNavigate } from "react-router-dom";
 
 const MainPage = () => {
 
-    const { room, loadRoom, roomLoaded } = useListeningRoom();
-    const navigate = useNavigate();
+    const { loadRoom, roomLoaded } = useListeningRoom();
 
     const [rooms, setRooms] = useState<IShortRoom[] | null>(null);
+    const [isOpen, setOpen] = useState<boolean>(false);
+    const [stat, setStat] = useState<{activeListners: number, activeRooms: number} | null>(null);
+    const navigate = useNavigate()
 
     useEffect(() => {
         async function loadRooms() {
-            const data = await roomService.getRoomsList();
-            setRooms(data)
+            const data = await roomService.getRoomsPage();
+            setRooms(data.publicRooms)
+            setStat({
+                activeListners: data.activeListners,
+                activeRooms: data.activeRooms
+            })
         }
 
         loadRooms()
     }, [])
-
-    const onSelect = async (roomId: number) => {
-        try {
-            await userService.setUserRoom(roomId);
-        } finally {
-            loadRoom();
-            navigate("/room");
-        }
-    }
 
     const createRoom = async () => {
         try {
             await roomService.createRoom();
         } finally {
             loadRoom();
+            navigate("/room");
+        }
+    }
+
+    const joinRoom = async (code: string) => {
+        try {
+            await roomService.joinRoom(code);
+        } finally {
+            loadRoom();
+            navigate("/room");
         }
     }
 
@@ -55,15 +65,18 @@ const MainPage = () => {
                         <h2>Community Buzz</h2>
 
                         <div className={styles.statItem}>
-                            {/* icon */}
-
-                            <span>Currently Listening: <br/><strong>{/* 5 people */}</strong></span>
+                            <div className={styles.icon}>
+                                <UserGroupIcon/>
+                            </div>
+                            <span>Currently Listening: <br/>{stat?.activeListners && <strong>{stat?.activeListners} people</strong>}</span>
                         </div>
 
                         <div className={styles.statItem}>
-                            {/* icon */}
+                            <div className={styles.icon}>
+                                <DiscIcon className={styles.disc}/>
+                            </div>
 
-                            <span>Total Rooms Active: <br/><strong>{/* 5 */}</strong></span>
+                            <span>Total Rooms Active: <br/><strong>{stat?.activeRooms}</strong></span>
                         </div>
                     </div>
                 </div>
@@ -71,12 +84,12 @@ const MainPage = () => {
                 <div className={clsx(styles.box, styles.sidebar)}>
 
                     <section className={styles.actions}>
-                        <button className={styles.actionBtn}>
+                        <button className={styles.actionBtn} onClick={createRoom}>
                             <CirclePlusIcon />
                             <span>Create New Room</span>
                         </button>
 
-                        <button className={styles.actionBtn}>
+                        <button className={styles.actionBtn} onClick={() => setOpen(true)}>
                             <DoorIcon />
                             <span>Join a Room</span>
                         </button>
@@ -88,7 +101,7 @@ const MainPage = () => {
                         <div className={styles.roomsList}>
 
                             {rooms?.map(r => (
-                                <div className={styles.room} key={r.id}>
+                                <div className={styles.room} key={r.id} onClick={() => joinRoom(r.code)}>
                                     
                                     <div className={styles.audioCover}>
                                         <MusicNoteIcon/>
@@ -105,6 +118,8 @@ const MainPage = () => {
                     </section>
                 </div>
             </div>
+
+            <JoinRoomModal isOpen={isOpen} setOpen={setOpen}/>
 
             {roomLoaded && <AudioPlayerOpener />}
         </>

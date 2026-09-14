@@ -9,6 +9,7 @@ export interface IShortRoom {
     id: number;
     title: string;
     ownerId: number;
+    code: string;
     membersCount: number;
 }
 

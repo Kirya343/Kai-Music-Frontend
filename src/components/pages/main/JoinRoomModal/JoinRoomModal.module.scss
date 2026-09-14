@@ -1,6 +1,6 @@
 @use "@/css/components/mixins/" as *;
 
-.submitBtn {
+.join {
     width: fit-content;
     margin: 0 auto;
     padding: 10px 17px;
@@ -10,11 +10,7 @@
     @include dirty-glass(true);
 }
 
-.label {
-    color: var(--text-color-l2);
-}
-
-.editable {
+.input {
     font-size: 1rem;
     padding: 8px;
     color: var(--text-color);
@@ -28,16 +24,4 @@
     @include mobile {
         width: 100%;
     }
-}
-
-span.editable {
-    border-color: transparent;
-}
-
-.section {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-    align-items: flex-start;
-
 }

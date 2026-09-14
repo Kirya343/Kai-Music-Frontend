@@ -1,5 +1,5 @@
 import { Link, NavLink, useNavigate } from "react-router-dom";
-import { useAuth, useChats, useListeningRoom } from "@/lib";
+import { useAuth, useListeningRoom } from "@/lib";
 import styles from "./Header.module.scss"
 import DoorIcon from "@/components/icons/DoorIcon"
 import LibraryIcon from "@/components/icons/LibraryIcon"
@@ -9,7 +9,6 @@ const Header = () => {
 
     const { user, isAuthenticated } = useAuth();
     const { room } = useListeningRoom();
-    const { unreadMessages } = useChats();
     const navigate = useNavigate();
     
     return (
@@ -29,12 +28,6 @@ const Header = () => {
                             <span className={styles.subtitle}>Library</span>
                         </NavLink>
                     )}
-
-                    {/* <NavLink to="/chats" className={styles.link}>
-                        <ChatsIcon className={styles.linkIcon} />
-                        <span className={styles.subtitle}>Сообщения</span>
-                        <UnreadNotifications count={unreadMessages?.length || 0}/>
-                    </NavLink> */}
                 </div>
                 {isAuthenticated ? (
                     <div className={styles.auth}>

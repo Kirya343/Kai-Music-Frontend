@@ -3,7 +3,6 @@ import { LoginPage, LoginSuccessPage, LogoutPage, MainPage, RegisterPage } from 
 import MainLayout from "./components/layout/MainLayout";
 import RoomPage from "./pages/RoomPage";
 import LibraryPage from "./pages/LibraryPage";
-import ChatsPage from "./pages/ChatsPage";
 
 const AppRouter = () => {
     return (
@@ -13,7 +12,6 @@ const AppRouter = () => {
                     <Route index element={<MainPage />} />
                     <Route path="room" element={<RoomPage />} />
                     <Route path="library" element={<LibraryPage />}/>
-                    <Route path="chats" element={<ChatsPage />}/>
 
                     <Route path="login" element={<LoginPage />} />
                     <Route path="register" element={<RegisterPage />} />

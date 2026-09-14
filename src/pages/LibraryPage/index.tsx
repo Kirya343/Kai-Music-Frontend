@@ -9,10 +9,10 @@ import { AxiosProgressEvent } from "axios";
 import CheckmarkIcon from "@/components/icons/CheckmarkIcon";
 import CrossIcon from "@/components/icons/CrossIcon";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import AudioFileModal from "@/components/ui/library/AudioFileModal/AudioFileModal";
 import MusicNoteIcon from "@/components/icons/MusicNoteIcon";
 import { countPosition } from "@/lib/services/utils/interfaceFunctions";
 import Loader from "@/components/ui/Loader/Loader";
+import AudioFileModal from "@/components/pages/library/AudioFileModal/AudioFileModal";
 
 interface IUploadingAudio {
     file: File;

@@ -1,13 +1,13 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { ListeningRoomContext } from "../contexts";
 import { useListeningRoomWS } from "../hooks/useListeningRoomWS";
-import { audioService } from "../services/audio";
 import { API_BASE } from "@/config";
 import { useGlobal } from "../contexts/GlobalContext";
+import { roomService } from "../services/room";
 
 export const ListeningRoomProvider = ({ children }: { children?: React.ReactNode }) => {
 
-    const { room, addToQueue, removeFromQueue, loadRoom } = audioService.useCurrentRoom();
+    const { room, addToQueue, removeFromQueue, loadRoom } = roomService.useCurrentRoom();
     const { playbackState, updateTrackPosition, playNext, playPrev, audioInfo} = useListeningRoomWS(room?.id || null);
     const [localPosition, setLocalPosition] = useState<number>(0);
     const [roomLoaded, setRoomLoaded] = useState<boolean>(true);

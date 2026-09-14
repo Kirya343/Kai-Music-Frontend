@@ -1,8 +1,8 @@
 import { IAudio, IAudioUpdate } from "@/lib";
-import Modal from "../../Modal/Modal";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import styles from "./AudioFileModal.module.scss"
 import { audioService } from "@/lib/services/audio";
+import Modal from "@/components/ui/Modal/Modal";
 
 const AudioFileModal = ({ 
     audioFile, setAudioFile, setAudios
@@ -56,7 +56,7 @@ const AudioFileModal = ({
     }
 
     return (
-        <Modal 
+        <Modal
             isOpen={!!audioFile} 
             onClose={() => setAudioFile(null)} 
             title={`Info of track: ${audioFile?.title || audioFile?.name}`}

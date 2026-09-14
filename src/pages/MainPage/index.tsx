@@ -44,7 +44,7 @@ const MainPage = () => {
     return (
         <>
             <div className={styles.header}>
-                <span>Комнаты</span>
+                <span>Rooms</span>
                 <button onClick={() => createRoom()}>
                     <PlusIcon/>
                 </button>

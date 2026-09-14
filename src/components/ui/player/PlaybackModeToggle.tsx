@@ -3,8 +3,8 @@ import NoRepeatIcon from "@/components/icons/player/NoRepeatIcon";
 import RepeatOneIcon from "@/components/icons/player/RepeatOneIcon";
 import ShuffleIcon from "@/components/icons/player/ShuffleIcon";
 import { useListeningRoom } from "@/lib";
-import { audioService } from "@/lib/services/audio";
 import { useState } from "react";
+import { roomService } from "@/lib/services/room";
 
 export enum PlaybackMode {
     NORMAL = "NORMAL",
@@ -29,7 +29,7 @@ export const PlaybackModeToggle = () => {
             }
         })();
 
-        const res = await audioService.setRoomPlaybackMode(room?.id, next);
+        const res = await roomService.setRoomPlaybackMode(room?.id, next);
         if (res.ok) setCurrentMode(next)
     };
 

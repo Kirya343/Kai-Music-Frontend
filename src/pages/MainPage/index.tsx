@@ -1,15 +1,13 @@
-import PlusIcon from "@/components/icons/PlusIcon";
 import styles from "./MainPage.module.scss";
 import { IShortRoom, useListeningRoom, userService } from "@/lib";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { audioService } from "@/lib/services/audio";
-import UserIcon from "@/components/icons/UserIcon";
 import AudioPlayerOpener from "@/components/ui/player/AudioPlayerOpener/AudioPlayerOpener";
 import clsx from "clsx";
 import DoorIcon from "@/components/icons/DoorIcon";
 import CirclePlusIcon from "@/components/icons/CirclePlusIcon";
 import MusicNoteIcon from "@/components/icons/MusicNoteIcon";
+import { roomService } from "@/lib/services/room";
 
 const MainPage = () => {
 
@@ -20,7 +18,7 @@ const MainPage = () => {
 
     useEffect(() => {
         async function loadRooms() {
-            const data = await audioService.getRoomsList();
+            const data = await roomService.getRoomsList();
             setRooms(data)
         }
 
@@ -38,7 +36,7 @@ const MainPage = () => {
 
     const createRoom = async () => {
         try {
-            await audioService.createRoom();
+            await roomService.createRoom();
         } finally {
             loadRoom();
         }

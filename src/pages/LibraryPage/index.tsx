@@ -12,6 +12,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import AudioFileModal from "@/components/ui/library/AudioFileModal/AudioFileModal";
 import MusicNoteIcon from "@/components/icons/MusicNoteIcon";
 import { countPosition } from "@/lib/services/utils/interfaceFunctions";
+import Loader from "@/components/ui/Loader/Loader";
 
 interface IUploadingAudio {
     file: File;
@@ -161,37 +162,39 @@ const LibraryPage = () => {
                 ))}
             </div>
 
-            <div className={styles.trackList}>
-                {audios?.map(audio => (
-                    <div 
-                        key={audio.id} 
-                        className={styles.track} 
-                        onClick={() => handleClick(audio.id)}
-                    >
-                        {roomTopUpMode && (
-                            <input
-                                type="checkbox"
-                                checked={selectedTracks.includes(audio.id)}
-                                readOnly
-                            />
-                        )}
+            <Loader loadingActive={!audios}>
+                <div className={styles.trackList}>
+                    {audios?.map(audio => (
+                        <div 
+                            key={audio.id} 
+                            className={styles.track} 
+                            onClick={() => handleClick(audio.id)}
+                        >
+                            {roomTopUpMode && (
+                                <input
+                                    type="checkbox"
+                                    checked={selectedTracks.includes(audio.id)}
+                                    readOnly
+                                />
+                            )}
 
-                        <div className={styles.audioCover}>
-                            <MusicNoteIcon/>
-                        </div>
+                            <div className={styles.audioCover}>
+                                <MusicNoteIcon/>
+                            </div>
 
-                        <div className={styles.meta}>
-                            <span className={styles.id}>#{audio.id}</span>
-                            <span className={styles.name}>{audio?.title ?? audio?.name}</span>
-                            <span className={styles.artist}>{audio?.artist}</span>
-                            <span className={styles.info}>
-                                {audio?.album && (<>{audio?.album} • </>)}
-                                {audio?.duration && (<>{countPosition(audio?.duration)}</>)}
-                            </span>
+                            <div className={styles.meta}>
+                                <span className={styles.id}>#{audio.id}</span>
+                                <span className={styles.name}>{audio?.title ?? audio?.name}</span>
+                                <span className={styles.artist}>{audio?.artist}</span>
+                                <span className={styles.info}>
+                                    {audio?.album && (<>{audio?.album} • </>)}
+                                    {audio?.duration && (<>{countPosition(audio?.duration)}</>)}
+                                </span>
+                            </div>
                         </div>
-                    </div>
-                ))}
-            </div>
+                    ))}
+                </div>
+            </Loader>
 
             {roomTopUpMode && selectedTracks.length > 0 && (
                 <div className={styles.roomTopUpActions}>

@@ -6,10 +6,9 @@ import PauseIcon from "@/components/icons/PauseIcon";
 import styles from "./RoomPage.module.scss";
 import AudioPlayerOpener from "@/components/ui/player/AudioPlayerOpener/AudioPlayerOpener";
 import { useGlobal } from "@/lib/contexts/GlobalContext";
-import { audioService } from "@/lib/services/audio";
 import clsx from "clsx";
-import PlusIcon from "@/components/icons/PlusIcon";
 import MusicNoteIcon from "@/components/icons/MusicNoteIcon";
+import { roomService } from "@/lib/services/room";
 
 const RoomPage = () => {
     const [selectedTracks, setSelectedTracks] = useState<number[]>([]);
@@ -56,7 +55,7 @@ const RoomPage = () => {
         const roomUpdate: IRoomUpdate = {
             title: newRoomName
         }
-        const res = await audioService.updateRoom(room.id, roomUpdate);
+        const res = await roomService.updateRoom(room.id, roomUpdate);
         if (res.ok) {
             setEditMode(false)
             loadRoom()

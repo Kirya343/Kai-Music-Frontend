@@ -68,7 +68,7 @@ const MainPage = () => {
                             <div className={styles.icon}>
                                 <UserGroupIcon/>
                             </div>
-                            <span>Currently Listening: <br/>{stat?.activeListners && <strong>{stat?.activeListners} people</strong>}</span>
+                            <span>Currently Listening: <br/><strong>{stat?.activeListners ? stat?.activeListners : 0} people</strong></span>
                         </div>
 
                         <div className={styles.statItem}>

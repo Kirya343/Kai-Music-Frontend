@@ -185,7 +185,7 @@ const LibraryPage = () => {
                             <div className={styles.meta}>
                                 <span className={styles.id}>#{audio.id}</span>
                                 <span className={styles.name}>{audio?.title ?? audio?.name}</span>
-                                <span className={styles.artist}>{audio?.artist}</span>
+                                <span className={styles.artist}>{audio?.artist || "Unknown artist"}</span>
                                 <span className={styles.info}>
                                     {audio?.album && (<>{audio?.album} • </>)}
                                     {audio?.duration && (<>{countPosition(audio?.duration)}</>)}

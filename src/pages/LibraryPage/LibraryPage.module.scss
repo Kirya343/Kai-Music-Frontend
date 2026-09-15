@@ -5,6 +5,10 @@
     flex-direction: column;
     gap: 0.5rem;
     position: relative;
+
+    @include mobile {
+        padding: 0 0.5rem;
+    }
 }
 
 .trackList {
@@ -13,7 +17,7 @@
     gap: 0.5rem;
 
     @include mobile {
-        width: 100%;;
+        width: 100%;
     }
 }
 
@@ -21,6 +25,10 @@
     display: flex;
     gap: 1rem;
     justify-content: center;
+
+    @include mobile {
+        gap: 0.5rem;
+    }
 
     .action {
         padding: 10px 20px;
@@ -38,7 +46,12 @@
         @include glass(true);
 
         @include mobile {
-            padding: 10px 10px;
+            padding: 10px 5px;
+            font-size: 15px;
+
+            svg {
+                width: 27px;
+            }
         }
 
         svg {

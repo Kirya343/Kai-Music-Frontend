@@ -18,6 +18,7 @@ export const ListeningRoomProvider = ({ children }: { children?: React.ReactNode
     const audioRef = useRef<HTMLAudioElement | null>(null);
     const isProgrammaticRef = useRef(false);
     const { started } = useGlobal();
+    
     // Обновление позиции и паузы от сервера
     useEffect(() => {
         const audio = audioRef.current;

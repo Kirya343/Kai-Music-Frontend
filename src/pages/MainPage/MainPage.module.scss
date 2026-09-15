@@ -5,12 +5,24 @@
     gap: 1.5rem;
     padding: 1.5rem 0;
     flex: 1;
+
+    @include mobile {
+        flex-direction: column;
+        padding: .5rem;
+        padding-top: 1.5rem;
+        gap: .5rem;
+    }
 }
 
 .page {
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
+
+    @include mobile {
+        gap: 1.5rem;
+        align-items: center;
+    }
 
     .welcome {
         border: 1px solid;
@@ -35,6 +47,10 @@
 
         @include glass;
 
+        @include mobile {
+            width: 100%;
+        }
+
         .statItem {
             display: flex;
             align-items: center;
@@ -54,6 +70,11 @@
             .disc {
                 width: 37px;
             }
+
+            span {
+                display: flex;
+                gap: 0.5rem;
+            }
         }
     }
 }
@@ -65,6 +86,10 @@
     height: fit-content;
 
     @include glass;
+
+    @include mobile {
+        width: 100%;
+    }
 
     section {
         padding: 1rem;

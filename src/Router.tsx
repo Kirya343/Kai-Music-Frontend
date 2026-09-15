@@ -3,6 +3,7 @@ import { LoginPage, LoginSuccessPage, LogoutPage, MainPage, RegisterPage } from 
 import MainLayout from "./components/layout/MainLayout";
 import RoomPage from "./pages/RoomPage";
 import LibraryPage from "./pages/LibraryPage";
+import PrivateRoute from "./PrivateRoute";
 
 const AppRouter = () => {
     return (
@@ -10,8 +11,10 @@ const AppRouter = () => {
             <Routes>
                 <Route element={<MainLayout/>}>
                     <Route index element={<MainPage />} />
-                    <Route path="room" element={<RoomPage />} />
-                    <Route path="library" element={<LibraryPage />}/>
+                    <Route element={<PrivateRoute/> }>
+                        <Route path="room" element={<RoomPage />} />
+                        <Route path="library" element={<LibraryPage />}/>
+                    </Route>
 
                     <Route path="login" element={<LoginPage />} />
                     <Route path="register" element={<RegisterPage />} />

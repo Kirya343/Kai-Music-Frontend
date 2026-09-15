@@ -13,7 +13,10 @@ import { roomService } from "@/lib/services/room";
 const RoomPage = () => {
     const [selectedTracks, setSelectedTracks] = useState<number[]>([]);
     const [selectMode, setSelectMode] = useState<boolean>(false);
-    const { room, removeFromQueue, updateTrackPosition, playbackState, localPosition, loadRoom } = useListeningRoom();
+    const { room, removeFromQueue, 
+            updateTrackPosition, playbackState, 
+            localPosition, loadRoom 
+    } = useListeningRoom();
     const { started } = useGlobal();
     const { error } = useWebSocket();
     const [newRoomName, setNewRoomName] = useState<string>(room?.title || "");
@@ -65,26 +68,33 @@ const RoomPage = () => {
     return (
         <>
             <div className={styles.page}>
-                <div className={styles.room}>
-                    <span>#{room?.id}</span>
-                    {editMode ? (
-                        <>  
-                            <input 
+
+                <div className={styles.header}>
+                    <div className={styles.room}>
+                        <span>#{room?.id}</span>
+                        {editMode ? (
+                            <>  
+                                <input 
+                                    className={styles.roomName}
+                                    value={newRoomName} 
+                                    onChange={(e) => setNewRoomName(e.target.value)} 
+                                    placeholder={room?.title}
+                                />
+                                <button className={styles.submitBtn} onClick={saveRoom}>✔</button>
+                            </>
+                        ) : (
+                            <span 
+                                onDoubleClick={() => setEditMode(true)}
                                 className={styles.roomName}
-                                value={newRoomName} 
-                                onChange={(e) => setNewRoomName(e.target.value)} 
-                                placeholder={room?.title}
-                            />
-                            <button className={styles.submitBtn} onClick={saveRoom}>✔</button>
-                        </>
-                    ) : (
-                        <span 
-                            onDoubleClick={() => setEditMode(true)}
-                            className={styles.roomName}
-                        >
-                            {room?.title}
-                        </span>
-                    )}
+                            >
+                                {room?.title}
+                            </span>
+                        )}
+                    </div>
+
+                    <div className={styles.room}>
+                        <span className={styles.roomName}>{room?.code || "Room code is unknown"}</span>
+                    </div>
                 </div>
 
                 <div className={styles.members}>
@@ -139,7 +149,7 @@ const RoomPage = () => {
 
                                 <div className={styles.meta}>
                                     <span className={styles.name}>{queueItem?.name}</span>
-                                    <span className={styles.artist}>{`<Artist name>`}</span>
+                                    <span className={styles.artist}>{queueItem?.artist || "Unknown artist"}</span>
                                 </div>
                             </div>
                         ))}
@@ -157,19 +167,25 @@ const RoomPage = () => {
                     <div className={styles.selectedTracksActions}>
                         <button 
                             onClick={deleteFromRoom}
-                            style={{backgroundColor: "#4b1129"}}
-                        >Remove from queue</button>
+                            className={styles.action}
+                        >
+                            Remove from queue
+                        </button>
                         <button 
-                            style={{backgroundColor: "#156451"}}
+                            className={styles.action}
                             onClick={() => setSelectedTracks([])}
-                        >Clean selected</button>
+                        >
+                            Clean selected
+                        </button>
                         <button 
-                            style={{backgroundColor: "#58161f"}}
+                            className={styles.action}
                             onClick={() =>  {
                                 setSelectMode(false)
                                 setSelectedTracks([])
                             }}
-                        >Cancel</button>
+                        >
+                            Cancel
+                        </button>
                     </div>
                 )}
             </div>

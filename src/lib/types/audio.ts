@@ -1,5 +1,11 @@
 import { PlaybackMode } from "@/components/ui/player/PlaybackModeToggle";
 
+export interface AudioChunk {
+    bytes: Uint8Array;
+    sequence: number;
+    duration: number;
+};
+
 export interface IListeningRoom extends IShortRoom{
     mode: PlaybackMode;
     queue: IQueueItem[]

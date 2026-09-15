@@ -3,7 +3,6 @@ import { ListeningRoomContext } from "../contexts";
 import { useListeningRoomWS } from "../hooks/useListeningRoomWS";
 import { API_BASE } from "@/config";
 import { useGlobal } from "../contexts/GlobalContext";
-import { roomService } from "../services/room";
 
 export const ListeningRoomProvider = ({ children }: { children?: React.ReactNode }) => {
 
@@ -11,7 +10,7 @@ export const ListeningRoomProvider = ({ children }: { children?: React.ReactNode
             playNext, playPrev, 
             audioInfo, room, 
             addToQueue, removeFromQueue, 
-            loadRoom } = useListeningRoomWS();
+            loadRoom, setAudioChunkHandler } = useListeningRoomWS();
     const [localPosition, setLocalPosition] = useState<number>(0);
     const [roomLoaded, setRoomLoaded] = useState<boolean>(true);
     const [duration, setDuration] = useState(0);
@@ -21,6 +20,14 @@ export const ListeningRoomProvider = ({ children }: { children?: React.ReactNode
     const audioRef = useRef<HTMLAudioElement | null>(null);
     const isProgrammaticRef = useRef(false);
     const { started } = useGlobal();
+
+    const mediaSourceRef = useRef<MediaSource | null>(null);
+    const sourceBufferRef = useRef<SourceBuffer | null>(null);
+    const queueRef = useRef<Uint8Array[]>([]);
+
+    useEffect(() => {
+        initAudioStream();
+    }, []);
     
     // Обновление позиции и паузы от сервера
     useEffect(() => {
@@ -31,11 +38,9 @@ export const ListeningRoomProvider = ({ children }: { children?: React.ReactNode
 
         isProgrammaticRef.current = true;
 
-        // Если трек сменился
+        //Если трек сменился
         if (currentAudioId !== playbackState.entryId) {
             setCurrentAudioId(playbackState?.entryId);
-            audio.src = `${API_BASE}/audio/${playbackState.entryId}`;
-            audio.load();
         }
 
         audio.currentTime = playbackState.position;
@@ -101,6 +106,55 @@ export const ListeningRoomProvider = ({ children }: { children?: React.ReactNode
 
         sendUserUpdate(localPosition, nextPaused);
     }, [localPosition, paused]);
+
+    useEffect(() => {
+        setAudioChunkHandler((chunk) => {
+            queueRef.current.push(chunk.bytes);
+
+            appendNextChunk();
+        });
+
+        return () => {
+            setAudioChunkHandler(() => {});
+        };
+    }, [setAudioChunkHandler]);
+
+    const initAudioStream = () => {
+        const audio = audioRef.current;
+        if (!audio) return;
+
+        const mediaSource = new MediaSource();
+
+        mediaSourceRef.current = mediaSource;
+
+        audio.src = URL.createObjectURL(mediaSource);
+
+        mediaSource.addEventListener("sourceopen", () => {
+            const sourceBuffer = mediaSource.addSourceBuffer("audio/mpeg");
+
+            sourceBufferRef.current = sourceBuffer;
+
+            sourceBuffer.addEventListener("updateend", appendNextChunk);
+
+            appendNextChunk();
+        }, { once: true });
+    };
+
+    const appendNextChunk = () => {
+        const sourceBuffer = sourceBufferRef.current;
+
+        if (!sourceBuffer) return;
+        if (sourceBuffer.updating) return;
+
+        const chunk = queueRef.current.shift();
+
+        if (!chunk) return;
+
+        const buffer = new ArrayBuffer(chunk.byteLength);
+        new Uint8Array(buffer).set(chunk);
+
+        sourceBuffer.appendBuffer(buffer);
+    };
 
     return (
         <ListeningRoomContext.Provider value={{ 

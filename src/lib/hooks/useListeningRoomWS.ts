@@ -1,6 +1,6 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useAuth, useWebSocket } from "../contexts";
-import { IAudio, IListeningRoom, IPlaybackState } from "../types";
+import { AudioChunk, IAudio, IListeningRoom, IPlaybackState } from "../types";
 import { audioService } from "../services/audio";
 import { roomService } from "../services/room";
 
@@ -10,6 +10,8 @@ export const useListeningRoomWS = () => {
     const [playbackState, setPlaybackState] = useState<IPlaybackState | null>(null);
     const [audioInfo, setAudioInfo] = useState<IAudio | null>(null);
     const [room, setRoom] = useState<IListeningRoom | null>(null);
+    const [audioBuffer, setAudioBuffer] = useState<AudioChunk[]>([]);
+    const onAudioChunkRef = useRef<((chunk: AudioChunk) => void) | null>(null);
 
     useEffect(() => {
         async function loadState(roomId: number) {
@@ -131,12 +133,35 @@ export const useListeningRoomWS = () => {
             setRoom(room);
         });
 
+        const audioSub = client?.subscribe("/user/queue/audio", (message) => {
+            const chunk: AudioChunk = {
+                bytes: message.binaryBody,
+                sequence: Number(message.headers["sequence"]),
+                duration: Number(message.headers["duration"])
+            };
+
+            onAudioChunkRef.current?.(chunk);
+        });
+
+        client?.publish({
+            destination: `/app/audio/get`,
+            body: ""
+        });
+
         loadRoom();
 
         return () => {
             roomSub?.unsubscribe();
+            audioSub?.unsubscribe();
         }
     }, [client, isReady])
+
+    const setAudioChunkHandler = useCallback(
+        (handler: (chunk: AudioChunk) => void) => {
+            onAudioChunkRef.current = handler;
+        },
+        []
+    );
 
     return {
         playbackState, 
@@ -144,6 +169,7 @@ export const useListeningRoomWS = () => {
         playNext, playPrev, 
         audioInfo,
         addToQueue, removeFromQueue,
-        room, loadRoom
+        room, loadRoom,
+        setAudioChunkHandler
     };
 }

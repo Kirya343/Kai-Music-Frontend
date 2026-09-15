@@ -7,8 +7,11 @@ import { roomService } from "../services/room";
 
 export const ListeningRoomProvider = ({ children }: { children?: React.ReactNode }) => {
 
-    const { room, addToQueue, removeFromQueue, loadRoom } = roomService.useCurrentRoom();
-    const { playbackState, updateTrackPosition, playNext, playPrev, audioInfo} = useListeningRoomWS(room?.id || null);
+    const { playbackState, updateTrackPosition, 
+            playNext, playPrev, 
+            audioInfo, room, 
+            addToQueue, removeFromQueue, 
+            loadRoom } = useListeningRoomWS();
     const [localPosition, setLocalPosition] = useState<number>(0);
     const [roomLoaded, setRoomLoaded] = useState<boolean>(true);
     const [duration, setDuration] = useState(0);

@@ -14,7 +14,7 @@ import { useNavigate } from "react-router-dom";
 
 const MainPage = () => {
 
-    const { loadRoom, roomLoaded } = useListeningRoom();
+    const { roomLoaded } = useListeningRoom();
 
     const [rooms, setRooms] = useState<IShortRoom[] | null>(null);
     const [isOpen, setOpen] = useState<boolean>(false);
@@ -38,7 +38,6 @@ const MainPage = () => {
         try {
             await roomService.createRoom();
         } finally {
-            loadRoom();
             navigate("/room");
         }
     }
@@ -47,7 +46,6 @@ const MainPage = () => {
         try {
             await roomService.joinRoom(code);
         } finally {
-            loadRoom();
             navigate("/room");
         }
     }

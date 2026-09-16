@@ -4,8 +4,13 @@ export interface AudioChunk {
     bytes: Uint8Array;
     sequence: number;
     duration: number;
+    initialization: boolean;
 };
 
+export interface TimeRange {
+    start: number; 
+    end: number
+}
 export interface IListeningRoom extends IShortRoom{
     mode: PlaybackMode;
     queue: IQueueItem[]

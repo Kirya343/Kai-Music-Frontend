@@ -156,3 +156,38 @@
         }
     }
 }
+
+.progress {
+    position: relative;
+    width: 100%;
+    height: 20px;
+    display: flex;
+    align-items: center;
+
+    input[type="range"] {
+        position: relative;
+        z-index: 2;
+
+        width: 100%;
+        margin: 0;
+
+        background: transparent;
+    }
+}
+
+.buffered {
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: #444;
+    border-radius: 2px;
+    pointer-events: none;
+}
+
+.bufferedRange {
+    position: absolute;
+    height: 100%;
+    background: #777;
+    border-radius: 2px;
+}

@@ -1,5 +1,6 @@
 import { createContext, useContext } from "react";
 import { IShortUser, IUser } from "../types";
+import { userService } from "../services";
 
 interface AuthContextType {
     isAuthenticated: boolean;
@@ -10,7 +11,7 @@ interface AuthContextType {
     loadUser: () => void
 }
 
-export const AuthContext = createContext<AuthContextType | null>(null);
+const AuthContext = createContext<AuthContextType | null>(null);
 
 export const useAuth = () => {
     const ctx = useContext(AuthContext);
@@ -19,3 +20,14 @@ export const useAuth = () => {
     }
     return ctx;
 }
+
+export const AuthProvider = ({ children }: { children?: React.ReactNode }) => {
+
+    const { user, isAuthenticated, loading, shortUser, isAdmin, loadUser } = userService.useCurrentUser();
+
+    return (
+        <AuthContext.Provider value={{ isAuthenticated, user, shortUser, loading, isAdmin, loadUser }}>
+            {children}
+        </AuthContext.Provider>
+    );
+};

@@ -13,6 +13,7 @@ import MusicNoteIcon from "@/components/icons/MusicNoteIcon";
 import { countPosition } from "@/lib/services/utils/interfaceFunctions";
 import Loader from "@/components/ui/Loader/Loader";
 import AudioFileModal from "@/components/pages/library/AudioFileModal/AudioFileModal";
+import { useGlobal } from "@/lib/contexts/GlobalContext";
 
 interface IUploadingAudio {
     file: File;

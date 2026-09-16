@@ -19,7 +19,7 @@ const Audio = () => {
         audioInfo, fullPlayerOpen, 
         setFullPlayerOpen, audioRef,
         togglePlay, sendUserUpdate, 
-        playbackState
+        playbackState, bufferedRanges
     } = useListeningRoom();
 
     const [updateMessage, setUpdateMessage] = useState<string | null>(null);
@@ -83,7 +83,7 @@ const Audio = () => {
 
     return (
         <>
-            <VolumeSlider audioRef={audioRef} visible={false}/>
+            <VolumeSlider visible={false}/>
 
             {fullPlayerOpen && (
                 <div className={styles.audioPlayer}>
@@ -98,18 +98,45 @@ const Audio = () => {
                         </div>
                     </div>
                     <div className={styles.tracker}>
-                        <input
-                            type="range"
-                            min={0}
-                            max={duration}
-                            value={localPosition}
-                            onChange={handleSeek}
-                            style={{ width: "100%", background: `linear-gradient(to right, #ffffff ${(localPosition / duration) * 100}%, #444 ${(localPosition / duration) * 100}%)`}}
-                        />
-                        
+                        <div className={styles.progress}>
+                            <div className={styles.buffered}>
+                                {bufferedRanges?.map((range, index) => (
+                                    <div
+                                        key={index}
+                                        className={styles.bufferedRange}
+                                        style={{
+                                            left: `${(range.start / duration) * 100}%`,
+                                            width: `${((range.end - range.start) / duration) * 100}%`
+                                        }}
+                                    />
+                                ))}
+                            </div>
+
+                            <input
+                                type="range"
+                                min={0}
+                                max={duration}
+                                value={localPosition}
+                                onChange={handleSeek}
+                                style={{
+                                    width: "100%",
+                                    background: `linear-gradient(
+                                        to right,
+                                        #ffffff ${(localPosition / duration) * 100}%,
+                                        #00000000 ${(localPosition / duration) * 100}%
+                                    )`
+                                }}
+                            />
+                        </div>
+
                         <div className={styles.positionMeta}>
-                            <span className={styles.currentPosition}>{countPosition(localPosition)}</span>
-                            <span className={styles.duration}>{countPosition(duration)}</span>
+                            <span className={styles.currentPosition}>
+                                {countPosition(localPosition)}
+                            </span>
+
+                            <span className={styles.duration}>
+                                {countPosition(duration)}
+                            </span>
                         </div>
                     </div>
                     <div className={styles.navigation}>
@@ -125,7 +152,7 @@ const Audio = () => {
                         </button>
                         <button><PlusIcon/></button>
                     </div>
-                    <VolumeSlider audioRef={audioRef} />
+                    <VolumeSlider />
                     {updateMessage && <div className={styles.update} onDoubleClick={() => setUpdateMessage("")}>{updateMessage}</div>}
                 </div>
             )}

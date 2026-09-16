@@ -1,7 +1,9 @@
 "use client"
 
-import { createContext, useContext } from "react";
+import { createContext, ReactNode, useContext } from "react";
 import { Client } from "@stomp/stompjs";
+import { useAuth } from "./AuthContext";
+import { useStompClient } from "../hooks";
 
 interface WebSocketContextProps {
     client: Client | null;
@@ -9,7 +11,7 @@ interface WebSocketContextProps {
     isReady: boolean;
 }
 
-export const WebSocketContext = createContext<WebSocketContextProps | null>(null);
+const WebSocketContext = createContext<WebSocketContextProps | null>(null);
 
 export const useWebSocket = () => {
     const ctx = useContext(WebSocketContext);
@@ -18,3 +20,16 @@ export const useWebSocket = () => {
     }
     return ctx;
 }
+
+export const WebSocketProvider = ({ children }: { children: ReactNode }) => {
+    const { client, connected, error } = useStompClient();
+    const { isAuthenticated } = useAuth();
+
+    const isReady = Boolean(client && connected && isAuthenticated);
+
+    return (
+        <WebSocketContext.Provider value={{ client, error, isReady }}>
+            {children}
+        </WebSocketContext.Provider>
+    );
+};

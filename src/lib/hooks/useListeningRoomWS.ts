@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useAuth, useWebSocket } from "../contexts";
+import { useWebSocket } from "../contexts";
 import { AudioChunk, IAudio, IListeningRoom, IPlaybackState } from "../types";
-import { audioService } from "../services/audio";
 import { roomService } from "../services/room";
 
 export const useListeningRoomWS = () => {
@@ -10,7 +9,6 @@ export const useListeningRoomWS = () => {
     const [playbackState, setPlaybackState] = useState<IPlaybackState | null>(null);
     const [audioInfo, setAudioInfo] = useState<IAudio | null>(null);
     const [room, setRoom] = useState<IListeningRoom | null>(null);
-    const [audioBuffer, setAudioBuffer] = useState<AudioChunk[]>([]);
     const onAudioChunkRef = useRef<((chunk: AudioChunk) => void) | null>(null);
 
     useEffect(() => {
@@ -68,19 +66,37 @@ export const useListeningRoomWS = () => {
             setPlaybackState(state);
         });
 
+        const audioSub = client?.subscribe(`/topic/room/${room?.id}/audio`, (message) => {
+            const chunk: AudioChunk = {
+                bytes: message.binaryBody,
+                sequence: Number(message.headers["sequence"]),
+                duration: Number(message.headers["duration"]),
+                initialization: message.headers["initialization"] === "true"
+            };
+
+            const audio: IAudio = {
+                id: Number(message.headers["audioId"]),
+                name: message.headers["audioName"],
+                format: message.headers["audioFormat"],
+                title: message.headers["audioTitle"],
+                artist: message.headers["audioArtist"],
+                album: message.headers["audioAlbum"],
+                duration: Number(message.headers["audioDuration"]),
+                coverUrl: message.headers["audioCoverUrl"]
+            }
+
+            //console.log("Пришла часть аудио", audio, chunk)
+
+            setAudioInfo(audio);
+
+            onAudioChunkRef.current?.(chunk);
+        });
+
         return () => {
             playbackSub?.unsubscribe();
+            audioSub?.unsubscribe();
         }
     }, [client, isReady, room?.id]);
-    
-    useEffect(() => {
-        async function loadAudioInfo(entryId: number) {
-            const data = await audioService.loadAudioInfo(entryId);
-            setAudioInfo(data);
-        }
-
-        if (playbackState?.entryId) loadAudioInfo(playbackState.entryId);
-    }, [playbackState?.entryId]);
 
     const loadRoom = useCallback(async() => {
 
@@ -124,8 +140,6 @@ export const useListeningRoomWS = () => {
 
         if (!isReady) return;
 
-        console.log("Подписались на комнату пользователя")
-
         const roomSub = client?.subscribe(`/user/queue/room`, (message) => {
             const room: IListeningRoom = JSON.parse(message.body);
             console.log("Пришло обновление комнаты: ", room.id, room)
@@ -133,26 +147,10 @@ export const useListeningRoomWS = () => {
             setRoom(room);
         });
 
-        const audioSub = client?.subscribe("/user/queue/audio", (message) => {
-            const chunk: AudioChunk = {
-                bytes: message.binaryBody,
-                sequence: Number(message.headers["sequence"]),
-                duration: Number(message.headers["duration"])
-            };
-
-            onAudioChunkRef.current?.(chunk);
-        });
-
-        client?.publish({
-            destination: `/app/audio/get`,
-            body: ""
-        });
-
         loadRoom();
 
         return () => {
             roomSub?.unsubscribe();
-            audioSub?.unsubscribe();
         }
     }, [client, isReady])
 

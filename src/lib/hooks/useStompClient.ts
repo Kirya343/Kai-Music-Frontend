@@ -3,13 +3,14 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Client, Frame } from "@stomp/stompjs";
 import { API_BASE } from "@/config";
-import { useAuth } from "../contexts/AuthContext";
-import { refreshToken } from "@/lib";
+import { useAuth } from "../contexts";
+import { refreshToken } from "../services";
 
 interface UseStompClientResult {
     client: Client | null;
     connected: boolean;
     error: boolean;
+    addOnConnectHandler(handler: (client: Client) => void): () => void;
 }
 
 export function useStompClient(): UseStompClientResult {
@@ -24,6 +25,12 @@ export function useStompClient(): UseStompClientResult {
     const [reconnectAttempts, setReconnectAttempts] = useState(0);
 
     const maxReconnects = 3;
+
+    type Cleanup = () => void;
+    type OnConnectHandler = (client: Client) => void | Cleanup;
+
+    const handlers = useRef(new Set<OnConnectHandler>());
+    const cleanups = useRef(new Map<OnConnectHandler, Cleanup>());
 
     const cleanupClient = useCallback(() => {
         if (!clientRef.current) return;
@@ -59,6 +66,17 @@ export function useStompClient(): UseStompClientResult {
             setConnected(true);
             setError(false);
             setReconnectAttempts(0);
+
+            for (const handler of handlers.current) {
+                cleanups.current.get(handler)?.();
+
+                const cleanup = handler(stompClient);
+                if (cleanup) {
+                    cleanups.current.set(handler, cleanup);
+                } else {
+                    cleanups.current.delete(handler);
+                }
+            }
         };
 
         stompClient.onDisconnect = () => {
@@ -110,6 +128,23 @@ export function useStompClient(): UseStompClientResult {
         stompClient.activate();
     }, [user, reconnectAttempts, cleanupClient]);
 
+    const addOnConnectHandler = useCallback((handler: OnConnectHandler): Cleanup => {
+        handlers.current.add(handler);
+
+        if (clientRef.current?.connected) {
+            const cleanup = handler(clientRef.current);
+            if (cleanup) {
+                cleanups.current.set(handler, cleanup);
+            }
+        }
+
+        return () => {
+            cleanups.current.get(handler)?.();
+            cleanups.current.delete(handler);
+            handlers.current.delete(handler);
+        };
+    }, []);
+
     useEffect(() => {
         if (!user) return;
 
@@ -127,5 +162,6 @@ export function useStompClient(): UseStompClientResult {
         client,
         connected,
         error,
+        addOnConnectHandler
     };
 }

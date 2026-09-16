@@ -1,12 +1,11 @@
-import Audio from "@/components/ui/player/Audio/Audio";
 import { Outlet } from "react-router-dom";
-import styles from "./MainLayout.module.scss"
+import styles from "./StartLayout.module.scss"
 import { useGlobal } from "@/lib/contexts/GlobalContext";
 import { AnimatePresence, motion } from "motion/react"
 import clsx from "clsx";
-import Header from "../ui/Header/Header";
+import { AuthProvider, ListeningRoomProvider, WebSocketProvider } from "@/lib";
 
-const MainLayout = () => {
+const StartLayout = () => {
 
     const { started, setStarted } = useGlobal();
 
@@ -27,14 +26,13 @@ const MainLayout = () => {
                         transition={{ duration: 0.7 }}
                         className={styles.content}
                     >
-                        
-                        <Header/>
-
-                        <main className={styles.main}>
-                            <Outlet />
-                        </main>
-
-                        <Audio />
+                        <AuthProvider>
+                            <WebSocketProvider>
+                                <ListeningRoomProvider>
+                                    <Outlet />
+                                </ListeningRoomProvider>
+                            </WebSocketProvider>
+                        </AuthProvider>
 
                     </motion.div>
                 )}
@@ -43,4 +41,4 @@ const MainLayout = () => {
     )
 }
 
-export default MainLayout;
+export default StartLayout;

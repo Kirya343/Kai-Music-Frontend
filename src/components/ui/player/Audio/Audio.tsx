@@ -15,32 +15,12 @@ const Audio = () => {
     const { 
         localPosition, setLocalPosition, 
         playNext, playPrev, duration, 
-        paused, currentAudioId, 
-        audioInfo, fullPlayerOpen, 
+        paused, updateMessage, 
+        fullPlayerOpen, audioInfo,
         setFullPlayerOpen, audioRef,
         togglePlay, sendUserUpdate, 
-        playbackState, bufferedRanges
+        bufferedRanges
     } = useListeningRoom();
-
-    const [updateMessage, setUpdateMessage] = useState<string | null>(null);
-
-    useEffect(() => {
-        const writeUpdateMessage = (newState: IPlaybackState) => {
-
-            console.log(newState)
-            if (newState.entryId != currentAudioId) {
-                setUpdateMessage(`${newState.user} started playing track #${newState.entryId}`);
-            } else if (newState.pause != paused && newState.pause) {
-                setUpdateMessage(`${newState.user} paused the playback`);
-            } else if (newState.pause != paused && !newState.pause) {
-                setUpdateMessage(`${newState.user} resumed playback`);
-            } else if (newState.position != localPosition) {
-                setUpdateMessage(`${newState.user} seeked to ${countPosition(newState.position)}`);
-            }
-        }
-
-        if (playbackState) writeUpdateMessage(playbackState);
-    }, [playbackState])
 
     const debounceTimeoutRef = useRef<number | null>(null);
 
@@ -51,7 +31,7 @@ const Audio = () => {
         const newTime = Number(e.target.value);
         audio.pause();
         audio.currentTime = newTime;
-        setLocalPosition(newTime);
+        // setLocalPosition(newTime);
 
         // отменяем предыдущий таймаут, если был
         if (debounceTimeoutRef.current) {
@@ -62,7 +42,7 @@ const Audio = () => {
         debounceTimeoutRef.current = setTimeout(() => {
             sendUserUpdate(newTime, paused);
             debounceTimeoutRef.current = null;
-        }, 300);
+        }, 100);
     };
 
     const headerRef = useRef<HTMLDivElement | null>(null);
@@ -153,7 +133,7 @@ const Audio = () => {
                         <button><PlusIcon/></button>
                     </div>
                     <VolumeSlider />
-                    {updateMessage && <div className={styles.update} onDoubleClick={() => setUpdateMessage("")}>{updateMessage}</div>}
+                    {updateMessage && <div className={styles.update}>{updateMessage}</div>}
                 </div>
             )}
         </>

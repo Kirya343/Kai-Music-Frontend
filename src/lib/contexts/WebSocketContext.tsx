@@ -9,6 +9,7 @@ interface WebSocketContextProps {
     client: Client | null;
     error: boolean;
     isReady: boolean;
+    addOnConnectHandler(handler: (client: Client) => void): () => void;
 }
 
 const WebSocketContext = createContext<WebSocketContextProps | null>(null);
@@ -22,13 +23,13 @@ export const useWebSocket = () => {
 }
 
 export const WebSocketProvider = ({ children }: { children: ReactNode }) => {
-    const { client, connected, error } = useStompClient();
+    const { client, connected, error, addOnConnectHandler } = useStompClient();
     const { isAuthenticated } = useAuth();
 
     const isReady = Boolean(client && connected && isAuthenticated);
 
     return (
-        <WebSocketContext.Provider value={{ client, error, isReady }}>
+        <WebSocketContext.Provider value={{ client, error, isReady, addOnConnectHandler }}>
             {children}
         </WebSocketContext.Provider>
     );

@@ -3,6 +3,7 @@ import { IAudio, IListeningRoom, IPlaybackState, TimeRange } from "../types";
 import { useListeningRoomWS } from "../hooks/useListeningRoomWS";
 import { useGlobal } from "./GlobalContext";
 import { useAudioStream } from "../services/audio/hooks";
+import { countPosition } from "../services/utils/interfaceFunctions";
 
 interface ListeningRoomContextType {
     playbackState: IPlaybackState | null;
@@ -23,8 +24,7 @@ interface ListeningRoomContextType {
     audioInfo: IAudio | null;
     fullPlayerOpen: boolean;
     setFullPlayerOpen: Dispatch<SetStateAction<boolean>>;
-    currentAudioId: number | null;
-    setCurrentAudioId: Dispatch<SetStateAction<number | null>>;
+    updateMessage: string;
     audioRef: React.RefObject<HTMLAudioElement | null>;
     togglePlay: () => void;
     sendUserUpdate: (position: number, pausedState: boolean) => void;
@@ -49,7 +49,7 @@ export const ListeningRoomProvider = ({ children }: { children?: React.ReactNode
             addToQueue, removeFromQueue, 
             loadRoom, setAudioChunkHandler 
     } = useListeningRoomWS();
-    const { stopPlayback, handleAudioChunk, 
+    const { cleanupAudio, handleAudioChunk, 
         resumePlayback, pausePlayback, 
         audioRef, bufferedRanges
     } = useAudioStream();
@@ -61,6 +61,27 @@ export const ListeningRoomProvider = ({ children }: { children?: React.ReactNode
     const [currentAudioId, setCurrentAudioId] = useState<number | null>(null);
     const isProgrammaticRef = useRef(false);
     const { started } = useGlobal();
+    const [updateMessage, setUpdateMessage] = useState<string>("");
+
+    
+    
+    useEffect(() => {
+        const writeUpdateMessage = (newState: IPlaybackState) => {
+
+            console.log(newState)
+            if (newState.entryId != currentAudioId) {
+                setUpdateMessage(`${newState.user} started playing track #${newState.entryId}`);
+            } else if (newState.pause != paused && newState.pause) {
+                setUpdateMessage(`${newState.user} paused the playback`);
+            } else if (newState.pause != paused && !newState.pause) {
+                setUpdateMessage(`${newState.user} resumed playback`);
+            } else if (newState.position != localPosition) {
+                setUpdateMessage(`${newState.user} seeked to ${countPosition(newState.position)}`);
+            }
+        }
+
+        if (playbackState) writeUpdateMessage(playbackState);
+    }, [playbackState])
     
     // Обновление позиции и паузы от сервера
     useEffect(() => {
@@ -158,7 +179,7 @@ export const ListeningRoomProvider = ({ children }: { children?: React.ReactNode
             roomLoaded, setRoomLoaded,
             duration, 
             fullPlayerOpen, setFullPlayerOpen,
-            currentAudioId, setCurrentAudioId,
+            updateMessage,
             paused, setPaused,
             loadRoom, audioInfo, 
             playNext, playPrev,

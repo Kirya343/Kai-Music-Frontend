@@ -11,20 +11,15 @@ export const useAudioStream = () => {
     const [bufferedRanges, setBufferedRanges] = useState<TimeRange[] | null | null>(null);
 
     const queueRef = useRef<AudioChunk[]>([]);
-    const nextExpectedSequenceRef = useRef<number>(0);
+    const nextExpectedSequenceRef = useRef<number | null>(null);
 
     const isInitializedRef = useRef<boolean>(false);
     const objectUrlRef = useRef<string | null>(null);
 
     const processQueue = useCallback(() => {
-
         const sourceBuffer = sourceBufferRef.current;
 
-        if (!sourceBuffer) {
-            return;
-        }
-
-        if (sourceBuffer.updating) {
+        if (!sourceBuffer || sourceBuffer.updating) {
             return;
         }
 
@@ -45,6 +40,10 @@ export const useAudioStream = () => {
                 return !isInitializedRef.current;
             }
 
+            if (nextExpectedSequenceRef.current === null) {
+                return true;
+            }
+
             return chunk.sequence === nextExpectedSequenceRef.current;
         });
 
@@ -55,7 +54,6 @@ export const useAudioStream = () => {
         const chunk = queueRef.current.splice(nextIndex, 1)[0];
 
         try {
-
             const buffer = chunk.bytes.buffer.slice(
                 chunk.bytes.byteOffset,
                 chunk.bytes.byteOffset + chunk.bytes.byteLength
@@ -66,11 +64,9 @@ export const useAudioStream = () => {
             if (chunk.initialization) {
                 isInitializedRef.current = true;
             } else {
-                nextExpectedSequenceRef.current++;
+                nextExpectedSequenceRef.current = chunk.sequence + 1;
             }
-
         } catch (error) {
-
             console.error(
                 `Ошибка добавления M4A чанка #${chunk.sequence}:`,
                 error
@@ -158,7 +154,7 @@ export const useAudioStream = () => {
         [initMediaSource, processQueue]
     );
 
-    const stopPlayback = useCallback(() => {
+    const cleanupAudio = useCallback(() => {
 
         const audio = audioRef.current;
 
@@ -176,10 +172,11 @@ export const useAudioStream = () => {
         mediaSourceRef.current = null;
         sourceBufferRef.current = null;
         objectUrlRef.current = null;
+        setBufferedRanges(null);
 
         queueRef.current = [];
 
-        nextExpectedSequenceRef.current = 0;
+        nextExpectedSequenceRef.current = null;
         isInitializedRef.current = false;
 
     }, []);
@@ -230,10 +227,11 @@ export const useAudioStream = () => {
 
     return {
         handleAudioChunk,
-        stopPlayback,
+        cleanupAudio,
         pausePlayback,
         resumePlayback,
         audioRef,
-        bufferedRanges
+        bufferedRanges,
+        setBufferedRanges
     };
 };

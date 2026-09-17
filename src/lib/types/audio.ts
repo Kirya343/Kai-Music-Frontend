@@ -13,7 +13,8 @@ export interface TimeRange {
 }
 export interface IListeningRoom extends IShortRoom{
     mode: PlaybackMode;
-    queue: IQueueItem[]
+    queue: IQueueItem[];
+    audio: IAudio;
 }
 
 export interface IShortRoom {

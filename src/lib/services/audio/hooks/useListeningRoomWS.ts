@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useWebSocket } from "../contexts";
-import { AudioChunk, IAudio, IListeningRoom, IPlaybackState } from "../types";
-import { roomService } from "../services/room";
+import { useWebSocket } from "../../../contexts";
+import { AudioChunk, IAudio, IListeningRoom, IPlaybackState } from "../../../types";
+import { roomService } from "../../room";
 
 export const useListeningRoomWS = () => {
     
@@ -21,11 +21,11 @@ export const useListeningRoomWS = () => {
     }, [room?.id])
 
     const updateTrackPosition = useCallback(async (entryId: number, position: number, pause: boolean) => {
-        if (!client || !entryId) return;
+        if (!client || !entryId || !room?.id) return;
 
         const state: IPlaybackState = {entryId, position, pause};
 
-        console.log("Отправляем обновление позиции: ", state)
+        console.log("Отправляем обновление позиции: ", state, room?.id)
 
         client?.publish({
             destination: `/app/room/${room?.id}/update-playback-state`,
@@ -60,6 +60,7 @@ export const useListeningRoomWS = () => {
     const addToQueue = useCallback(async (audioId: number) => {
         if (!room) return;
         const data = await roomService.addToQueue(room.id, audioId);
+        
         setRoom(p => {
             if (!p) return p;
             return {
@@ -67,7 +68,7 @@ export const useListeningRoomWS = () => {
                 queue: [...p.queue, data]
             };
         });
-    }, [room])
+    }, [room, setAudioInfo, setRoom])
 
     const removeFromQueue = useCallback(async (queueItemId: number) => {
         if (!room) return;
@@ -95,15 +96,16 @@ export const useListeningRoomWS = () => {
 
             const roomSub = client.subscribe(`/user/queue/room`, (message) => {
                 const room: IListeningRoom = JSON.parse(message.body);
-                console.log("Пришло обновление комнаты: ", room.id, room)
+                //console.log("Пришло обновление комнаты: ", room.id, room)
                 
                 setRoom(room);
+                setAudioInfo(room.audio)
             });
 
             const playbackSub = client.subscribe(`/user/queue/playback`, (message) => {
                 const state: IPlaybackState = JSON.parse(message.body);
 
-                console.log("Пришло обновление playback: ", state)
+                //console.log("Пришло обновление playback: ", state)
                 
                 setPlaybackState(state);
             });
@@ -116,27 +118,12 @@ export const useListeningRoomWS = () => {
                     initialization: message.headers["initialization"] === "true"
                 };
 
-                const audio: IAudio = {
-                    id: Number(message.headers["audioId"]),
-                    name: message.headers["audioName"],
-                    format: message.headers["audioFormat"],
-                    title: message.headers["audioTitle"],
-                    artist: message.headers["audioArtist"],
-                    album: message.headers["audioAlbum"],
-                    duration: Number(message.headers["audioDuration"]),
-                    coverUrl: message.headers["audioCoverUrl"]
-                }
-
-                //console.log("Пришла часть аудио", audio, chunk)
-
-                setAudioInfo(audio);
-
                 onAudioChunkRef.current?.(chunk);
             });
 
             client.publish({ destination: `/app/user.ready` });
 
-            console.log("Вебсокет подписался на всё")
+            //console.log("Вебсокет подписался на всё")
 
             return () => {
                 audioSub.unsubscribe();

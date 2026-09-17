@@ -1,8 +1,8 @@
 import { createContext, Dispatch, Ref, SetStateAction, useCallback, useContext, useEffect, useRef, useState } from "react";
 import { IAudio, IListeningRoom, IPlaybackState, TimeRange } from "../types";
-import { useListeningRoomWS } from "../hooks/useListeningRoomWS";
+import { useListeningRoomWS } from "../services/audio/hooks/useListeningRoomWS";
 import { useGlobal } from "./GlobalContext";
-import { useAudioStream } from "../services/audio/hooks";
+import { useAudioStream } from "../services/audio/hooks/useAudioStream";
 import { countPosition } from "../services/utils/interfaceFunctions";
 
 interface ListeningRoomContextType {
@@ -62,59 +62,45 @@ export const ListeningRoomProvider = ({ children }: { children?: React.ReactNode
     const isProgrammaticRef = useRef(false);
     const { started } = useGlobal();
     const [updateMessage, setUpdateMessage] = useState<string>("");
-
     
-    
-    useEffect(() => {
-        const writeUpdateMessage = (newState: IPlaybackState) => {
+    const writeUpdateMessage = (newState: IPlaybackState) => {
 
-            console.log(newState)
-            if (newState.entryId != currentAudioId) {
-                setUpdateMessage(`${newState.user} started playing track #${newState.entryId}`);
-            } else if (newState.pause != paused && newState.pause) {
-                setUpdateMessage(`${newState.user} paused the playback`);
-            } else if (newState.pause != paused && !newState.pause) {
-                setUpdateMessage(`${newState.user} resumed playback`);
-            } else if (newState.position != localPosition) {
-                setUpdateMessage(`${newState.user} seeked to ${countPosition(newState.position)}`);
-            }
+        //console.log(newState)
+        if (newState.entryId != currentAudioId) {
+            setUpdateMessage(`${newState.user} started playing track #${newState.entryId}`);
+        } else if (newState.pause != paused && newState.pause) {
+            setUpdateMessage(`${newState.user} paused the playback`);
+        } else if (newState.pause != paused && !newState.pause) {
+            setUpdateMessage(`${newState.user} resumed playback`);
+        } else if (newState.position != localPosition) {
+            setUpdateMessage(`${newState.user} seeked to ${countPosition(newState.position)}`);
         }
-
-        if (playbackState) writeUpdateMessage(playbackState);
-    }, [playbackState])
+    }
     
     // Обновление позиции и паузы от сервера
     useEffect(() => {
         if (!playbackState) return;
 
-        console.log(`Обновляем позицию: ${playbackState.entryId}, paused: ${playbackState.pause}, position: ${playbackState.position}`);
-
-        isProgrammaticRef.current = true;
-
-        //Если трек сменился
-        if (currentAudioId !== playbackState.entryId) {
-            setCurrentAudioId(playbackState?.entryId);
+        if (
+            currentAudioId !== null &&
+            currentAudioId !== playbackState.entryId
+        ) {
+            cleanupAudio();
         }
 
-        //audio.currentTime = playbackState.position;
+        setCurrentAudioId(playbackState.entryId);
         setLocalPosition(playbackState.position);
 
         if (playbackState.pause) {
             pausePlayback();
-            console.log(`Ставим на паузу`);
             setPaused(true);
-            
         } else {
             resumePlayback();
             setPaused(false);
         }
 
-        const timeout = setTimeout(() => {
-            isProgrammaticRef.current = false;
-        }, 50);
-
-        return () => clearTimeout(timeout);
-    }, [playbackState, currentAudioId, started]);
+        writeUpdateMessage(playbackState)
+    }, [playbackState]);
 
     // События пользователя
     useEffect(() => {
@@ -132,28 +118,27 @@ export const ListeningRoomProvider = ({ children }: { children?: React.ReactNode
 
     const sendUserUpdate = useCallback((position: number, pausedState: boolean) => {
         console.log(`Отправляем апдейт на position: ${position}, paused: ${pausedState}`);
-        const audio = audioRef.current;
+        if (!playbackState) return;
 
-        if (!audio || !playbackState) return;
         updateTrackPosition(playbackState.entryId, position, pausedState);
     }, [playbackState]);
 
     // Play / Pause кнопка
     const togglePlay = useCallback(() => {
-        const audio = audioRef.current;
-
-        if (!audio) return;
-
         console.log("трек на паузе? ", paused)
 
         const nextPaused = !paused; // это то, что будет после клика
 
-        if (nextPaused === false) {
-            console.log("включаем трек");
-            resumePlayback();
-        } else {
-            console.log("ставим на паузу");
-            pausePlayback();
+        try {
+            if (nextPaused === false) {
+                console.log("включаем трек");
+                resumePlayback();
+            } else {
+                console.log("ставим на паузу");
+                pausePlayback();
+            }
+        } catch (e) {
+            console.error('Ошибка переключения состояния', e)
         }
 
         sendUserUpdate(localPosition, nextPaused);

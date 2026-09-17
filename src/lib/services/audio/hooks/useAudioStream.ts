@@ -1,13 +1,12 @@
 import { AudioChunk, TimeRange } from '@/lib/types';
-import { useCallback, useRef, useState } from 'react';
-
-const MIME = 'audio/mp4; codecs="mp4a.40.2"';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 export const useAudioStream = () => {
 
     const audioRef = useRef<HTMLAudioElement | null>(null);
     const mediaSourceRef = useRef<MediaSource | null>(null);
     const sourceBufferRef = useRef<SourceBuffer | null>(null);
+    const streamGenerationRef = useRef(0);
     const [bufferedRanges, setBufferedRanges] = useState<TimeRange[] | null | null>(null);
 
     const queueRef = useRef<AudioChunk[]>([]);
@@ -18,8 +17,17 @@ export const useAudioStream = () => {
 
     const processQueue = useCallback(() => {
         const sourceBuffer = sourceBufferRef.current;
+        const mediaSource = mediaSourceRef.current;
 
-        if (!sourceBuffer || sourceBuffer.updating) {
+        if (!sourceBuffer || !mediaSource) {
+            return;
+        }
+
+        if (mediaSource.readyState !== "open") {
+            return;
+        }
+
+        if (sourceBuffer.updating) {
             return;
         }
 
@@ -82,6 +90,8 @@ export const useAudioStream = () => {
             return;
         }
 
+        const generation = ++streamGenerationRef.current;
+
         const audio = new Audio();
 
         audio.autoplay = true;
@@ -97,14 +107,17 @@ export const useAudioStream = () => {
 
         mediaSource.addEventListener('sourceopen', () => {
 
-            console.log('MediaSource opened');
+            console.log('sourceopen', {
+                generation,
+                currentGeneration: streamGenerationRef.current
+            });
 
-            console.log(
-                '2. MIME supported:',
-                MediaSource.isTypeSupported(
-                    'audio/mp4; codecs="mp4a.40.2"'
-                )
-            );
+
+            if (generation !== streamGenerationRef.current) {
+                return;
+            }
+
+            console.log('MediaSource opened');
 
             if (sourceBufferRef.current) {
                 return;
@@ -121,14 +134,22 @@ export const useAudioStream = () => {
                 processQueue()
             });
 
+            sourceBuffer.addEventListener('error', (event) => {
+                console.error('SourceBuffer error:', event);
+            });
+
+            mediaSource.addEventListener('error', (event) => {
+                console.error('MediaSource error:', event);
+            });
+
             processQueue();
 
-            audio.play().catch(error => {
+            /* audio.play().catch(error => {
                 console.error(
                     'Не удалось запустить audio:',
                     error
                 );
-            });
+            }); */
         });
 
     }, [processQueue]);
@@ -194,17 +215,23 @@ export const useAudioStream = () => {
         }
     }, [])
 
-    const resumePlayback = useCallback(() => {
-        try {
-            const audio = audioRef.current;
+    const resumePlayback = useCallback(async () => {
+        const audio = audioRef.current;
 
-            if (audio) {
-                audio.play();
-            }
-        } catch (e) {
-            console.log(e)
+        if (!audio) {
+            return;
         }
-    }, [])
+
+        try {
+            await audio.play();
+        } catch (error) {
+            if (error instanceof DOMException && error.name === "AbortError") {
+                return;
+            }
+
+            console.error("Ошибка запуска audio:", error);
+        }
+    }, []);
 
     const updateBufferedRanges = () => {
         const sourceBuffer = sourceBufferRef.current;
@@ -224,6 +251,10 @@ export const useAudioStream = () => {
 
         setBufferedRanges(ranges);
     };
+
+    useEffect(() => {
+        console.log("bufferedRanges", bufferedRanges)
+    }, [bufferedRanges])
 
     return {
         handleAudioChunk,

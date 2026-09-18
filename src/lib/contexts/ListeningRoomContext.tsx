@@ -49,7 +49,7 @@ export const ListeningRoomProvider = ({ children }: { children?: React.ReactNode
             addToQueue, removeFromQueue, 
             loadRoom, setAudioChunkHandler 
     } = useListeningRoomWS();
-    const { cleanupAudio, handleAudioChunk, 
+    const { handleAudioChunk, 
         resumePlayback, pausePlayback, 
         audioRef, bufferedRanges,
         startNewPlaybackStream
@@ -89,7 +89,8 @@ export const ListeningRoomProvider = ({ children }: { children?: React.ReactNode
             currentAudioId !== null &&
             currentAudioId !== playbackState.entryId
         ) {
-            cleanupAudio();
+            
+            //cleanupAudio();
         }
 
         startNewPlaybackStream();

@@ -51,18 +51,23 @@ export const useAudioStream = () => {
         const mediaSource = mediaSourceRef.current;
 
         if (!sourceBuffer || !mediaSource) {
+
+            console.warn("!sourceBuffer || !mediaSource", !!sourceBuffer, !!mediaSource)
             return;
         }
 
         if (mediaSource.readyState !== 'open') {
+            console.warn("mediaSource.readyState !== 'open'")
             return;
         }
 
         if (sourceBuffer.updating) {
+            console.warn("sourceBuffer.updating")
             return;
         }
 
         if (queueRef.current.length === 0) {
+            console.warn("queueRef.current.length === 0'")
             return;
         }
 
@@ -71,11 +76,15 @@ export const useAudioStream = () => {
         * за время жизни MediaSource.
         */
         if (!isInitializedRef.current) {
+
+            console.log("!isInitializedRef.current")
+
             const index = queueRef.current.findIndex(
                 chunk => chunk.initialization
             );
 
             if (index === -1) {
+                console.log("index", index)
                 return;
             }
 
@@ -113,6 +122,8 @@ export const useAudioStream = () => {
             chunk => !chunk.initialization
         );
 
+        console.log("index", index)
+
         if (index === -1) {
             return;
         }
@@ -134,6 +145,7 @@ export const useAudioStream = () => {
             /*
             * После первого chunk sequence должен продолжаться.
             */
+           console.log(" После первого chunk sequence должен продолжаться.")
             if (
                 nextExpectedSequenceRef.current !== null &&
                 chunk.sequence !== nextExpectedSequenceRef.current
@@ -176,13 +188,6 @@ export const useAudioStream = () => {
         }
     }, []);
 
-    const startNewPlaybackStream = useCallback(() => {
-        queueRef.current = [];
-
-        nextExpectedSequenceRef.current = null;
-        waitingForFirstChunkRef.current = true;
-    }, []);
-
     const initMediaSource = useCallback(() => {
         if (mediaSourceRef.current) {
             return;
@@ -205,27 +210,25 @@ export const useAudioStream = () => {
         mediaSource.addEventListener('sourceopen', () => {
             console.log('MediaSource opened');
 
-            if (sourceBufferRef.current) {
-                return;
-            }
-
-            const sourceBuffer = mediaSource.addSourceBuffer(
-                'audio/mp4; codecs="mp4a.40.2"'
-            );
-
-            sourceBufferRef.current = sourceBuffer;
-
-            sourceBuffer.addEventListener('updateend', () => {
-                updateBufferedRanges();
-                processQueue();
-            });
-
-            sourceBuffer.addEventListener('error', event => {
-                console.error(
-                    'SourceBuffer error:',
-                    event
+            if (!sourceBufferRef.current) {
+                const sourceBuffer = mediaSource.addSourceBuffer(
+                    'audio/mp4; codecs="mp4a.40.2"'
                 );
-            });
+
+                sourceBufferRef.current = sourceBuffer;
+
+                sourceBuffer.addEventListener('updateend', () => {
+                    updateBufferedRanges();
+                    processQueue();
+                });
+
+                sourceBuffer.addEventListener('error', event => {
+                    console.error(
+                        'SourceBuffer error:',
+                        event
+                    );
+                });
+            }
 
             mediaSource.addEventListener('error', event => {
                 console.error(
@@ -244,12 +247,13 @@ export const useAudioStream = () => {
     const handleAudioChunk = useCallback(
         (chunk: AudioChunk) => {
             console.log(
-                'Получен chunk:',
-                {
-                    sequence: chunk.sequence,
-                    initialization: chunk.initialization
-                }
+                `Получен ${chunk.initialization ? "init" : "media"} chunk: ${chunk.sequence}`
             );
+
+            if (chunk.initialization) {
+                startNewStream();
+                cleanupAudio();
+            }
 
             initMediaSource();
 
@@ -291,7 +295,16 @@ export const useAudioStream = () => {
         nextExpectedSequenceRef.current = null;
     }, []);
 
+    const startNewPlaybackStream = useCallback(() => {
+        queueRef.current = [];
+
+        nextExpectedSequenceRef.current = null;
+        waitingForFirstChunkRef.current = true;
+    }, []);
+
     const cleanupAudio = useCallback(() => {
+        console.log("Очищаем playback")
+
         const audio = audioRef.current;
 
         if (audio) {
@@ -309,14 +322,14 @@ export const useAudioStream = () => {
         sourceBufferRef.current = null;
         objectUrlRef.current = null;
 
-        setBufferedRanges(null);
+        setBufferedRanges([]);
 
         queueRef.current = [];
         nextExpectedSequenceRef.current = null;
         isInitializedRef.current = false;
 
         streamGenerationRef.current++;
-    }, []);
+    }, [setBufferedRanges]);
 
     const pausePlayback = useCallback(() => {
         const audio = audioRef.current;

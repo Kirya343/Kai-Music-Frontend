@@ -24,14 +24,22 @@ const Audio = () => {
 
     const debounceTimeoutRef = useRef<number | null>(null);
 
+    //useEffect(() => {console.log("localPosition", localPosition)}, [localPosition])
+
     const handleSeek = (e: React.ChangeEvent<HTMLInputElement>) => {
+
+        console.log("handleSeek")
+
         const audio = audioRef.current;
         if (!audio) return;
 
+        console.log("audio != null")
+
         const newTime = Number(e.target.value);
         audio.pause();
-        audio.currentTime = newTime;
-        // setLocalPosition(newTime);
+
+        console.log("handleSeek:", newTime)
+        setLocalPosition(newTime);
 
         // отменяем предыдущий таймаут, если был
         if (debounceTimeoutRef.current) {

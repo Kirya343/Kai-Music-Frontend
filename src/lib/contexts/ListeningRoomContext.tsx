@@ -51,7 +51,8 @@ export const ListeningRoomProvider = ({ children }: { children?: React.ReactNode
     } = useListeningRoomWS();
     const { cleanupAudio, handleAudioChunk, 
         resumePlayback, pausePlayback, 
-        audioRef, bufferedRanges
+        audioRef, bufferedRanges,
+        startNewPlaybackStream
     } = useAudioStream();
     const [localPosition, setLocalPosition] = useState<number>(0);
     const [roomLoaded, setRoomLoaded] = useState<boolean>(true);
@@ -62,6 +63,7 @@ export const ListeningRoomProvider = ({ children }: { children?: React.ReactNode
     const isProgrammaticRef = useRef(false);
     const { started } = useGlobal();
     const [updateMessage, setUpdateMessage] = useState<string>("");
+    const syncedPositionRef = useRef<number | null>(null);
     
     const writeUpdateMessage = (newState: IPlaybackState) => {
 
@@ -79,7 +81,9 @@ export const ListeningRoomProvider = ({ children }: { children?: React.ReactNode
     
     // Обновление позиции и паузы от сервера
     useEffect(() => {
-        if (!playbackState) return;
+        const audio = audioRef.current;
+        
+        if (!playbackState || !audio) return;
 
         if (
             currentAudioId !== null &&
@@ -88,7 +92,10 @@ export const ListeningRoomProvider = ({ children }: { children?: React.ReactNode
             cleanupAudio();
         }
 
+        startNewPlaybackStream();
         setCurrentAudioId(playbackState.entryId);
+
+        console.log("устанавливаем setLocalPosition на playbackState.position")
         setLocalPosition(playbackState.position);
 
         if (playbackState.pause) {
@@ -101,6 +108,34 @@ export const ListeningRoomProvider = ({ children }: { children?: React.ReactNode
 
         writeUpdateMessage(playbackState)
     }, [playbackState]);
+
+    useEffect(() => {
+        if (!audioRef.current || !bufferedRanges || !playbackState) {
+            return;
+        }
+
+        const position = playbackState.position;
+
+        if (syncedPositionRef.current === position) {
+            return;
+        }
+
+        const isBuffered = bufferedRanges.some(
+            range => position >= range.start && position <= range.end
+        );
+
+        if (!isBuffered) {
+            return;
+        }
+
+        console.log("playbackState seek:", position)
+        audioRef.current.currentTime = position;
+        syncedPositionRef.current = position;
+
+        if (!playbackState.pause) {
+            audioRef.current.play();
+        }
+    }, [bufferedRanges, playbackState]);
 
     // События пользователя
     useEffect(() => {
@@ -116,8 +151,10 @@ export const ListeningRoomProvider = ({ children }: { children?: React.ReactNode
         };
     }, [playbackState, updateTrackPosition, paused]);
 
+    useEffect(() => {console.log("playbackState", playbackState)}, [playbackState])
+
     const sendUserUpdate = useCallback((position: number, pausedState: boolean) => {
-        console.log(`Отправляем апдейт на position: ${position}, paused: ${pausedState}`);
+        console.log(`Отправляем апдейт на position: ${position}, paused: ${pausedState}, entryId: ${playbackState?.entryId}`);
         if (!playbackState) return;
 
         updateTrackPosition(playbackState.entryId, position, pausedState);
@@ -129,7 +166,7 @@ export const ListeningRoomProvider = ({ children }: { children?: React.ReactNode
 
         const nextPaused = !paused; // это то, что будет после клика
 
-        try {
+        /* try {
             if (nextPaused === false) {
                 console.log("включаем трек");
                 resumePlayback();
@@ -139,10 +176,10 @@ export const ListeningRoomProvider = ({ children }: { children?: React.ReactNode
             }
         } catch (e) {
             console.error('Ошибка переключения состояния', e)
-        }
+        } */
 
         sendUserUpdate(localPosition, nextPaused);
-    }, [localPosition, paused]);
+    }, [localPosition, paused, sendUserUpdate]);
 
     useEffect(() => {
         setAudioChunkHandler((chunk) => {

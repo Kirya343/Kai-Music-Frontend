@@ -1,7 +1,7 @@
 import { createContext, Dispatch, SetStateAction, useCallback, useContext, useEffect, useRef, useState } from "react";
 import { IAudio, TimeRange } from "@audio";
 import { IListeningRoom, IPlaybackState, useListeningRoomWS, useAudioStream } from "@room";
-import { countPosition, useGlobal } from "@common";
+import { countPosition } from "@common";
 
 interface ListeningRoomContextType {
     playbackState: IPlaybackState | null;
@@ -27,6 +27,8 @@ interface ListeningRoomContextType {
     togglePlay: () => void;
     sendUserUpdate: (position: number, pausedState: boolean) => void;
     bufferedRanges: TimeRange[] | null;
+    pausePlayback: () => void;
+    seek: (pos: number) => void
 }
 
 const ListeningRoomContext = createContext<ListeningRoomContextType | null>(null);
@@ -52,16 +54,16 @@ export const ListeningRoomProvider = ({ children }: { children?: React.ReactNode
         audioRef, bufferedRanges,
         startNewPlaybackStream
     } = useAudioStream();
+
     const [localPosition, setLocalPosition] = useState<number>(0);
     const [roomLoaded, setRoomLoaded] = useState<boolean>(true);
     const duration = Number(audioInfo?.duration);
     const [paused, setPaused] = useState(true);
     const [fullPlayerOpen, setFullPlayerOpen] = useState<boolean>(false);
     const [currentAudioId, setCurrentAudioId] = useState<number | null>(null);
-    const isProgrammaticRef = useRef(false);
-    const { started } = useGlobal();
     const [updateMessage, setUpdateMessage] = useState<string>("");
     const syncedPositionRef = useRef<number | null>(null);
+    const pendingSeekPositionRef = useRef<number | null>(null);
     
     const writeUpdateMessage = (newState: IPlaybackState) => {
 
@@ -101,7 +103,35 @@ export const ListeningRoomProvider = ({ children }: { children?: React.ReactNode
     }, [playbackState]);
 
     useEffect(() => {
-        if (!audioRef.current || !bufferedRanges || !playbackState) {
+        const audio = audioRef.current;
+
+        if (!audio || !bufferedRanges || !playbackState) {
+            return;
+        }
+
+        const pendingSeek = pendingSeekPositionRef.current;
+
+        if (pendingSeek !== null) {
+            const isBuffered = bufferedRanges.some(
+                range =>
+                    pendingSeek >= range.start &&
+                    pendingSeek <= range.end
+            );
+
+            if (!isBuffered) {
+                return;
+            }
+
+            console.log("Seek position buffered:", pendingSeek);
+
+            audio.currentTime = pendingSeek;
+
+            pendingSeekPositionRef.current = null;
+
+            if (!playbackState.pause) {
+                audio.play();
+            }
+
             return;
         }
 
@@ -112,19 +142,20 @@ export const ListeningRoomProvider = ({ children }: { children?: React.ReactNode
         }
 
         const isBuffered = bufferedRanges.some(
-            range => position >= range.start && position <= range.end
+            range =>
+                position >= range.start &&
+                position <= range.end
         );
 
         if (!isBuffered) {
             return;
         }
 
-        console.log("playbackState seek:", position)
-        audioRef.current.currentTime = position;
+        audio.currentTime = position;
         syncedPositionRef.current = position;
 
         if (!playbackState.pause) {
-            audioRef.current.play();
+            audio.play();
         }
     }, [bufferedRanges, playbackState]);
 
@@ -157,20 +188,24 @@ export const ListeningRoomProvider = ({ children }: { children?: React.ReactNode
 
         const nextPaused = !paused; // это то, что будет после клика
 
-        /* try {
-            if (nextPaused === false) {
-                console.log("включаем трек");
-                resumePlayback();
-            } else {
-                console.log("ставим на паузу");
-                pausePlayback();
-            }
-        } catch (e) {
-            console.error('Ошибка переключения состояния', e)
-        } */
-
         sendUserUpdate(localPosition, nextPaused);
     }, [localPosition, paused, sendUserUpdate]);
+
+    const seek = useCallback((position: number) => {
+        pendingSeekPositionRef.current = position;
+
+        setLocalPosition(position);
+
+        pausePlayback();
+
+        if (playbackState) {
+            updateTrackPosition(
+                playbackState.entryId,
+                position,
+                paused
+            );
+        }
+    }, [playbackState, updateTrackPosition, pausePlayback, paused]);
 
     useEffect(() => {
         setAudioChunkHandler((chunk) => {
@@ -194,10 +229,11 @@ export const ListeningRoomProvider = ({ children }: { children?: React.ReactNode
             fullPlayerOpen, setFullPlayerOpen,
             updateMessage,
             paused, setPaused,
-            loadRoom, audioInfo, 
+            loadRoom, audioInfo,
             playNext, playPrev,
             audioRef, togglePlay,
-            sendUserUpdate, bufferedRanges
+            sendUserUpdate, bufferedRanges,
+            pausePlayback, seek
         }}>
             {children}
         </ListeningRoomContext.Provider>

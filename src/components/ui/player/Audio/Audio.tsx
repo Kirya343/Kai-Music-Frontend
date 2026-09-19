@@ -17,9 +17,9 @@ const Audio = () => {
         playNext, playPrev, duration, 
         paused, updateMessage, 
         fullPlayerOpen, audioInfo,
-        setFullPlayerOpen, audioRef,
-        togglePlay, sendUserUpdate, 
-        bufferedRanges
+        setFullPlayerOpen, pausePlayback,
+        togglePlay, 
+        bufferedRanges, seek
     } = useListeningRoom();
 
     const debounceTimeoutRef = useRef<number | null>(null);
@@ -30,13 +30,8 @@ const Audio = () => {
 
         console.log("handleSeek")
 
-        const audio = audioRef.current;
-        if (!audio) return;
-
-        console.log("audio != null")
-
         const newTime = Number(e.target.value);
-        audio.pause();
+        pausePlayback();
 
         console.log("handleSeek:", newTime)
         setLocalPosition(newTime);
@@ -48,7 +43,7 @@ const Audio = () => {
 
         // ставим новый таймаут на 300 мс
         debounceTimeoutRef.current = setTimeout(() => {
-            sendUserUpdate(newTime, paused);
+            seek(newTime);
             debounceTimeoutRef.current = null;
         }, 100);
     };

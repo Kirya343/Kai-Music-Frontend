@@ -1,5 +1,5 @@
-import { IPermission, IPermissionUpdate } from '../../types';
-import { apiFetchJson, apiFetch } from '@/lib/common/utils/apiClient';
+import { IPermission, IPermissionUpdate } from '@permission';
+import { apiFetchJson, apiFetch } from '@common';
 
 export const getAllRoles = () => apiFetchJson('/permissions/roles')
 export const getAllPermissions = () => apiFetchJson('/permissions')

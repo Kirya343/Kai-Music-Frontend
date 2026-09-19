@@ -1,9 +1,7 @@
-import { createContext, Dispatch, Ref, SetStateAction, useCallback, useContext, useEffect, useRef, useState } from "react";
-import { IAudio, IListeningRoom, IPlaybackState, TimeRange } from "../types";
-import { useListeningRoomWS } from "../services/audio/hooks/useListeningRoomWS";
-import { useGlobal } from "../../common/GlobalContext";
-import { useAudioStream } from "../services/audio/hooks/useAudioStream";
-import { countPosition } from "../services/utils/interfaceFunctions";
+import { createContext, Dispatch, SetStateAction, useCallback, useContext, useEffect, useRef, useState } from "react";
+import { IAudio, TimeRange } from "@audio";
+import { IListeningRoom, IPlaybackState, useListeningRoomWS, useAudioStream } from "@room";
+import { countPosition, useGlobal } from "@common";
 
 interface ListeningRoomContextType {
     playbackState: IPlaybackState | null;

@@ -1,6 +1,6 @@
 import { PlaybackMode } from "@/components/ui/player/PlaybackModeToggle";
-import { apiFetch, apiFetchJson } from "@/lib/common/utils/apiClient";
-import { IRoomUpdate } from "@/lib/audio/audioTypes";
+import { apiFetch, apiFetchJson } from "@common";
+import { IRoomUpdate } from "@audio";
 
 export const loadCurrentRoom = () => apiFetchJson("/room")
 export const setRoomPlaybackMode = (roomId: number, mode: PlaybackMode) => apiFetch(`/room/${roomId}/mode`, {method: "PATCH"}, {mode})

@@ -1,6 +1,6 @@
-import { IAudio, useListeningRoom } from "@/lib";
-import { audioService } from "@/lib/old/services/audio";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useListeningRoom } from "@room";
+import { audioService, IAudio } from "@audio";
+import { useCallback, useEffect, useState } from "react";
 import styles from "./LibraryPage.module.scss"
 import CirclePlusIcon from "@/components/icons/CirclePlusIcon";
 import PlaylistIcon from "@/components/icons/PlaylistIcon";
@@ -13,7 +13,6 @@ import MusicNoteIcon from "@/components/icons/MusicNoteIcon";
 import { countPosition } from "@/lib/common/utils/interfaceFunctions";
 import Loader from "@/components/ui/Loader/Loader";
 import AudioFileModal from "@/components/pages/library/AudioFileModal/AudioFileModal";
-import { useGlobal } from "@/lib/common/GlobalContext";
 
 interface IUploadingAudio {
     file: File;

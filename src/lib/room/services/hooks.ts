@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react"
 import { roomService } from ".";
-import { IListeningRoom } from "@/lib/audio/audioTypes";
+import { IListeningRoom } from "@audio";
 
 export const useCurrentRoom = () => {
     const [room, setRoom] = useState<IListeningRoom | null>(null);

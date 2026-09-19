@@ -3,8 +3,8 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Client, Frame } from "@stomp/stompjs";
 import { API_BASE } from "@/config";
-import { useAuth } from "../contexts";
-import { refreshToken } from "../old/services";
+import { useAuth } from "@auth";
+import { refreshToken } from "@common";
 
 interface UseStompClientResult {
     client: Client | null;

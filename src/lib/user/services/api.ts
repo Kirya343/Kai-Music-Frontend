@@ -1,4 +1,4 @@
-import { apiFetchJson, apiFetch } from '@/lib';
+import { apiFetchJson, apiFetch } from '@common';
 
 export const getCurrent = () => apiFetchJson(`/user/current`)
 export const getById = (userId: number) => apiFetchJson(`/user/get/${userId}`)

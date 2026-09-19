@@ -1,9 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { 
-    apiFetchJson,
-    useAuth
-} from "@/lib";
+import { useAuth } from "@auth";
+import { apiFetchJson } from "@common";
 
 const RegisterPage = () => {
 

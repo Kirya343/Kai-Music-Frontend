@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useWebSocket } from "../../../contexts";
-import { AudioChunk, IAudio, IListeningRoom, IPlaybackState } from "../../../types";
-import { roomService } from "../../room";
+import { useWebSocket } from "@websocket";
+import { AudioChunk, IAudio } from "@audio";
+import { roomService, IListeningRoom, IPlaybackState } from "@room";
 
 export const useListeningRoomWS = () => {
     

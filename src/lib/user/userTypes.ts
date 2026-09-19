@@ -1,3 +1,5 @@
+import { IRole } from "@permission";
+
 export interface IShortUser {
     openId: string;
     name: string;
@@ -12,21 +14,4 @@ export interface IUser extends IShortUser {
     roles: IRole[];
     status: string | null;
     createdAt: string;
-}
-
-export interface IRole {
-    id: number;
-    name: string;
-    level: number;
-}
-
-export interface IPermission {
-    id: number;
-    name: string;
-    comment: string;
-}
-
-export interface IPermissionUpdate {
-    permissionId: number,
-    enabled: boolean
 }

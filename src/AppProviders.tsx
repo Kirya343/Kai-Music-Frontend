@@ -1,8 +1,6 @@
 
 import { ReactNode } from "react";
-import { 
-    AuthProvider, GlobalProvider
-} from "./lib/old/contexts";
+import { GlobalProvider } from "@common";
 
 export const AppProviders = ({ children }: {children: ReactNode}) => {
     return (

@@ -1,6 +1,5 @@
 import { createContext, useContext } from "react";
-import { IShortUser, IUser } from "@/lib/user/userTypes";
-import { userService } from "@/lib/user/services";
+import { userService, IShortUser, IUser } from "@user";
 
 interface AuthContextType {
     isAuthenticated: boolean;

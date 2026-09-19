@@ -2,8 +2,8 @@
 
 import { createContext, ReactNode, useContext } from "react";
 import { Client } from "@stomp/stompjs";
-import { useAuth } from "./AuthContext";
-import { useStompClient } from "../old/hooks";
+import { useAuth } from "@auth";
+import { useStompClient } from "@websocket";
 
 interface WebSocketContextProps {
     client: Client | null;

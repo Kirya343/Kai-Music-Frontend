@@ -1,4 +1,4 @@
-import { IShortUser, IUser } from "@/lib/old/types";
+import { IShortUser, IUser } from "@user";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { userService } from ".";
 

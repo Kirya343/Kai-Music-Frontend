@@ -1,9 +1,11 @@
 import { Outlet } from "react-router-dom";
 import styles from "./StartLayout.module.scss"
-import { useGlobal } from "@/lib/common/GlobalContext";
+import { useGlobal } from "@common";
 import { AnimatePresence, motion } from "motion/react"
 import clsx from "clsx";
-import { AuthProvider, ListeningRoomProvider, WebSocketProvider } from "@/lib";
+import { AuthProvider } from "@auth";
+import { ListeningRoomProvider } from "@room";
+import { WebSocketProvider } from "@websocket";
 
 const StartLayout = () => {
 

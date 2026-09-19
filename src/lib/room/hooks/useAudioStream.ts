@@ -1,128 +1,44 @@
-import { AudioChunk, TimeRange } from '@audio';
-import { useCallback, useRef, useState } from 'react';
+import { AudioChunk } from '@audio';
+import { useCallback, useRef } from 'react';
+import { useMediaResource } from './stream/useMediaResource';
 
 export const useAudioStream = () => {
-    const audioRef = useRef<HTMLAudioElement | null>(null);
-    const mediaSourceRef = useRef<MediaSource | null>(null);
-    const sourceBufferRef = useRef<SourceBuffer | null>(null);
-    const waitingForFirstChunkRef = useRef(false);
 
-    const [bufferedRanges, setBufferedRanges] = useState<TimeRange[] | null>(null);
-
+    // очередь медиа чанков
     const queueRef = useRef<AudioChunk[]>([]);
+    const processQueueRef = useRef<() => void>(() => {});
 
     // Sequence ожидаемого чанка текущего server stream.
     const nextExpectedSequenceRef = useRef<number | null>(null);
+    const waitingForFirstChunkRef = useRef(false);
 
-    // Был ли уже добавлен initialization chunk текущего stream.
-    const isInitializedRef = useRef(false);
-
-    // Увеличивается при каждом новом playbackState/seek.
-    const streamGenerationRef = useRef(0);
-
-    const objectUrlRef = useRef<string | null>(null);
-
-    const updateBufferedRanges = useCallback(() => {
-        const sourceBuffer = sourceBufferRef.current;
-
-        if (!sourceBuffer) {
-            return;
-        }
-
-        const ranges: TimeRange[] = [];
-
-        for (let i = 0; i < sourceBuffer.buffered.length; i++) {
-            ranges.push({
-                start: sourceBuffer.buffered.start(i),
-                end: sourceBuffer.buffered.end(i)
-            });
-        }
-
-        setBufferedRanges(ranges);
-
-        console.log(
-            'MSE buffered:',
-            ranges
-        );
-    }, []);
+    const { 
+        mediaSourceRef, audioRef, 
+        cleanupAudio, initMediaSource,
+        resumePlayback, pausePlayback,
+        appendChunk, processInitializationChunk,
+        sourceBufferRef, bufferedRanges
+    } = useMediaResource(processQueueRef);
 
     const processQueue = useCallback(() => {
         const sourceBuffer = sourceBufferRef.current;
         const mediaSource = mediaSourceRef.current;
 
         if (!sourceBuffer || !mediaSource) {
-
-            console.warn("!sourceBuffer || !mediaSource", !!sourceBuffer, !!mediaSource)
             return;
         }
 
         if (mediaSource.readyState !== 'open') {
-            console.warn("mediaSource.readyState !== 'open'")
             return;
         }
 
         if (sourceBuffer.updating) {
-            console.warn("sourceBuffer.updating")
             return;
         }
 
-        if (queueRef.current.length === 0) {
-            console.warn("queueRef.current.length === 0'")
-            return;
-        }
-
-        /*
-        * Initialization добавляется только один раз
-        * за время жизни MediaSource.
-        */
-        if (!isInitializedRef.current) {
-
-            console.log("!isInitializedRef.current")
-
-            const index = queueRef.current.findIndex(
-                chunk => chunk.initialization
-            );
-
-            if (index === -1) {
-                console.log("index", index)
-                return;
-            }
-
-            const chunk = queueRef.current.splice(index, 1)[0];
-
-            try {
-                const buffer = chunk.bytes.buffer.slice(
-                    chunk.bytes.byteOffset,
-                    chunk.bytes.byteOffset + chunk.bytes.byteLength
-                ) as ArrayBuffer;
-
-                console.log(
-                    'Добавляем initialization chunk'
-                );
-
-                sourceBuffer.appendBuffer(buffer);
-
-                isInitializedRef.current = true;
-            } catch (error) {
-                console.error(
-                    'Ошибка добавления initialization chunk:',
-                    error
-                );
-
-                queueRef.current.unshift(chunk);
-            }
-
-            return;
-        }
-
-        /*
-        * Ищем media chunk.
-        */
         const index = queueRef.current.findIndex(
             chunk => !chunk.initialization
         );
-
-        console.log("index", index)
 
         if (index === -1) {
             return;
@@ -145,7 +61,7 @@ export const useAudioStream = () => {
             /*
             * После первого chunk sequence должен продолжаться.
             */
-           console.log(" После первого chunk sequence должен продолжаться.")
+            console.log(" После первого chunk sequence должен продолжаться.")
             if (
                 nextExpectedSequenceRef.current !== null &&
                 chunk.sequence !== nextExpectedSequenceRef.current
@@ -162,107 +78,19 @@ export const useAudioStream = () => {
             }
         }
 
-        try {
-            const buffer = chunk.bytes.buffer.slice(
-                chunk.bytes.byteOffset,
-                chunk.bytes.byteOffset + chunk.bytes.byteLength
-            ) as ArrayBuffer;
+        if (appendChunk(chunk)) {
 
-            console.log(
-                'Добавляем media chunk:',
-                chunk.sequence,
-                'expected:',
-                nextExpectedSequenceRef.current
-            );
-
-            sourceBuffer.appendBuffer(buffer);
+            console.log('Добавляем media chunk:', chunk.sequence);
 
             nextExpectedSequenceRef.current = chunk.sequence + 1;
-        } catch (error) {
-            console.error(
-                `Ошибка добавления M4A чанка #${chunk.sequence}:`,
-                error
-            );
+        } else {
+            console.error(`Ошибка добавления M4A чанка #${chunk.sequence}:`);
 
             queueRef.current.unshift(chunk);
         }
-    }, []);
+    }, [appendChunk]);
 
-    const initMediaSource = useCallback(() => {
-        if (mediaSourceRef.current) {
-            return;
-        }
-
-        const audio = new Audio();
-        const mediaSource = new MediaSource();
-
-        audio.autoplay = true;
-        audio.controls = false;
-
-        const objectUrl = URL.createObjectURL(mediaSource);
-
-        audio.src = objectUrl;
-
-        audioRef.current = audio;
-        mediaSourceRef.current = mediaSource;
-        objectUrlRef.current = objectUrl;
-
-        mediaSource.addEventListener('sourceopen', () => {
-            console.log('MediaSource opened');
-
-            if (!sourceBufferRef.current) {
-                const sourceBuffer = mediaSource.addSourceBuffer(
-                    'audio/mp4; codecs="mp4a.40.2"'
-                );
-
-                sourceBufferRef.current = sourceBuffer;
-
-                sourceBuffer.addEventListener('updateend', () => {
-                    updateBufferedRanges();
-                    processQueue();
-                });
-
-                sourceBuffer.addEventListener('error', event => {
-                    console.error(
-                        'SourceBuffer error:',
-                        event
-                    );
-                });
-            }
-
-            mediaSource.addEventListener('error', event => {
-                console.error(
-                    'MediaSource error:',
-                    event
-                );
-            });
-
-            processQueue();
-        });
-    }, [processQueue, updateBufferedRanges]);
-
-    /*
-     * Вызывается на каждый chunk от backend.
-     */
-    const handleAudioChunk = useCallback(
-        (chunk: AudioChunk) => {
-            console.log(
-                `Получен ${chunk.initialization ? "init" : "media"} chunk: ${chunk.sequence}`
-            );
-
-            if (chunk.initialization) {
-                startNewStream();
-                cleanupAudio();
-            }
-
-            initMediaSource();
-
-            queueRef.current.push(chunk);
-
-            processQueue();
-        },
-        [initMediaSource, processQueue]
-    );
+    processQueueRef.current = processQueue;
 
     /*
      * Вызывается при получении нового playbackState.
@@ -272,22 +100,11 @@ export const useAudioStream = () => {
      * playbackState означает начало нового server stream.
      */
     const startNewStream = useCallback(() => {
-        streamGenerationRef.current++;
-
-        console.log(
-            'Начинаем новый audio stream:',
-            streamGenerationRef.current
-        );
 
         /*
          * Старые ещё не обработанные chunks больше не нужны.
          */
         queueRef.current = [];
-
-        /*
-         * Следующий chunk будет initialization.
-         */
-        isInitializedRef.current = false;
 
         /*
          * Sequence нового stream не обязан продолжать старый.
@@ -302,78 +119,55 @@ export const useAudioStream = () => {
         waitingForFirstChunkRef.current = true;
     }, []);
 
-    const cleanupAudio = useCallback(() => {
-        console.log("Очищаем playback")
+    const handleInitializationChunk = useCallback(
+        (chunk: AudioChunk) => {
+            console.log(
+                "Получен initialization chunk, начинаем новый media resource"
+            );
 
-        const audio = audioRef.current;
+            startNewStream();
 
-        if (audio) {
-            audio.pause();
-            audio.removeAttribute('src');
-            audio.load();
-        }
+            cleanupAudio();
 
-        if (objectUrlRef.current) {
-            URL.revokeObjectURL(objectUrlRef.current);
-        }
+            initMediaSource();
 
-        audioRef.current = null;
-        mediaSourceRef.current = null;
-        sourceBufferRef.current = null;
-        objectUrlRef.current = null;
+            processInitializationChunk(chunk);
+        },
+        [
+            startNewStream,
+            cleanupAudio,
+            initMediaSource,
+            processInitializationChunk
+        ]
+    );
 
-        setBufferedRanges([]);
+    /*
+     * Вызывается на каждый chunk от backend.
+     */
+    const handleAudioChunk = useCallback(
+        (chunk: AudioChunk) => {
+            console.log(
+                `Получен ${chunk.initialization ? "init" : "media"} chunk: ${chunk.sequence}`
+            );
 
-        queueRef.current = [];
-        nextExpectedSequenceRef.current = null;
-        isInitializedRef.current = false;
-
-        streamGenerationRef.current++;
-    }, [setBufferedRanges]);
-
-    const pausePlayback = useCallback(() => {
-        const audio = audioRef.current;
-
-        if (!audio) {
-            return;
-        }
-
-        audio.pause();
-    }, []);
-
-    const resumePlayback = useCallback(async () => {
-        const audio = audioRef.current;
-
-        if (!audio) {
-            return;
-        }
-
-        try {
-            await audio.play();
-        } catch (error) {
-            if (
-                error instanceof DOMException &&
-                error.name === 'AbortError'
-            ) {
+            if (chunk.initialization) {
+                handleInitializationChunk(chunk);
                 return;
             }
 
-            console.error(
-                'Ошибка запуска audio:',
-                error
-            );
-        }
-    }, []);
+            queueRef.current.push(chunk);
+            processQueue();
+        },
+        [handleInitializationChunk, processQueue]
+    );
 
     return {
         handleAudioChunk,
         startNewStream,
-        cleanupAudio,
         pausePlayback,
         resumePlayback,
         audioRef,
         bufferedRanges,
-        setBufferedRanges,
         startNewPlaybackStream
     };
 };

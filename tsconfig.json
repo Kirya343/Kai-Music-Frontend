@@ -10,7 +10,6 @@
 
         "baseUrl": "./",
         "paths": {
-            "@/*": ["src/*"],
             
             "@user": ["src/lib/user/index.ts"],
             "@user/*": ["src/lib/user/*"],
@@ -31,7 +30,9 @@
             "@common/*": ["src/lib/common/*"],
 
             "@auth": ["src/lib/auth/index.ts"],
-            "@auth/*": ["src/lib/auth/*"]
+            "@auth/*": ["src/lib/auth/*"],
+
+            "@/*": ["src/*"]
         },
 
         "allowImportingTsExtensions": true,

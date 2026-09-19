@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import styles from "./VolumeSlider.module.scss"
-import { useListeningRoom } from "@/lib";
+import { useListeningRoom } from "@room";
 
 type Props = {
     visible?: boolean;

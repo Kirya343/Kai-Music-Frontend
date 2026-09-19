@@ -1,7 +1,6 @@
-import { IAudio, IAudioUpdate } from "@/lib";
+import { IAudio, IAudioUpdate, audioService } from "@audio";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import styles from "./AudioFileModal.module.scss"
-import { audioService } from "@/lib/old/services/audio";
 import Modal from "@/components/ui/Modal/Modal";
 
 const AudioFileModal = ({ 

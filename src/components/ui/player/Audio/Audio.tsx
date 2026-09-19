@@ -1,8 +1,8 @@
-import { IPlaybackState, useListeningRoom } from "@/lib";
-import React, { useEffect, useRef, useState } from "react";
+import { useListeningRoom } from "@room";
+import React, { useEffect, useRef } from "react";
 import { PlaybackModeToggle } from "../PlaybackModeToggle";
 import VolumeSlider from "../VolumeSlider/VolumeSlider";
-import { countPosition } from "@/lib/common/utils/interfaceFunctions";
+import { countPosition } from "@common";
 import PauseIcon from "@/components/icons/PauseIcon";
 import PlayIcon from "@/components/icons/PlayIcon";
 import LeftIcon from "@/components/icons/LeftIcon";

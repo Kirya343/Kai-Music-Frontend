@@ -1,5 +1,5 @@
 
-import { autoGrow } from "@/lib/common/utils/htmlViewService";
+import { autoGrow } from "@common";
 import styles from "./TextareaRT1.module.scss";
 
 const TextareaRT1 = ({

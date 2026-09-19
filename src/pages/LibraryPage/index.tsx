@@ -10,7 +10,7 @@ import CheckmarkIcon from "@/components/icons/CheckmarkIcon";
 import CrossIcon from "@/components/icons/CrossIcon";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import MusicNoteIcon from "@/components/icons/MusicNoteIcon";
-import { countPosition } from "@/lib/common/utils/interfaceFunctions";
+import { countPosition } from "@common";
 import Loader from "@/components/ui/Loader/Loader";
 import AudioFileModal from "@/components/pages/library/AudioFileModal/AudioFileModal";
 

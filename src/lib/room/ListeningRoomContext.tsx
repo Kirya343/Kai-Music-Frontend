@@ -83,14 +83,6 @@ export const ListeningRoomProvider = ({ children }: { children?: React.ReactNode
         
         if (!playbackState || !audio) return;
 
-        if (
-            currentAudioId !== null &&
-            currentAudioId !== playbackState.entryId
-        ) {
-            
-            //cleanupAudio();
-        }
-
         startNewPlaybackStream();
         setCurrentAudioId(playbackState.entryId);
 

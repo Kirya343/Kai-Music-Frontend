@@ -1,6 +1,9 @@
 import { AudioChunk } from '@audio';
 import { useCallback, useRef } from 'react';
 import { useMediaResource } from './stream/useMediaResource';
+import debug from "debug"
+
+const log = debug("useAudioStream")
 
 export const useAudioStream = () => {
 
@@ -53,20 +56,20 @@ export const useAudioStream = () => {
         if (waitingForFirstChunkRef.current) {
             waitingForFirstChunkRef.current = false;
 
-            console.log(
+            log(
                 'Первый chunk после playbackState:',
                 chunk.sequence
             );
         } else {
-            /*
-            * После первого chunk sequence должен продолжаться.
+            /** 
+             * После первого chunk sequence должен продолжаться.
             */
-            console.log(" После первого chunk sequence должен продолжаться.")
+            //console.log(" После первого chunk sequence должен продолжаться.")
             if (
                 nextExpectedSequenceRef.current !== null &&
                 chunk.sequence !== nextExpectedSequenceRef.current
             ) {
-                console.log(
+                log(
                     'Ожидаем sequence:',
                     nextExpectedSequenceRef.current,
                     'но получили:',
@@ -80,11 +83,11 @@ export const useAudioStream = () => {
 
         if (appendChunk(chunk)) {
 
-            console.log('Добавляем media chunk:', chunk.sequence);
+            log('Добавляем media chunk:', chunk.sequence);
 
             nextExpectedSequenceRef.current = chunk.sequence + 1;
         } else {
-            console.error(`Ошибка добавления M4A чанка #${chunk.sequence}:`);
+            log(`Ошибка добавления M4A чанка #${chunk.sequence}:`);
 
             queueRef.current.unshift(chunk);
         }
@@ -121,9 +124,7 @@ export const useAudioStream = () => {
 
     const handleInitializationChunk = useCallback(
         (chunk: AudioChunk) => {
-            console.log(
-                "Получен initialization chunk, начинаем новый media resource"
-            );
+            log("Получен initialization chunk, начинаем новый media resource");
 
             startNewStream();
 
@@ -146,9 +147,7 @@ export const useAudioStream = () => {
      */
     const handleAudioChunk = useCallback(
         (chunk: AudioChunk) => {
-            console.log(
-                `Получен ${chunk.initialization ? "init" : "media"} chunk: ${chunk.sequence}`
-            );
+            log(`Получен ${chunk.initialization ? "init" : "media"} chunk: ${chunk.sequence}`);
 
             if (chunk.initialization) {
                 handleInitializationChunk(chunk);

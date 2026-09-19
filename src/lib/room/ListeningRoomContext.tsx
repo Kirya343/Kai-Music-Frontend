@@ -165,15 +165,16 @@ export const ListeningRoomProvider = ({ children }: { children?: React.ReactNode
 
         if (!audio) return;
 
-        const handleTimeUpdate = () => setLocalPosition(audio.currentTime);
+        const handleTimeUpdate = () => {
+            if (pendingSeekPositionRef.current) return;
+            setLocalPosition(audio.currentTime);
+        }
         audio.addEventListener("timeupdate", handleTimeUpdate);
 
         return () => {
             audio.removeEventListener("timeupdate", handleTimeUpdate);
         };
     }, [playbackState, updateTrackPosition, paused]);
-
-    useEffect(() => {console.log("playbackState", playbackState)}, [playbackState])
 
     const sendUserUpdate = useCallback((position: number, pausedState: boolean) => {
         console.log(`Отправляем апдейт на position: ${position}, paused: ${pausedState}, entryId: ${playbackState?.entryId}`);
@@ -184,11 +185,8 @@ export const ListeningRoomProvider = ({ children }: { children?: React.ReactNode
 
     // Play / Pause кнопка
     const togglePlay = useCallback(() => {
-        console.log("трек на паузе? ", paused)
 
-        const nextPaused = !paused; // это то, что будет после клика
-
-        sendUserUpdate(localPosition, nextPaused);
+        sendUserUpdate(localPosition, !paused);
     }, [localPosition, paused, sendUserUpdate]);
 
     const seek = useCallback((position: number) => {

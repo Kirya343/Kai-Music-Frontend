@@ -26,10 +26,10 @@ export function useAudioBuffer() {
 
         setBufferedRanges(ranges);
 
-        console.log(
+        /* console.log(
             'MSE buffered:',
             ranges
-        );
+        ); */
     }, []);
 
     const appendChunk = useCallback((chunk: AudioChunk) => {

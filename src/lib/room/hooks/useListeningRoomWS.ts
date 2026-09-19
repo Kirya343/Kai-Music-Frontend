@@ -105,7 +105,7 @@ export const useListeningRoomWS = () => {
             const playbackSub = client.subscribe(`/user/queue/playback`, (message) => {
                 const state: IPlaybackState = JSON.parse(message.body);
 
-                console.log("Пришло обновление playback: ", state)
+                // console.log("Пришло обновление playback: ", state)
                 
                 setPlaybackState(state);
             });

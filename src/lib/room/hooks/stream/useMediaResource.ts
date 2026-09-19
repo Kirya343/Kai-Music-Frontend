@@ -1,5 +1,8 @@
 import { useCallback, useRef } from "react";
 import { useAudioBuffer } from "./useAudioBuffer";
+import debug from "debug"
+
+const log = debug("room:audio")
 
 export const useMediaResource = (processQueueRef: React.RefObject<() => void>) => {
 
@@ -34,7 +37,7 @@ export const useMediaResource = (processQueueRef: React.RefObject<() => void>) =
         objectUrlRef.current = objectUrl;
 
         mediaSource.addEventListener('sourceopen', () => {
-            console.log('MediaSource opened');
+            log('MediaSource opened');
 
             if (!sourceBufferRef.current) {
                 const sourceBuffer = mediaSource.addSourceBuffer(
@@ -49,7 +52,7 @@ export const useMediaResource = (processQueueRef: React.RefObject<() => void>) =
                 });
 
                 sourceBuffer.addEventListener('error', event => {
-                    console.error(
+                    log(
                         'SourceBuffer error:',
                         event
                     );
@@ -57,7 +60,7 @@ export const useMediaResource = (processQueueRef: React.RefObject<() => void>) =
             }
 
             mediaSource.addEventListener('error', event => {
-                console.error(
+                log(
                     'MediaSource error:',
                     event
                 );
@@ -68,7 +71,7 @@ export const useMediaResource = (processQueueRef: React.RefObject<() => void>) =
     }, [updateBufferedRanges]);
 
     const cleanupAudio = useCallback(() => {
-        console.log("Очищаем playback")
+        log("Очищаем playback")
 
         const audio = audioRef.current;
 
@@ -118,7 +121,7 @@ export const useMediaResource = (processQueueRef: React.RefObject<() => void>) =
                 return;
             }
 
-            console.error(
+            log(
                 'Ошибка запуска audio:',
                 error
             );

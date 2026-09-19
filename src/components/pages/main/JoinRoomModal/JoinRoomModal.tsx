@@ -3,7 +3,7 @@ import { Dispatch, SetStateAction, useState } from "react";
 import styles from "./JoinRoomModal.module.scss"
 import Modal from "@/components/ui/Modal/Modal";
 import { useNavigate } from "react-router-dom";
-import { roomService } from "@/lib/services/room";
+import { roomService } from "@/lib/old/services/room";
 
 const JoinRoomModal = ({ 
     isOpen, setOpen

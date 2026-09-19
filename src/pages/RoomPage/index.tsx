@@ -5,10 +5,10 @@ import PlayIcon from "@/components/icons/PlayIcon";
 import PauseIcon from "@/components/icons/PauseIcon";
 import styles from "./RoomPage.module.scss";
 import AudioPlayerOpener from "@/components/ui/player/AudioPlayerOpener/AudioPlayerOpener";
-import { useGlobal } from "@/lib/contexts/GlobalContext";
+import { useGlobal } from "@/lib/common/GlobalContext";
 import clsx from "clsx";
 import MusicNoteIcon from "@/components/icons/MusicNoteIcon";
-import { roomService } from "@/lib/services/room";
+import { roomService } from "@/lib/old/services/room";
 
 const RoomPage = () => {
     const [selectedTracks, setSelectedTracks] = useState<number[]>([]);

@@ -1,8 +1,8 @@
 // Контексты
-export * from './contexts';
+export * from './old/contexts';
 
-export * from './hooks';
+export * from './old/hooks';
 
 // Сервисы
-export * from './services';
-export * from './types';
+export * from './old/services';
+export * from './old/types';

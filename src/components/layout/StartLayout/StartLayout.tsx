@@ -1,6 +1,6 @@
 import { Outlet } from "react-router-dom";
 import styles from "./StartLayout.module.scss"
-import { useGlobal } from "@/lib/contexts/GlobalContext";
+import { useGlobal } from "@/lib/common/GlobalContext";
 import { AnimatePresence, motion } from "motion/react"
 import clsx from "clsx";
 import { AuthProvider, ListeningRoomProvider, WebSocketProvider } from "@/lib";

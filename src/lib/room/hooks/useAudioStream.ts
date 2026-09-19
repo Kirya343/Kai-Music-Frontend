@@ -1,4 +1,4 @@
-import { AudioChunk, TimeRange } from '@/lib/types';
+import { AudioChunk, TimeRange } from '@/lib/audio/audioTypes';
 import { useCallback, useRef, useState } from 'react';
 
 export const useAudioStream = () => {

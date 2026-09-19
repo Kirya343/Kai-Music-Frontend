@@ -2,7 +2,7 @@ import { IPlaybackState, useListeningRoom } from "@/lib";
 import React, { useEffect, useRef, useState } from "react";
 import { PlaybackModeToggle } from "../PlaybackModeToggle";
 import VolumeSlider from "../VolumeSlider/VolumeSlider";
-import { countPosition } from "@/lib/services/utils/interfaceFunctions";
+import { countPosition } from "@/lib/common/utils/interfaceFunctions";
 import PauseIcon from "@/components/icons/PauseIcon";
 import PlayIcon from "@/components/icons/PlayIcon";
 import LeftIcon from "@/components/icons/LeftIcon";

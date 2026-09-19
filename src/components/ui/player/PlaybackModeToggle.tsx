@@ -4,7 +4,7 @@ import RepeatOneIcon from "@/components/icons/player/RepeatOneIcon";
 import ShuffleIcon from "@/components/icons/player/ShuffleIcon";
 import { useListeningRoom } from "@/lib";
 import { useState } from "react";
-import { roomService } from "@/lib/services/room";
+import { roomService } from "@/lib/old/services/room";
 
 export enum PlaybackMode {
     NORMAL = "NORMAL",

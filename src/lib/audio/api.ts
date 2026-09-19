@@ -1,7 +1,7 @@
 import axios, { AxiosProgressEvent } from "axios";
-import { apiFetch, apiFetchJson } from "../utils/apiClient";
+import { apiFetch, apiFetchJson } from "@/lib/common/utils/apiClient";
 import { API_BASE } from "@/config";
-import { IAudioUpdate } from "@/lib/types";
+import { IAudioUpdate } from "@/lib/audio/audioTypes";
 
 export const loadAudioInfo = (entryId: number) => apiFetchJson(`/audio/${entryId}/info`)
 export const loadLibrary = () => apiFetchJson("/audio/library")

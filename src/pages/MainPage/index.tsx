@@ -6,7 +6,7 @@ import clsx from "clsx";
 import DoorIcon from "@/components/icons/DoorIcon";
 import CirclePlusIcon from "@/components/icons/CirclePlusIcon";
 import MusicNoteIcon from "@/components/icons/MusicNoteIcon";
-import { roomService } from "@/lib/services/room";
+import { roomService } from "@/lib/old/services/room";
 import UserGroupIcon from "@/components/icons/UserGroupIcon";
 import DiscIcon from "@/components/icons/DiscIcon";
 import JoinRoomModal from "@/components/pages/main/JoinRoomModal/JoinRoomModal";

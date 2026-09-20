@@ -18,8 +18,8 @@ const Audio = () => {
         paused, updateMessage, 
         fullPlayerOpen, audioInfo,
         setFullPlayerOpen, pausePlayback,
-        togglePlay, 
-        bufferedRanges, seek
+        togglePlay, seek,
+        bufferedRanges, pendingSeekPositionRef
     } = useListeningRoom();
 
     const debounceTimeoutRef = useRef<number | null>(null);
@@ -31,21 +31,25 @@ const Audio = () => {
         console.log("handleSeek")
 
         const newTime = Number(e.target.value);
-        pausePlayback();
-
         console.log("handleSeek:", newTime)
-        setLocalPosition(newTime);
 
-        // отменяем предыдущий таймаут, если был
-        if (debounceTimeoutRef.current) {
-            clearTimeout(debounceTimeoutRef.current);
+        try {
+            pausePlayback();
+        } finally {
+            pendingSeekPositionRef.current = newTime
+            setLocalPosition(newTime);
+
+            // отменяем предыдущий таймаут, если был
+            if (debounceTimeoutRef.current) {
+                clearTimeout(debounceTimeoutRef.current);
+            }
+
+            // ставим новый таймаут на 300 мс
+            debounceTimeoutRef.current = setTimeout(() => {
+                seek(newTime);
+                debounceTimeoutRef.current = null;
+            }, 100);
         }
-
-        // ставим новый таймаут на 300 мс
-        debounceTimeoutRef.current = setTimeout(() => {
-            seek(newTime);
-            debounceTimeoutRef.current = null;
-        }, 100);
     };
 
     const headerRef = useRef<HTMLDivElement | null>(null);

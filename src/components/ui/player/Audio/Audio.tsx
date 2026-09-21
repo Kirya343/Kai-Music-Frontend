@@ -19,12 +19,10 @@ const Audio = () => {
         fullPlayerOpen, audioInfo,
         setFullPlayerOpen, pausePlayback,
         togglePlay, seek,
-        bufferedRanges, pendingSeekPositionRef
+        bufferedRanges, unsyncedPositionRef
     } = useListeningRoom();
 
     const debounceTimeoutRef = useRef<number | null>(null);
-
-    //useEffect(() => {console.log("localPosition", localPosition)}, [localPosition])
 
     const handleSeek = (e: React.ChangeEvent<HTMLInputElement>) => {
 
@@ -36,7 +34,7 @@ const Audio = () => {
         try {
             pausePlayback();
         } finally {
-            pendingSeekPositionRef.current = newTime
+            unsyncedPositionRef.current = newTime
             setLocalPosition(newTime);
 
             // отменяем предыдущий таймаут, если был

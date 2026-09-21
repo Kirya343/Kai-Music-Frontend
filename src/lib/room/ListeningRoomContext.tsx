@@ -28,7 +28,7 @@ interface ListeningRoomContextType {
     sendUserUpdate: (position: number, pausedState: boolean) => void;
     bufferedRanges: TimeRange[] | null;
     pausePlayback: () => void;
-    pendingSeekPositionRef: React.RefObject<number | null>;
+    unsyncedPositionRef: React.RefObject<number | null>;
     seek: (position: number) => void
 }
 
@@ -58,8 +58,7 @@ export const ListeningRoomProvider = ({ children }: { children?: React.ReactNode
 
     const [roomLoaded, setRoomLoaded] = useState<boolean>(true);
     const duration = Number(audioInfo?.duration);
-    const syncedPositionRef = useRef<number | null>(null);
-    const pendingSeekPositionRef = useRef<number | null>(null);
+    const unsyncedPositionRef = useRef<number | null>(null);
 
     // info
     const [updateMessage, setUpdateMessage] = useState<string>("");
@@ -97,54 +96,21 @@ export const ListeningRoomProvider = ({ children }: { children?: React.ReactNode
 
         console.log("устанавливаем setLocalPosition на playbackState.position")
         setLocalPosition(playbackState.position);
-
-        /* if (playbackState.pause) {
-            pausePlayback();
-            setPaused(true);
-        } else {
-            resumePlayback();
-            setPaused(false);
-        } */
+        unsyncedPositionRef.current = playbackState.position;
+        setPaused(playbackState.pause);
 
         writeUpdateMessage(playbackState)
     }, [playbackState]);
 
     useEffect(() => {
         const audio = audioRef.current;
+        const position = unsyncedPositionRef.current;
 
-        if (!audio || !bufferedRanges || !playbackState) {
+        if (!audio || !bufferedRanges || !playbackState || position === null) {
             return;
         }
 
-        const pendingSeek = pendingSeekPositionRef.current;
-
-        if (pendingSeek !== null) {
-            const isBuffered = bufferedRanges.some(
-                range =>
-                    pendingSeek >= range.start &&
-                    pendingSeek <= range.end
-            );
-
-            if (!isBuffered) {
-                return;
-            }
-
-            console.log("Seek position buffered:", pendingSeek);
-
-            audio.currentTime = pendingSeek;
-
-            pendingSeekPositionRef.current = null;
-
-            if (!playbackState.pause) {
-                audio.play();
-            }
-
-            return;
-        }
-
-        const position = playbackState.position;
-
-        if (syncedPositionRef.current === position) {
+        if (position === null) {
             return;
         }
 
@@ -159,9 +125,10 @@ export const ListeningRoomProvider = ({ children }: { children?: React.ReactNode
         }
 
         audio.currentTime = position;
-        syncedPositionRef.current = position;
+        unsyncedPositionRef.current = null;
 
         if (!playbackState.pause) {
+            setPaused(false)
             audio.play();
         }
     }, [bufferedRanges, playbackState]);
@@ -173,7 +140,7 @@ export const ListeningRoomProvider = ({ children }: { children?: React.ReactNode
         if (!audio) return;
 
         const handleTimeUpdate = () => {
-            if (pendingSeekPositionRef.current !== null) {
+            if (unsyncedPositionRef.current !== null) {
                 return;
             }
             setLocalPosition(audio.currentTime);
@@ -195,10 +162,18 @@ export const ListeningRoomProvider = ({ children }: { children?: React.ReactNode
     // Play / Pause кнопка
     const togglePlay = useCallback(() => {
 
-        sendUserUpdate(localPosition, !paused);
+        const newPaused = !paused
+
+        if (newPaused) {
+            pausePlayback()
+        }
+
+        sendUserUpdate(localPosition, newPaused);
     }, [localPosition, paused, sendUserUpdate]);
 
     const seek = useCallback((position: number) => {
+
+        console.log("paused", paused, "position", position)
         if (playbackState) {
             updateTrackPosition(
                 playbackState.entryId,
@@ -234,7 +209,7 @@ export const ListeningRoomProvider = ({ children }: { children?: React.ReactNode
             playNext, playPrev,
             audioRef, togglePlay,
             sendUserUpdate, bufferedRanges,
-            pausePlayback, pendingSeekPositionRef,
+            pausePlayback, unsyncedPositionRef,
             seek
         }}>
             {children}

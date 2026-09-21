@@ -21,7 +21,7 @@ const MainPage = () => {
     const navigate = useNavigate()
 
     useEffect(() => {
-        async function loadRooms() {
+        async function loadPage() {
             const data = await roomService.getRoomsPage();
             setRooms(data.publicRooms)
             setStat({
@@ -30,7 +30,7 @@ const MainPage = () => {
             })
         }
 
-        loadRooms()
+        loadPage()
     }, [])
 
     const createRoom = async () => {

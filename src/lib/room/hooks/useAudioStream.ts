@@ -1,9 +1,6 @@
 import { AudioChunk } from '@audio';
 import { useCallback, useRef } from 'react';
 import { useMediaResource } from './stream/useMediaResource';
-import debug from "debug"
-
-const log = debug("useAudioStream")
 
 export const useAudioStream = () => {
 
@@ -56,7 +53,7 @@ export const useAudioStream = () => {
         if (waitingForFirstChunkRef.current) {
             waitingForFirstChunkRef.current = false;
 
-            log(
+            console.log(
                 'Первый chunk после playbackState:',
                 chunk.sequence
             );
@@ -69,7 +66,7 @@ export const useAudioStream = () => {
                 nextExpectedSequenceRef.current !== null &&
                 chunk.sequence !== nextExpectedSequenceRef.current
             ) {
-                log(
+                console.log(
                     'Ожидаем sequence:',
                     nextExpectedSequenceRef.current,
                     'но получили:',
@@ -83,11 +80,11 @@ export const useAudioStream = () => {
 
         if (appendChunk(chunk)) {
 
-            log('Добавляем media chunk:', chunk.sequence);
+            console.log('Добавляем media chunk:', chunk.sequence);
 
             nextExpectedSequenceRef.current = chunk.sequence + 1;
         } else {
-            log(`Ошибка добавления M4A чанка #${chunk.sequence}:`);
+            console.error(`Ошибка добавления M4A чанка #${chunk.sequence}:`);
 
             queueRef.current.unshift(chunk);
         }
@@ -124,7 +121,7 @@ export const useAudioStream = () => {
 
     const handleInitializationChunk = useCallback(
         (chunk: AudioChunk) => {
-            log("Получен initialization chunk, начинаем новый media resource");
+            console.log("Получен initialization chunk, начинаем новый media resource");
 
             startNewStream();
 
@@ -147,7 +144,7 @@ export const useAudioStream = () => {
      */
     const handleAudioChunk = useCallback(
         (chunk: AudioChunk) => {
-            log(`Получен ${chunk.initialization ? "init" : "media"} chunk: ${chunk.sequence}`);
+            console.log(`Получен ${chunk.initialization ? "init" : "media"} chunk: ${chunk.sequence}`);
 
             if (chunk.initialization) {
                 handleInitializationChunk(chunk);

@@ -23,3 +23,5 @@ export const updateAudio = (audioId: number, audio: IAudioUpdate) =>
             headers: { "Content-Type": "application/json" }, 
             body: JSON.stringify(audio)
         }, {})
+
+export const deleteAudio = (audioId: number) => apiFetch(`/audio/${audioId}`, { method: "DELETE" })

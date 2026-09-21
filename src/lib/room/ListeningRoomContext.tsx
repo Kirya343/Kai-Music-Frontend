@@ -87,9 +87,7 @@ export const ListeningRoomProvider = ({ children }: { children?: React.ReactNode
     
     // Обновление позиции и паузы от сервера
     useEffect(() => {
-        const audio = audioRef.current;
-        
-        if (!playbackState || !audio) return;
+        if (!playbackState) return;
 
         startNewPlaybackStream();
         setCurrentAudioId(playbackState.entryId);
@@ -128,8 +126,9 @@ export const ListeningRoomProvider = ({ children }: { children?: React.ReactNode
         unsyncedPositionRef.current = null;
 
         if (!playbackState.pause) {
+            console.log("start playing")
             setPaused(false)
-            audio.play();
+            resumePlayback();
         }
     }, [bufferedRanges, playbackState]);
 
@@ -141,6 +140,7 @@ export const ListeningRoomProvider = ({ children }: { children?: React.ReactNode
 
         const handleTimeUpdate = () => {
             if (unsyncedPositionRef.current !== null) {
+                console.log("unsyncedPositionRef.current", unsyncedPositionRef.current)
                 return;
             }
             setLocalPosition(audio.currentTime);

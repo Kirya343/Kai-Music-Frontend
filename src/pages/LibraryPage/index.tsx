@@ -13,6 +13,7 @@ import MusicNoteIcon from "@/components/icons/MusicNoteIcon";
 import { countPosition } from "@common";
 import Loader from "@/components/ui/Loader/Loader";
 import AudioFileModal from "@/components/pages/library/AudioFileModal/AudioFileModal";
+import TrashIcon from "@/components/icons/TrashIcon";
 
 interface IUploadingAudio {
     file: File;
@@ -49,6 +50,19 @@ const LibraryPage = () => {
             setAudioFileView(audio || null)
         }
     };
+
+    const handleDelete = async (audio: IAudio) => {
+        const success = confirm(`Ary you sure deleting audio ${audio.name}`)
+
+        if (success) {
+            try {
+                await audioService.deleteAudio(audio.id)
+                audios?.filter(a => a.id == audio.id);
+            } catch (e) {
+                console.error(e)
+            }
+        }
+    }
 
     const { addToQueue } = useListeningRoom();
 
@@ -191,6 +205,8 @@ const LibraryPage = () => {
                                     {audio?.duration && (<>{countPosition(audio?.duration)}</>)}
                                 </span>
                             </div>
+
+                            <button onClick={() => handleDelete(audio)}><TrashIcon/></button>
                         </div>
                     ))}
                 </div>

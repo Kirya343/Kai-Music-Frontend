@@ -1,8 +1,5 @@
 import { useCallback, useRef } from "react";
 import { useAudioBuffer } from "./useAudioBuffer";
-import debug from "debug"
-
-const log = debug("room:audio")
 
 export const useMediaResource = (processQueueRef: React.RefObject<() => void>) => {
 
@@ -25,7 +22,7 @@ export const useMediaResource = (processQueueRef: React.RefObject<() => void>) =
         const audio = new Audio();
         const mediaSource = new MediaSource();
 
-        audio.autoplay = true;
+        audio.autoplay = false;
         audio.controls = false;
 
         const objectUrl = URL.createObjectURL(mediaSource);
@@ -37,7 +34,7 @@ export const useMediaResource = (processQueueRef: React.RefObject<() => void>) =
         objectUrlRef.current = objectUrl;
 
         mediaSource.addEventListener('sourceopen', () => {
-            log('MediaSource opened');
+            console.log('MediaSource opened');
 
             if (!sourceBufferRef.current) {
                 const sourceBuffer = mediaSource.addSourceBuffer(
@@ -52,7 +49,7 @@ export const useMediaResource = (processQueueRef: React.RefObject<() => void>) =
                 });
 
                 sourceBuffer.addEventListener('error', event => {
-                    log(
+                    console.log(
                         'SourceBuffer error:',
                         event
                     );
@@ -60,7 +57,7 @@ export const useMediaResource = (processQueueRef: React.RefObject<() => void>) =
             }
 
             mediaSource.addEventListener('error', event => {
-                log(
+                console.log(
                     'MediaSource error:',
                     event
                 );
@@ -71,7 +68,7 @@ export const useMediaResource = (processQueueRef: React.RefObject<() => void>) =
     }, [updateBufferedRanges]);
 
     const cleanupAudio = useCallback(() => {
-        log("Очищаем playback")
+        console.log("Очищаем playback")
 
         const audio = audioRef.current;
 
@@ -121,7 +118,7 @@ export const useMediaResource = (processQueueRef: React.RefObject<() => void>) =
                 return;
             }
 
-            log(
+            console.log(
                 'Ошибка запуска audio:',
                 error
             );

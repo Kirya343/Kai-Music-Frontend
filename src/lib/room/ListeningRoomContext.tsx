@@ -50,23 +50,23 @@ export const ListeningRoomProvider = ({ children }: { children?: React.ReactNode
             addToQueue, removeFromQueue, 
             loadRoom, setAudioChunkHandler 
     } = useListeningRoomWS();
+
     const { handleAudioChunk, 
         resumePlayback, pausePlayback, 
         audioRef, bufferedRanges,
-        startNewPlaybackStream
+        startNewPlaybackStream,
+
+        currentAudioId, paused, localPosition,
+        updateLocalPlayback, setPaused, setLocalPosition,
+
+        unsyncedPositionRef
     } = useAudioStream();
 
     const [roomLoaded, setRoomLoaded] = useState<boolean>(true);
     const duration = Number(audioInfo?.duration);
-    const unsyncedPositionRef = useRef<number | null>(null);
 
     // info
     const [updateMessage, setUpdateMessage] = useState<string>("");
-
-    // audio state
-    const [paused, setPaused] = useState(true);
-    const [currentAudioId, setCurrentAudioId] = useState<number | null>(null);
-    const [localPosition, setLocalPosition] = useState<number>(0);
 
     // ui
     const [fullPlayerOpen, setFullPlayerOpen] = useState<boolean>(false);
@@ -90,12 +90,9 @@ export const ListeningRoomProvider = ({ children }: { children?: React.ReactNode
         if (!playbackState) return;
 
         startNewPlaybackStream();
-        setCurrentAudioId(playbackState.entryId);
+        updateLocalPlayback(playbackState);
 
-        console.log("устанавливаем setLocalPosition на playbackState.position")
-        setLocalPosition(playbackState.position);
         unsyncedPositionRef.current = playbackState.position;
-        setPaused(playbackState.pause);
 
         writeUpdateMessage(playbackState)
     }, [playbackState]);
@@ -131,26 +128,6 @@ export const ListeningRoomProvider = ({ children }: { children?: React.ReactNode
             resumePlayback();
         }
     }, [bufferedRanges, playbackState]);
-
-    // События пользователя
-    useEffect(() => {
-        const audio = audioRef.current;
-
-        if (!audio) return;
-
-        const handleTimeUpdate = () => {
-            if (unsyncedPositionRef.current !== null) {
-                console.log("unsyncedPositionRef.current", unsyncedPositionRef.current)
-                return;
-            }
-            setLocalPosition(audio.currentTime);
-        }
-        audio.addEventListener("timeupdate", handleTimeUpdate);
-
-        return () => {
-            audio.removeEventListener("timeupdate", handleTimeUpdate);
-        };
-    }, [playbackState, updateTrackPosition, paused]);
 
     const sendUserUpdate = useCallback((position: number, pausedState: boolean) => {
         console.log(`Отправляем апдейт на position: ${position}, paused: ${pausedState}, entryId: ${playbackState?.entryId}`);

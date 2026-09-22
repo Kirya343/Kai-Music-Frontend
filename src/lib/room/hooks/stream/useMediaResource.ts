@@ -1,5 +1,6 @@
-import { useCallback, useRef } from "react";
+import { useCallback, useRef, useState } from "react";
 import { useAudioBuffer } from "./useAudioBuffer";
+import { IPlaybackState } from "@room/roomTypes";
 
 export const useMediaResource = (processQueueRef: React.RefObject<() => void>) => {
 
@@ -13,6 +14,13 @@ export const useMediaResource = (processQueueRef: React.RefObject<() => void>) =
     const audioRef = useRef<HTMLAudioElement | null>(null);
     const mediaSourceRef = useRef<MediaSource | null>(null);
     const objectUrlRef = useRef<string | null>(null);
+
+    // audio state
+    const [paused, setPaused] = useState(true);
+    const [currentAudioId, setCurrentAudioId] = useState<number | null>(null);
+    const [localPosition, setLocalPosition] = useState<number>(0);
+
+    const unsyncedPositionRef = useRef<number | null>(null);
 
     const initMediaSource = useCallback(() => {
         if (mediaSourceRef.current) {
@@ -65,6 +73,8 @@ export const useMediaResource = (processQueueRef: React.RefObject<() => void>) =
 
             processInitializationChunk();
         });
+
+        addEventListener();
     }, [updateBufferedRanges]);
 
     const cleanupAudio = useCallback(() => {
@@ -125,6 +135,35 @@ export const useMediaResource = (processQueueRef: React.RefObject<() => void>) =
         }
     }, []);
 
+    const updateLocalPlayback = useCallback((playbackState: IPlaybackState) => {
+
+        console.log("устанавливаем setLocalPosition на playbackState.position")
+
+        setCurrentAudioId(playbackState.entryId);
+        setLocalPosition(playbackState.position);
+        setPaused(playbackState.pause);
+    }, [])
+
+    // События пользователя
+    const addEventListener = useCallback(() => {
+        const audio = audioRef.current;
+
+        if (!audio) return;
+
+        const handleTimeUpdate = () => {
+            if (unsyncedPositionRef.current !== null) {
+                console.log("unsyncedPositionRef.current", unsyncedPositionRef.current)
+                return;
+            }
+            setLocalPosition(audio.currentTime);
+        }
+        audio.addEventListener("timeupdate", handleTimeUpdate);
+
+        return () => {
+            audio.removeEventListener("timeupdate", handleTimeUpdate);
+        };
+    }, [setLocalPosition]);
+
     return {
         audioRef,
         mediaSourceRef,
@@ -135,6 +174,11 @@ export const useMediaResource = (processQueueRef: React.RefObject<() => void>) =
         appendChunk,
         processInitializationChunk,
         sourceBufferRef, 
-        bufferedRanges
+        bufferedRanges,
+
+        currentAudioId, paused, localPosition,
+        updateLocalPlayback, setPaused, setLocalPosition,
+
+        unsyncedPositionRef
     }
 }

@@ -17,7 +17,12 @@ export const useAudioStream = () => {
         cleanupAudio, initMediaSource,
         resumePlayback, pausePlayback,
         appendChunk, processInitializationChunk,
-        sourceBufferRef, bufferedRanges
+        sourceBufferRef, bufferedRanges,
+
+        currentAudioId, paused, localPosition,
+        updateLocalPlayback, setPaused, setLocalPosition,
+        
+        unsyncedPositionRef
     } = useMediaResource(processQueueRef);
 
     const processQueue = useCallback(() => {
@@ -164,6 +169,11 @@ export const useAudioStream = () => {
         resumePlayback,
         audioRef,
         bufferedRanges,
-        startNewPlaybackStream
+        startNewPlaybackStream,
+
+        currentAudioId, paused, localPosition,
+        updateLocalPlayback, setPaused, setLocalPosition,
+
+        unsyncedPositionRef
     };
 };

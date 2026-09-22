@@ -49,6 +49,22 @@ export const useListeningRoomWS = () => {
         client.publish({ destination: `/app/room/${room?.id}/prev` });
     }
 
+    const addToQueue = useCallback((audioId: number) => {
+        console.log("попытка переключить песню вперёд")
+
+        if (!client) return;
+
+        client.publish({ destination: `/app/room/queue.add`, body: JSON.stringify(audioId) });
+    }, [client])
+
+    const removeFromQueue = useCallback((queueItemId: number) => {
+        console.log("попытка переключить песню вперёд")
+
+        if (!client) return;
+
+        client.publish({ destination: `/app/room/queue.remove`, body: JSON.stringify(queueItemId) });
+    }, [client])
+
     const loadRoom = useCallback(async() => {
         console.log("загружаем комнату")
 
@@ -56,33 +72,6 @@ export const useListeningRoomWS = () => {
 
         client.publish({ destination: `/app/room/load` });
     }, [client])
-
-    const addToQueue = useCallback(async (audioId: number) => {
-        if (!room) return;
-        const data = await roomService.addToQueue(room.id, audioId);
-        
-        setRoom(p => {
-            if (!p) return p;
-            return {
-                ...p,
-                queue: [...p.queue, data]
-            };
-        });
-    }, [room, setAudioInfo, setRoom])
-
-    const removeFromQueue = useCallback(async (queueItemId: number) => {
-        if (!room) return;
-        
-        await roomService.removeFromQueue(room.id, queueItemId);
-
-        setRoom(p => {
-            if (!p) return p;
-            return {
-                ...p,
-                queue: [...p.queue.filter(qi => qi.id != queueItemId)]
-            };
-        });
-    }, [room])
 
     const setAudioChunkHandler = useCallback(
         (handler: (chunk: AudioChunk) => void) => {

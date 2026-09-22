@@ -1,12 +1,9 @@
 import { PlaybackMode } from "@/components/ui/player/PlaybackModeToggle";
 import { apiFetch, apiFetchJson } from "@common";
-import { IRoomUpdate } from "@audio";
+import { IRoomUpdate } from "@room";
 
 export const loadCurrentRoom = () => apiFetchJson("/room")
 export const setRoomPlaybackMode = (roomId: number, mode: PlaybackMode) => apiFetch(`/room/${roomId}/mode`, {method: "PATCH"}, {mode})
-
-export const addToQueue = (roomId: number, audioId: number) => apiFetchJson(`/room/${roomId}/queue`, {method: "PATCH"}, {audioId})
-export const removeFromQueue = (roomId: number, queueItemId: number) => apiFetch(`/room/${roomId}/queue`, {method: "DELETE"}, {queueItemId})
 
 export const getCurrentRoomState = (roomId: number) => apiFetchJson(`/room/${roomId}/playback-state`);
 export const getRoomsPage = () => apiFetchJson(`/room/list/page`)

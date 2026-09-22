@@ -48,7 +48,7 @@ export const ListeningRoomProvider = ({ children }: { children?: React.ReactNode
             playNext, playPrev, 
             audioInfo, room, 
             addToQueue, removeFromQueue, 
-            loadRoom, setAudioChunkHandler 
+            loadRoom, setAudioChunkHandler,
     } = useListeningRoomWS();
 
     const { handleAudioChunk, 

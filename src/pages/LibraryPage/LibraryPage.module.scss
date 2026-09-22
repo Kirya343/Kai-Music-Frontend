@@ -3,6 +3,7 @@
 .library {
     display: flex;
     flex-direction: column;
+    flex: 1;
     gap: 0.5rem;
     position: relative;
 
@@ -72,15 +73,23 @@
 
     border: 1px solid;
     border-radius: 10px;
+    gap: 1rem;
+    justify-content: space-between;
     padding: 10px;
-    gap: 0.7rem;
 
     @include glass(true);
+
+    .body {
+        display: flex;
+        gap: 0.7rem;
+        overflow: hidden;
+    }
 
     .meta {
         display: flex;
         flex-direction: column;
         gap: 1px;
+        overflow: hidden;
     }
 
     .audioCover {
@@ -107,6 +116,9 @@
 
     .name {
         font-size: 0.9rem;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
     }
 
     .artist {
@@ -118,11 +130,37 @@
         font-size: 0.8rem;
         color: var(--text-color-l1);
     }
+
+    .actions {
+        height: 100%;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+
+        button {
+
+            border: 1px solid;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 5px;
+
+            @include glass;
+        }
+    }
+}
+
+.uploadingStat {
+    display: flex;
+    gap: 1rem;
 }
 
 .uploadingList {
     display: flex;
     flex-direction: column;
+    max-height: 150px;
+
 }
 
 .uploadItem {

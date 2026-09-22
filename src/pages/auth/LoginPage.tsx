@@ -1,4 +1,4 @@
-import { apiFetchJson, apiFetchJsonDebug } from "@/lib"
+import { apiFetchJson } from "@common"
 import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import clsx from "clsx";

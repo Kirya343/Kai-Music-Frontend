@@ -1,4 +1,4 @@
-import { useListeningRoom } from "@/lib";
+import { useListeningRoom } from "@room";
 import { useEffect, useRef } from "react";
 
 import styles from "./AudioPlayerOpener.module.scss"

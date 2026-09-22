@@ -1,6 +1,6 @@
-import { IAudio, useListeningRoom } from "@/lib";
-import { audioService } from "@/lib/services/audio";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useListeningRoom } from "@room";
+import { audioService, IAudio } from "@audio";
+import { useCallback, useEffect, useState } from "react";
 import styles from "./LibraryPage.module.scss"
 import CirclePlusIcon from "@/components/icons/CirclePlusIcon";
 import PlaylistIcon from "@/components/icons/PlaylistIcon";
@@ -10,9 +10,12 @@ import CheckmarkIcon from "@/components/icons/CheckmarkIcon";
 import CrossIcon from "@/components/icons/CrossIcon";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import MusicNoteIcon from "@/components/icons/MusicNoteIcon";
-import { countPosition } from "@/lib/services/utils/interfaceFunctions";
+import { countPosition } from "@common";
 import Loader from "@/components/ui/Loader/Loader";
 import AudioFileModal from "@/components/pages/library/AudioFileModal/AudioFileModal";
+import TrashIcon from "@/components/icons/TrashIcon";
+import AudioPlayerOpener from "@/components/ui/player/AudioPlayerOpener/AudioPlayerOpener";
+import PenIcon from "@/components/icons/PenIcon";
 
 interface IUploadingAudio {
     file: File;
@@ -32,6 +35,8 @@ const LibraryPage = () => {
     const roomId = searchParams.get("roomId");
     const navigate = useNavigate()
 
+    const { roomLoaded } = useListeningRoom();
+
     useEffect(() => {
         if (roomId) setRoomTopUpMode(true);
     }, [roomId]);
@@ -46,9 +51,21 @@ const LibraryPage = () => {
         } else {
             const audio = audios?.find(a => a.id == id);
             console.log("audio для просмотра: ", audio)
-            setAudioFileView(audio || null)
         }
     };
+
+    const handleDelete = async (audio: IAudio) => {
+        const success = confirm(`Ary you sure deleting audio ${audio.name}`)
+
+        if (success) {
+            try {
+                await audioService.deleteAudio(audio.id)
+                audios?.filter(a => a.id == audio.id);
+            } catch (e) {
+                console.error(e)
+            }
+        }
+    }
 
     const { addToQueue } = useListeningRoom();
 
@@ -77,10 +94,11 @@ const LibraryPage = () => {
 
         if (!files) return;
 
-        const fileArray: File[] = Array.from(files);
+        const fileList = Array.from(files);
 
-        for (const file of fileArray) {
+        let identifiedList: { id: string, file: File}[] = [];
 
+        for (const file of fileList) {
             const uploadId = `${file.name}-${Date.now()}`;
 
             setUploading(prev => [
@@ -91,6 +109,13 @@ const LibraryPage = () => {
                     progress: 0
                 }
             ]);
+
+            identifiedList.push({id: uploadId, file})
+        }
+
+        for (const fileItem of identifiedList) {
+
+            const file = fileItem.file;
 
             const formData = new FormData();
             formData.append("file", file);
@@ -105,7 +130,7 @@ const LibraryPage = () => {
 
                     setUploading(prev =>
                         prev.map(item =>
-                            item.id === uploadId
+                            item.id === fileItem.id
                                 ? {
                                     ...item,
                                     progress: percent,
@@ -118,7 +143,7 @@ const LibraryPage = () => {
             } catch (error) {
                 setUploading(prev =>
                     prev.map(item =>
-                        item.id === uploadId
+                        item.id === fileItem.id
                             ? { ...item, success: false }
                             : item
                     )
@@ -133,110 +158,132 @@ const LibraryPage = () => {
     };
 
     return (
-        <div className={styles.library}>
-            <h1 className={styles.header}>Библиотека треков</h1>
-            <div className={styles.topPanel}>
-                <label htmlFor="uploadAudio" className={styles.action}>
-                    <CirclePlusIcon solid />
-                    <span className={styles.subtitle}>Upload new</span>
-                </label>
-                <button className={styles.action}>
-                    <PlaylistIcon />
-                    <span className={styles.subtitle}>Playlists</span>
-                </button>
-                <button className={styles.action}>
-                    <HeartIcon filled={false}/>
-                    <span className={styles.subtitle}>Favorite</span>
-                </button>
-            </div>
-
-            <div className={styles.uploadingList}>
-                {uploading.map(item => (
-                    <div key={item.id} className={styles.uploadItem}>
-                        <div className={styles.progressBar} style={{ width: `${item.progress}%` }}/>
-                        <span>{item.file.name}</span>
-                        <span className={styles.percent}>{item.progress}%</span>
-                        {item.success && <CheckmarkIcon className={`${styles.status} ${styles.success}`} />}
-                        {item.success === false && <CrossIcon className={`${styles.status} ${styles.error}`} />}
-                    </div>
-                ))}
-            </div>
-
-            <Loader loadingActive={!audios}>
-                <div className={styles.trackList}>
-                    {audios?.map(audio => (
-                        <div 
-                            key={audio.id} 
-                            className={styles.track} 
-                            onClick={() => handleClick(audio.id)}
-                        >
-                            {roomTopUpMode && (
-                                <input
-                                    type="checkbox"
-                                    checked={selectedTracks.includes(audio.id)}
-                                    readOnly
-                                />
-                            )}
-
-                            <div className={styles.audioCover}>
-                                <MusicNoteIcon/>
-                            </div>
-
-                            <div className={styles.meta}>
-                                <span className={styles.id}>#{audio.id}</span>
-                                <span className={styles.name}>{audio?.title ?? audio?.name}</span>
-                                <span className={styles.artist}>{audio?.artist || "Unknown artist"}</span>
-                                <span className={styles.info}>
-                                    {audio?.album && (<>{audio?.album} • </>)}
-                                    {audio?.duration && (<>{countPosition(audio?.duration)}</>)}
-                                </span>
-                            </div>
-                        </div>
-                    ))}
+        <>
+            <div className={styles.library}>
+                <h1 className={styles.header}>Библиотека треков</h1>
+                <div className={styles.topPanel}>
+                    <label htmlFor="uploadAudio" className={styles.action}>
+                        <CirclePlusIcon solid />
+                        <span className={styles.subtitle}>Upload new</span>
+                    </label>
+                    <button className={styles.action}>
+                        <PlaylistIcon />
+                        <span className={styles.subtitle}>Playlists</span>
+                    </button>
+                    <button className={styles.action}>
+                        <HeartIcon filled={false}/>
+                        <span className={styles.subtitle}>Favorite</span>
+                    </button>
                 </div>
-            </Loader>
 
-            {roomTopUpMode && selectedTracks.length > 0 && (
-                <div className={styles.roomTopUpActions}>
-                    {roomId && (
+                {uploading.length > 0 && (
+                    <>
+                        <div className={styles.uploadingStat}>
+                            <span>Uploaded: <strong>{uploading.filter(a => a.progress == 100).length}/{uploading.length}</strong></span>
+                            <span>||</span>
+                            <span>Success: <strong>{uploading.filter(a => a.success && a.progress == 100).length}</strong></span>
+                            <span>||</span>
+                            <span>Failed: <strong>{uploading.filter(a => !a.success && a.progress == 100).length}</strong></span>
+                        </div>
+                        <div className={styles.uploadingList}>
+                            {uploading.map(item => (
+                                <div key={item.id} className={styles.uploadItem}>
+                                    <div className={styles.progressBar} style={{ width: `${item.progress}%` }}/>
+                                    <span>{item.file.name}</span>
+                                    <span className={styles.percent}>{item.progress}%</span>
+                                    {item.success && <CheckmarkIcon className={`${styles.status} ${styles.success}`} />}
+                                    {item.success === false && <CrossIcon className={`${styles.status} ${styles.error}`} />}
+                                </div>
+                            ))}
+                        </div>
+                    </>
+                )}
+
+                <Loader loadingActive={!audios}>
+                    <div className={styles.trackList}>
+                        {audios?.map(audio => (
+                            <div 
+                                key={audio.id} 
+                                className={styles.track} 
+                                onClick={() => handleClick(audio.id)}
+                            >
+                                <div className={styles.body}>
+                                    {roomTopUpMode && (
+                                        <input
+                                            type="checkbox"
+                                            checked={selectedTracks.includes(audio.id)}
+                                            readOnly
+                                        />
+                                    )}
+
+                                    <div className={styles.audioCover}>
+                                        <MusicNoteIcon/>
+                                    </div>
+
+                                    <div className={styles.meta}>
+                                        <span className={styles.id}>#{audio.id}</span>
+                                        <span className={styles.name}>{audio?.title ?? audio?.name}</span>
+                                        <span className={styles.artist}>{audio?.artist || "Unknown artist"}</span>
+                                        <span className={styles.info}>
+                                            {audio?.album && (<>{audio?.album} • </>)}
+                                            {audio?.duration && (<>{countPosition(audio?.duration)}</>)}
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <div className={styles.actions}>
+                                    <button onClick={() => setAudioFileView(audio)}><PenIcon/></button>
+                                    <button onClick={() => handleDelete(audio)}><TrashIcon/></button>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </Loader>
+
+                {roomTopUpMode && selectedTracks.length > 0 && (
+                    <div className={styles.roomTopUpActions}>
+                        {roomId && (
+                            <button 
+                                onClick={addSelectedToRoom}
+                                className={styles.listAction}
+                            >
+                                Add to room #{roomId}
+                            </button>
+                        )}
+
                         <button 
-                            onClick={addSelectedToRoom}
+                            onClick={() => setSelectedTracks([])}
                             className={styles.listAction}
                         >
-                            Add to room #{roomId}
+                            Clean list
                         </button>
-                    )}
 
-                    <button 
-                        onClick={() => setSelectedTracks([])}
-                        className={styles.listAction}
-                    >
-                        Clean list
-                    </button>
+                        <button 
+                            onClick={() =>  {
+                                setRoomTopUpMode(false)
+                                setSelectedTracks([])
+                            }}
+                            className={styles.listAction}
+                        >
+                            Cancel
+                        </button>
+                    </div>
+                )}
 
-                    <button 
-                        onClick={() =>  {
-                            setRoomTopUpMode(false)
-                            setSelectedTracks([])
-                        }}
-                        className={styles.listAction}
-                    >
-                        Cancel
-                    </button>
-                </div>
-            )}
+                <input 
+                    type="file"
+                    accept="audio/*"
+                    id="uploadAudio"
+                    className={styles.uploadAudio}
+                    multiple
+                    onChange={handleAudioUpload}
+                />
 
-            <input 
-                type="file"
-                accept="audio/*"
-                id="uploadAudio"
-                className={styles.uploadAudio}
-                multiple
-                onChange={handleAudioUpload}
-            />
+                <AudioFileModal audioFile={audioFileView} setAudioFile={setAudioFileView} setAudios={setAudios}/>
+            </div>
 
-            <AudioFileModal audioFile={audioFileView} setAudioFile={setAudioFileView} setAudios={setAudios}/>
-        </div>
+            {roomLoaded && <AudioPlayerOpener />}
+        </>
     )
 }
 

@@ -1,12 +1,11 @@
 import styles from "./MainPage.module.scss";
-import { IShortRoom, useListeningRoom } from "@/lib";
+import { IShortRoom, useListeningRoom, roomService } from "@room";
 import { useEffect, useState } from "react";
 import AudioPlayerOpener from "@/components/ui/player/AudioPlayerOpener/AudioPlayerOpener";
 import clsx from "clsx";
 import DoorIcon from "@/components/icons/DoorIcon";
 import CirclePlusIcon from "@/components/icons/CirclePlusIcon";
 import MusicNoteIcon from "@/components/icons/MusicNoteIcon";
-import { roomService } from "@/lib/services/room";
 import UserGroupIcon from "@/components/icons/UserGroupIcon";
 import DiscIcon from "@/components/icons/DiscIcon";
 import JoinRoomModal from "@/components/pages/main/JoinRoomModal/JoinRoomModal";
@@ -22,7 +21,7 @@ const MainPage = () => {
     const navigate = useNavigate()
 
     useEffect(() => {
-        async function loadRooms() {
+        async function loadPage() {
             const data = await roomService.getRoomsPage();
             setRooms(data.publicRooms)
             setStat({
@@ -31,7 +30,7 @@ const MainPage = () => {
             })
         }
 
-        loadRooms()
+        loadPage()
     }, [])
 
     const createRoom = async () => {

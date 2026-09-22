@@ -1,9 +1,10 @@
 import { Link, NavLink, useNavigate } from "react-router-dom";
-import { useAuth, useListeningRoom } from "@/lib";
+import { useListeningRoom } from "@room";
 import styles from "./Header.module.scss"
 import DoorIcon from "@/components/icons/DoorIcon"
 import LibraryIcon from "@/components/icons/LibraryIcon"
 import UserIcon from "@/components/icons/UserIcon"
+import { useAuth } from "@/lib/auth";
 
 const Header = () => {
 

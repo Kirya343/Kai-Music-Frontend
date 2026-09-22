@@ -1,8 +1,8 @@
-import { IPlaybackState, useListeningRoom } from "@/lib";
-import React, { useEffect, useRef, useState } from "react";
+import { useListeningRoom } from "@room";
+import React, { useEffect, useRef } from "react";
 import { PlaybackModeToggle } from "../PlaybackModeToggle";
 import VolumeSlider from "../VolumeSlider/VolumeSlider";
-import { countPosition } from "@/lib/services/utils/interfaceFunctions";
+import { countPosition } from "@common";
 import PauseIcon from "@/components/icons/PauseIcon";
 import PlayIcon from "@/components/icons/PlayIcon";
 import LeftIcon from "@/components/icons/LeftIcon";
@@ -15,54 +15,39 @@ const Audio = () => {
     const { 
         localPosition, setLocalPosition, 
         playNext, playPrev, duration, 
-        paused, currentAudioId, 
-        audioInfo, fullPlayerOpen, 
-        setFullPlayerOpen, audioRef,
-        togglePlay, sendUserUpdate, 
-        playbackState
+        paused, updateMessage, 
+        fullPlayerOpen, audioInfo,
+        setFullPlayerOpen, pausePlayback,
+        togglePlay, seek,
+        bufferedRanges, unsyncedPositionRef
     } = useListeningRoom();
-
-    const [updateMessage, setUpdateMessage] = useState<string | null>(null);
-
-    useEffect(() => {
-        const writeUpdateMessage = (newState: IPlaybackState) => {
-
-            console.log(newState)
-            if (newState.entryId != currentAudioId) {
-                setUpdateMessage(`${newState.user} started playing track #${newState.entryId}`);
-            } else if (newState.pause != paused && newState.pause) {
-                setUpdateMessage(`${newState.user} paused the playback`);
-            } else if (newState.pause != paused && !newState.pause) {
-                setUpdateMessage(`${newState.user} resumed playback`);
-            } else if (newState.position != localPosition) {
-                setUpdateMessage(`${newState.user} seeked to ${countPosition(newState.position)}`);
-            }
-        }
-
-        if (playbackState) writeUpdateMessage(playbackState);
-    }, [playbackState])
 
     const debounceTimeoutRef = useRef<number | null>(null);
 
     const handleSeek = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const audio = audioRef.current;
-        if (!audio) return;
+
+        console.log("handleSeek")
 
         const newTime = Number(e.target.value);
-        audio.pause();
-        audio.currentTime = newTime;
-        setLocalPosition(newTime);
+        console.log("handleSeek:", newTime)
 
-        // отменяем предыдущий таймаут, если был
-        if (debounceTimeoutRef.current) {
-            clearTimeout(debounceTimeoutRef.current);
+        try {
+            pausePlayback();
+        } finally {
+            unsyncedPositionRef.current = newTime
+            setLocalPosition(newTime);
+
+            // отменяем предыдущий таймаут, если был
+            if (debounceTimeoutRef.current) {
+                clearTimeout(debounceTimeoutRef.current);
+            }
+
+            // ставим новый таймаут на 300 мс
+            debounceTimeoutRef.current = setTimeout(() => {
+                seek(newTime);
+                debounceTimeoutRef.current = null;
+            }, 100);
         }
-
-        // ставим новый таймаут на 300 мс
-        debounceTimeoutRef.current = setTimeout(() => {
-            sendUserUpdate(newTime, paused);
-            debounceTimeoutRef.current = null;
-        }, 300);
     };
 
     const headerRef = useRef<HTMLDivElement | null>(null);
@@ -83,7 +68,7 @@ const Audio = () => {
 
     return (
         <>
-            <VolumeSlider audioRef={audioRef} visible={false}/>
+            <VolumeSlider visible={false}/>
 
             {fullPlayerOpen && (
                 <div className={styles.audioPlayer}>
@@ -98,18 +83,45 @@ const Audio = () => {
                         </div>
                     </div>
                     <div className={styles.tracker}>
-                        <input
-                            type="range"
-                            min={0}
-                            max={duration}
-                            value={localPosition}
-                            onChange={handleSeek}
-                            style={{ width: "100%", background: `linear-gradient(to right, #ffffff ${(localPosition / duration) * 100}%, #444 ${(localPosition / duration) * 100}%)`}}
-                        />
-                        
+                        <div className={styles.progress}>
+                            <div className={styles.buffered}>
+                                {bufferedRanges?.map((range, index) => (
+                                    <div
+                                        key={index}
+                                        className={styles.bufferedRange}
+                                        style={{
+                                            left: `${(range.start / duration) * 100}%`,
+                                            width: `${((range.end - range.start) / duration) * 100}%`
+                                        }}
+                                    />
+                                ))}
+                            </div>
+
+                            <input
+                                type="range"
+                                min={0}
+                                max={duration}
+                                value={localPosition}
+                                onChange={handleSeek}
+                                style={{
+                                    width: "100%",
+                                    background: `linear-gradient(
+                                        to right,
+                                        #ffffff ${(localPosition / duration) * 100}%,
+                                        #00000000 ${(localPosition / duration) * 100}%
+                                    )`
+                                }}
+                            />
+                        </div>
+
                         <div className={styles.positionMeta}>
-                            <span className={styles.currentPosition}>{countPosition(localPosition)}</span>
-                            <span className={styles.duration}>{countPosition(duration)}</span>
+                            <span className={styles.currentPosition}>
+                                {countPosition(localPosition)}
+                            </span>
+
+                            <span className={styles.duration}>
+                                {countPosition(duration)}
+                            </span>
                         </div>
                     </div>
                     <div className={styles.navigation}>
@@ -125,8 +137,8 @@ const Audio = () => {
                         </button>
                         <button><PlusIcon/></button>
                     </div>
-                    <VolumeSlider audioRef={audioRef} />
-                    {updateMessage && <div className={styles.update} onDoubleClick={() => setUpdateMessage("")}>{updateMessage}</div>}
+                    <VolumeSlider />
+                    {updateMessage && <div className={styles.update}>{updateMessage}</div>}
                 </div>
             )}
         </>

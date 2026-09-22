@@ -1,14 +1,14 @@
 import { useRef, useState } from "react";
-import { IRoomUpdate, useListeningRoom, useWebSocket } from "@/lib";
+import { IRoomUpdate, useListeningRoom, roomService } from "@room";
 import { Link } from "react-router-dom";
 import PlayIcon from "@/components/icons/PlayIcon";
 import PauseIcon from "@/components/icons/PauseIcon";
 import styles from "./RoomPage.module.scss";
 import AudioPlayerOpener from "@/components/ui/player/AudioPlayerOpener/AudioPlayerOpener";
-import { useGlobal } from "@/lib/contexts/GlobalContext";
+import { useGlobal } from "@common";
 import clsx from "clsx";
 import MusicNoteIcon from "@/components/icons/MusicNoteIcon";
-import { roomService } from "@/lib/services/room";
+import { useWebSocket } from "@websocket";
 
 const RoomPage = () => {
     const [selectedTracks, setSelectedTracks] = useState<number[]>([]);

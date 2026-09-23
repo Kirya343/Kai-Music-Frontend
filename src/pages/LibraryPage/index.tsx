@@ -1,4 +1,4 @@
-import { useListeningRoom } from "@room";
+import { IQueueItem, IQueueItemCreate, useListeningRoom } from "@room";
 import { audioService, IAudio } from "@audio";
 import { useCallback, useEffect, useState } from "react";
 import styles from "./LibraryPage.module.scss"
@@ -71,9 +71,12 @@ const LibraryPage = () => {
 
     const addSelectedToRoom = () => {
         if (selectedTracks.length < 1) return;
+
+        const list: IQueueItemCreate[] = selectedTracks.map(t => ({ audioId: t }))
         
+        addToQueue(list)
+
         for (const trackId of selectedTracks) {
-            addToQueue(trackId)
             setSelectedTracks(prev => prev.filter(id => id !== trackId))
         }
 

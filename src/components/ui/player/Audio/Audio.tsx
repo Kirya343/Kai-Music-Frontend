@@ -76,7 +76,7 @@ const Audio = () => {
                         <button onClick={() => setFullPlayerOpen(false)}><DownIcon/></button>
                         <button>⋮</button>
                     </div>
-                    <img src="/image/player.gif"/>
+                    <img src="/image/player.gif" />
                     <div ref={headerRef} className={styles.header}>
                         <div ref={textRef} className={styles.headerText}>
                             {audioInfo?.title ?? audioInfo?.name}

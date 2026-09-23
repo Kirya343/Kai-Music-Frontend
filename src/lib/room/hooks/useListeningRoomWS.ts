@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useWebSocket } from "@websocket";
 import { AudioChunk, IAudio } from "@audio";
-import { roomService, IListeningRoom, IPlaybackState } from "@room";
+import { roomService, IListeningRoom, IPlaybackState, IQueueItem, IQueueItemCreate } from "@room";
 
 export const useListeningRoomWS = () => {
     
@@ -49,20 +49,20 @@ export const useListeningRoomWS = () => {
         client.publish({ destination: `/app/room/${room?.id}/prev` });
     }
 
-    const addToQueue = useCallback((audioId: number) => {
+    const addToQueue = useCallback((list: IQueueItemCreate[]) => {
         console.log("попытка переключить песню вперёд")
 
         if (!client) return;
 
-        client.publish({ destination: `/app/room/queue.add`, body: JSON.stringify(audioId) });
+        client.publish({ destination: `/app/room/queue.add`, body: JSON.stringify(list) });
     }, [client])
 
-    const removeFromQueue = useCallback((queueItemId: number) => {
+    const removeFromQueue = useCallback((list: number[]) => {
         console.log("попытка переключить песню вперёд")
 
         if (!client) return;
 
-        client.publish({ destination: `/app/room/queue.remove`, body: JSON.stringify(queueItemId) });
+        client.publish({ destination: `/app/room/queue.remove`, body: JSON.stringify(list) });
     }, [client])
 
     const loadRoom = useCallback(async() => {

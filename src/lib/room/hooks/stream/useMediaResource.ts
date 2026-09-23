@@ -36,6 +36,8 @@ export const useMediaResource = (processQueueRef: React.RefObject<() => void>) =
         const objectUrl = URL.createObjectURL(mediaSource);
 
         audio.src = objectUrl;
+        const saved = localStorage.getItem("audioVolume");
+        audio.volume = saved ? Number(saved) : 1;
 
         audioRef.current = audio;
         mediaSourceRef.current = mediaSource;

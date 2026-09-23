@@ -27,6 +27,11 @@ export interface IQueueItem {
     position: number;
 }
 
+export interface IQueueItemCreate {
+    audioId: number;
+    position?: number;
+}
+
 export interface IPlaybackState {
     user?: string;
     entryId: number;

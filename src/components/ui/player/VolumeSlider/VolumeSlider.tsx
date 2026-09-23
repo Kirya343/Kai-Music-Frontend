@@ -20,7 +20,7 @@ export default function VolumeSlider({ visible = true }: Props) {
         if (!audio) return;
 
         audio.volume = volume;
-    }, [volume, audioRef]);
+    }, [volume]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const v = Number(e.target.value);

@@ -1,14 +1,14 @@
 import { createContext, Dispatch, SetStateAction, useCallback, useContext, useEffect, useRef, useState } from "react";
 import { IAudio, TimeRange } from "@audio";
-import { IListeningRoom, IPlaybackState, useListeningRoomWS, useAudioStream } from "@room";
+import { IListeningRoom, IPlaybackState, useListeningRoomWS, useAudioStream, IQueueItemCreate } from "@room";
 import { countPosition } from "@common";
 
 interface ListeningRoomContextType {
     playbackState: IPlaybackState | null;
     room: IListeningRoom | null;
     updateTrackPosition: (entryId: number, position: number, pause: boolean) => void;
-    addToQueue: (entryId: number) => void;
-    removeFromQueue: (entryId: number) => void;
+    addToQueue: (list: IQueueItemCreate[]) => void;
+    removeFromQueue: (list: number[]) => void;
     loadRoom: () => void;
     localPosition: number;
     setLocalPosition: Dispatch<SetStateAction<number>>;
@@ -51,7 +51,8 @@ export const ListeningRoomProvider = ({ children }: { children?: React.ReactNode
             loadRoom, setAudioChunkHandler,
     } = useListeningRoomWS();
 
-    const { handleAudioChunk, 
+    const { 
+        handleAudioChunk, 
         resumePlayback, pausePlayback, 
         audioRef, bufferedRanges,
         startNewPlaybackStream,
@@ -170,6 +171,47 @@ export const ListeningRoomProvider = ({ children }: { children?: React.ReactNode
             setAudioChunkHandler(() => {});
         };
     }, [setAudioChunkHandler]);
+
+    useEffect(() => {
+        if ("mediaSession" in navigator) {
+            navigator.mediaSession.metadata = new MediaMetadata({
+                title: room?.audio.title,
+                artist: room?.audio.artist,
+                album: room?.audio.album,
+                artwork: [
+                    {
+                        src: "/images/face.webp",
+                        sizes: "512x512",
+                        type: "image/webp",
+                    },
+                ],
+            });
+
+            navigator.mediaSession.setActionHandler("play", () => {
+                sendUserUpdate(localPosition, false);
+            });
+
+            navigator.mediaSession.setActionHandler("pause", () => {
+                sendUserUpdate(localPosition, true);
+            });
+
+            navigator.mediaSession.setActionHandler("nexttrack", () => {
+                playNext();
+            });
+
+            navigator.mediaSession.setActionHandler("previoustrack", () => {
+                playPrev();
+            });
+
+            navigator.mediaSession.setActionHandler("seekbackward", () => {
+                seek(Math.max(0, localPosition - 10));
+            });
+
+            navigator.mediaSession.setActionHandler("seekforward", () => {
+                seek(localPosition + 10);
+            });
+        }
+    }, [])
     
     return (
         <ListeningRoomContext.Provider value={{ 

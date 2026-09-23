@@ -48,9 +48,10 @@ const RoomPage = () => {
 
     const deleteFromRoom = () => {
         for (const trackId of selectedTracks) {
-            removeFromQueue(trackId)
             setSelectedTracks(prev => prev.filter(id => id !== trackId))
         }
+
+        removeFromQueue(selectedTracks)
     }
 
     const saveRoom = async () => {

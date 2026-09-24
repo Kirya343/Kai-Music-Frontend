@@ -1,3 +1,5 @@
+@use "./breakpoints" as *;
+
 @mixin glass($hover: false) {
     background-color: var(--glass-background);
     border-color: var(--glass-border);
@@ -11,6 +13,11 @@
 
     &:is(input, textarea, select):focus {
         outline-color: var(--glass-border);
+    }
+
+    @include mobile {
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);                
     }
 
     @if $hover {
@@ -28,6 +35,11 @@
     color: #000;
     backdrop-filter: blur(3px);
     -webkit-backdrop-filter: blur(3px);
+
+    @include mobile {
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);                
+    }
 
     @if $hover {
         cursor: pointer;

@@ -28,7 +28,7 @@ interface ListeningRoomContextType {
     sendUserUpdate: (position: number, pausedState: boolean) => void;
     bufferedRanges: TimeRange[] | null;
     pausePlayback: () => void;
-    unsyncedPositionRef: React.RefObject<number | null>;
+    unsyncedStateRef: React.RefObject<IPlaybackState | null>;
     seek: (position: number) => void
 }
 
@@ -57,10 +57,10 @@ export const ListeningRoomProvider = ({ children }: { children?: React.ReactNode
         audioRef, bufferedRanges,
         startNewPlaybackStream,
 
-        currentAudioId, paused, localPosition,
+        currentEntryId, paused, localPosition,
         updateLocalPlayback, setPaused, setLocalPosition,
 
-        unsyncedPositionRef
+        unsyncedStateRef
     } = useAudioStream();
 
     const [roomLoaded, setRoomLoaded] = useState<boolean>(true);
@@ -75,7 +75,7 @@ export const ListeningRoomProvider = ({ children }: { children?: React.ReactNode
     const writeUpdateMessage = (newState: IPlaybackState) => {
 
         //console.log(newState)
-        if (newState.entryId != currentAudioId) {
+        if (newState.entryId != currentEntryId) {
             setUpdateMessage(`${newState.user} started playing track #${newState.entryId}`);
         } else if (newState.pause != paused && newState.pause) {
             setUpdateMessage(`${newState.user} paused the playback`);
@@ -93,42 +93,42 @@ export const ListeningRoomProvider = ({ children }: { children?: React.ReactNode
         startNewPlaybackStream();
         updateLocalPlayback(playbackState);
 
-        unsyncedPositionRef.current = playbackState.position;
+        unsyncedStateRef.current = playbackState;
 
         writeUpdateMessage(playbackState)
     }, [playbackState]);
 
     useEffect(() => {
         const audio = audioRef.current;
-        const position = unsyncedPositionRef.current;
+        const state = unsyncedStateRef.current;
 
-        if (!audio || !bufferedRanges || !playbackState || position === null) {
+        if (!audio || !bufferedRanges || !playbackState || state === null) {
             return;
         }
 
-        if (position === null) {
+        if (state.entryId !== currentEntryId) {
             return;
         }
 
         const isBuffered = bufferedRanges.some(
             range =>
-                position >= range.start &&
-                position <= range.end
+                state.position >= range.start &&
+                state.position <= range.end
         );
 
         if (!isBuffered) {
             return;
         }
 
-        audio.currentTime = position;
-        unsyncedPositionRef.current = null;
+        audio.currentTime = state.position;
+        unsyncedStateRef.current = null;
 
         if (!playbackState.pause) {
             console.log("start playing")
             setPaused(false)
             resumePlayback();
         }
-    }, [bufferedRanges, playbackState]);
+    }, [bufferedRanges, playbackState, currentEntryId]);
 
     const sendUserUpdate = useCallback((position: number, pausedState: boolean) => {
         console.log(`Отправляем апдейт на position: ${position}, paused: ${pausedState}, entryId: ${playbackState?.entryId}`);
@@ -228,7 +228,7 @@ export const ListeningRoomProvider = ({ children }: { children?: React.ReactNode
             playNext, playPrev,
             audioRef, togglePlay,
             sendUserUpdate, bufferedRanges,
-            pausePlayback, unsyncedPositionRef,
+            pausePlayback, unsyncedStateRef,
             seek
         }}>
             {children}

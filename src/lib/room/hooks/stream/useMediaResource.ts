@@ -17,10 +17,10 @@ export const useMediaResource = (processQueueRef: React.RefObject<() => void>) =
 
     // audio state
     const [paused, setPaused] = useState(true);
-    const [currentAudioId, setCurrentAudioId] = useState<number | null>(null);
+    const [currentEntryId, setCurrentEntryId] = useState<number | null>(null);
     const [localPosition, setLocalPosition] = useState<number>(0);
 
-    const unsyncedPositionRef = useRef<number | null>(null);
+    const unsyncedStateRef = useRef<IPlaybackState | null>(null);
 
     const initMediaSource = useCallback(() => {
         if (mediaSourceRef.current) {
@@ -141,7 +141,7 @@ export const useMediaResource = (processQueueRef: React.RefObject<() => void>) =
 
         console.log("устанавливаем setLocalPosition на playbackState.position")
 
-        setCurrentAudioId(playbackState.entryId);
+        setCurrentEntryId(playbackState.entryId);
         setLocalPosition(playbackState.position);
         setPaused(playbackState.pause);
     }, [])
@@ -153,8 +153,8 @@ export const useMediaResource = (processQueueRef: React.RefObject<() => void>) =
         if (!audio) return;
 
         const handleTimeUpdate = () => {
-            if (unsyncedPositionRef.current !== null) {
-                console.log("unsyncedPositionRef.current", unsyncedPositionRef.current)
+            if (unsyncedStateRef.current !== null) {
+                console.log("unsyncedStateRef.current", unsyncedStateRef.current)
                 return;
             }
             setLocalPosition(audio.currentTime);
@@ -178,9 +178,9 @@ export const useMediaResource = (processQueueRef: React.RefObject<() => void>) =
         sourceBufferRef, 
         bufferedRanges,
 
-        currentAudioId, paused, localPosition,
+        currentEntryId, paused, localPosition,
         updateLocalPlayback, setPaused, setLocalPosition,
 
-        unsyncedPositionRef
+        unsyncedStateRef
     }
 }

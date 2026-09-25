@@ -36,7 +36,9 @@ const LibraryPage = () => {
 
     const recognizeAudio = async (audio: IAudio) => {
         const updatedAudio: IAudio = await audioService.recognizeAudio(audio.id)
+
         console.log("recognition result:", updatedAudio)
+
         setAudios(prev =>
             prev?.map(item =>
                 item.id === updatedAudio.id
@@ -130,9 +132,6 @@ const LibraryPage = () => {
                     )
                 );
             }
-
-            // удаляем после загрузки
-            /* setUploading(prev => prev.filter(item => item.id !== uploadId)); */
         }
 
         loadLibrary();
@@ -141,7 +140,7 @@ const LibraryPage = () => {
     return (
         <>
             <div className={styles.library}>
-                <h1 className={styles.header}>Библиотека треков</h1>
+                <h1 className={styles.header}>Track Library</h1>
                 <div className={styles.topPanel}>
                     <label htmlFor="uploadAudio" className={styles.action}>
                         <CirclePlusIcon solid />

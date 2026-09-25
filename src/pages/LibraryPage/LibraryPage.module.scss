@@ -83,6 +83,8 @@
         display: flex;
         gap: 0.7rem;
         overflow: hidden;
+        min-width: 0;
+        flex: 1;
     }
 
     .meta {
@@ -90,6 +92,8 @@
         flex-direction: column;
         gap: 1px;
         overflow: hidden;
+        min-width: 0;
+        flex: 1;
     }
 
     .audioCover {
@@ -129,6 +133,10 @@
     .info {
         font-size: 0.8rem;
         color: var(--text-color-l1);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        min-width: 0;
     }
 
     .actions {
@@ -136,6 +144,11 @@
         display: flex;
         align-items: center;
         gap: 6px;
+
+        @include mobile {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+        }
 
         button {
 

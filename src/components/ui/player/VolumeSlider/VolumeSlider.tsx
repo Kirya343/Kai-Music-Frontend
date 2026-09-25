@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import styles from "./VolumeSlider.module.scss"
-import { useListeningRoom } from "@room";
+import { useRoomPlayback } from "@room";
 
 type Props = {
     visible?: boolean;
@@ -8,7 +8,7 @@ type Props = {
 
 export default function VolumeSlider({ visible = true }: Props) {
 
-    const { audioRef } = useListeningRoom();
+    const { audioRef } = useRoomPlayback();
 
     const [volume, setVolume] = useState(() => {
         const saved = localStorage.getItem("audioVolume");

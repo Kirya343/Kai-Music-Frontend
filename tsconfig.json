@@ -20,6 +20,9 @@
             "@room": ["src/lib/room/index.ts"],
             "@room/*": ["src/lib/room/*"],
 
+            "@playback": ["src/lib/playback/index.ts"],
+            "@playback/*": ["src/lib/playback/*"],
+
             "@websocket": ["src/lib/websocket/index.ts"],
             "@websocket/*": ["src/lib/websocket/*"],
 

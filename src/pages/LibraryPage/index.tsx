@@ -1,4 +1,4 @@
-import { IQueueItem, IQueueItemCreate, useListeningRoom } from "@room";
+import { useRoomPlayback } from "@room";
 import { audioService, IAudio } from "@audio";
 import { useCallback, useEffect, useState } from "react";
 import styles from "./LibraryPage.module.scss"
@@ -8,9 +8,6 @@ import HeartIcon from "@/components/icons/HeartIcon";
 import { AxiosProgressEvent } from "axios";
 import CheckmarkIcon from "@/components/icons/CheckmarkIcon";
 import CrossIcon from "@/components/icons/CrossIcon";
-import { useNavigate, useSearchParams } from "react-router-dom";
-import MusicNoteIcon from "@/components/icons/MusicNoteIcon";
-import { countPosition } from "@common";
 import Loader from "@/components/ui/Loader/Loader";
 import AudioFileModal from "@/components/pages/library/AudioFileModal/AudioFileModal";
 import TrashIcon from "@/components/icons/TrashIcon";
@@ -33,7 +30,7 @@ const LibraryPage = () => {
     const [uploading, setUploading] = useState<IUploadingAudio[]>([]);
     const [audioFileView, setAudioFileView] = useState<IAudio | null>(null);
 
-    const { roomLoaded } = useListeningRoom();
+    const { roomLoaded } = useRoomPlayback();
 
     const recognizeAudio = async (audio: IAudio) => {
         const updatedAudio: IAudio = await audioService.recognizeAudio(audio.id)
@@ -62,7 +59,7 @@ const LibraryPage = () => {
         }
     }
 
-    const { addToQueue } = useListeningRoom();
+    const { addToQueue } = useRoomPlayback();
 
     const loadLibrary = useCallback(async () => {
         const data = await audioService.loadLibrary();

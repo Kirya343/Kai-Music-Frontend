@@ -1,4 +1,4 @@
-export * from "./ListeningRoomContext";
+export * from "../playback/RoomPlaybackProvider";
 export * from "./services"
-export * from "./hooks"
+export * from "../playback/hooks"
 export * from "./roomTypes"

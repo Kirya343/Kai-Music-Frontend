@@ -1,9 +1,10 @@
 import { createContext, Dispatch, SetStateAction, useCallback, useContext, useEffect, useRef, useState } from "react";
 import { IAudio, TimeRange } from "@audio";
-import { IListeningRoom, IPlaybackState, useListeningRoomWS, useAudioStream, IQueueItemCreate } from "@room";
+import { IListeningRoom, useListeningRoomWS, useAudioStream } from "@room";
 import { countPosition } from "@common";
+import { IPlaybackState, IQueueItemCreate } from "@playback";
 
-interface ListeningRoomContextType {
+interface RoomPlaybackContextType {
     playbackState: IPlaybackState | null;
     room: IListeningRoom | null;
     updateTrackPosition: (entryId: number, position: number, pause: boolean) => void;
@@ -32,17 +33,17 @@ interface ListeningRoomContextType {
     currentEntryId: number | null;
 }
 
-const ListeningRoomContext = createContext<ListeningRoomContextType | null>(null);
+const RoomPlaybackContext = createContext<RoomPlaybackContextType | null>(null);
 
-export const useListeningRoom = () => {
-    const ctx = useContext(ListeningRoomContext);
+export const useRoomPlayback = () => {
+    const ctx = useContext(RoomPlaybackContext);
     if (!ctx) {
-        throw new Error("useListeningRoom must be used inside AuthProvider");
+        throw new Error("useRoomPlayback must be used inside AuthProvider");
     }
     return ctx;
 }
 
-export const ListeningRoomProvider = ({ children }: { children?: React.ReactNode }) => {
+export const RoomPlaybackProvider = ({ children }: { children?: React.ReactNode }) => {
 
     const { 
         playbackState, updateTrackPosition, 
@@ -286,7 +287,7 @@ export const ListeningRoomProvider = ({ children }: { children?: React.ReactNode
     ]);
     
     return (
-        <ListeningRoomContext.Provider value={{ 
+        <RoomPlaybackContext.Provider value={{ 
             playbackState, room, 
             updateTrackPosition, 
             addToQueue, removeFromQueue, 
@@ -304,6 +305,6 @@ export const ListeningRoomProvider = ({ children }: { children?: React.ReactNode
             seek, currentEntryId
         }}>
             {children}
-        </ListeningRoomContext.Provider>
+        </RoomPlaybackContext.Provider>
     );
 };

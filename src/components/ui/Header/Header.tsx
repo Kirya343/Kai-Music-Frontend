@@ -1,5 +1,5 @@
 import { Link, NavLink, useNavigate } from "react-router-dom";
-import { useListeningRoom } from "@room";
+import { useRoomPlayback } from "@room";
 import styles from "./Header.module.scss"
 import DoorIcon from "@/components/icons/DoorIcon"
 import LibraryIcon from "@/components/icons/LibraryIcon"
@@ -9,7 +9,7 @@ import { useAuth } from "@/lib/auth";
 const Header = () => {
 
     const { user, isAuthenticated } = useAuth();
-    const { room } = useListeningRoom();
+    const { room } = useRoomPlayback();
     const navigate = useNavigate();
     
     return (

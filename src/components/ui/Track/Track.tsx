@@ -6,7 +6,7 @@ import { ReactNode } from "react"
 import ActionMenu, { IKebabAction } from "../ActionMenu/ActionMenu"
 import clsx from "clsx"
 import PlayingAudioIcon from "@/components/icons/animated/PlayingAudioIcon"
-import { useListeningRoom } from "@room"
+import { useRoomPlayback } from "@room"
 
 /**
  * The universal element for any AudioTracks
@@ -58,7 +58,7 @@ const Track = ({
     selected = false
 }: TrackProps) => {
 
-    const { room, currentEntryId, paused } = useListeningRoom();
+    const { room, currentEntryId, paused } = useRoomPlayback();
 
     const playing = room?.queue.find(i => currentEntryId === i.id)?.audio.id === audio.id;
 
@@ -79,10 +79,11 @@ const Track = ({
                 </div>
 
                 <div className={styles.meta}>
-                    {(!props || props.id) && <span className={styles.id}>#{id ? id :audio.id}</span>}
                     {(!props || props.title) && (
                         <span className={styles.title}>
-                            {playing && <PlayingAudioIcon playing={!paused} />} 
+                            {playing && <PlayingAudioIcon playing={!paused} />}
+
+                            {(!props || props.id) && <span className={styles.id}>#{id ? id :audio.id}</span>} 
                             {audio?.title ?? audio?.name}
                         </span>
                     )}

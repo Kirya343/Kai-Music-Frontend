@@ -1,4 +1,4 @@
-import { useListeningRoom, roomService } from "@room";
+import { useRoomPlayback, roomService } from "@room";
 import { Dispatch, SetStateAction, useState } from "react";
 import styles from "./JoinRoomModal.module.scss"
 import Modal from "@/components/ui/Modal/Modal";
@@ -12,7 +12,7 @@ const JoinRoomModal = ({
 }) => {
 
     const [code, setCode] = useState<string>("");
-    const { loadRoom } = useListeningRoom();
+    const { loadRoom } = useRoomPlayback();
     const navigate = useNavigate();
 
     const joinRoom = async () => {

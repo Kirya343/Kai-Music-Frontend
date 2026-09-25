@@ -4,7 +4,7 @@ import { useGlobal } from "@common";
 import { AnimatePresence, motion } from "motion/react"
 import clsx from "clsx";
 import { AuthProvider } from "@auth";
-import { ListeningRoomProvider } from "@room";
+import { RoomPlaybackProvider } from "@playback";
 import { WebSocketProvider } from "@websocket";
 
 const StartLayout = () => {
@@ -30,9 +30,9 @@ const StartLayout = () => {
                     >
                         <AuthProvider>
                             <WebSocketProvider>
-                                <ListeningRoomProvider>
+                                <RoomPlaybackProvider>
                                     <Outlet />
-                                </ListeningRoomProvider>
+                                </RoomPlaybackProvider>
                             </WebSocketProvider>
                         </AuthProvider>
 

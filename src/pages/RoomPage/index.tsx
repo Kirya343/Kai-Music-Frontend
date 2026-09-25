@@ -1,5 +1,5 @@
 import { useRef, useState } from "react";
-import { IRoomUpdate, useListeningRoom, roomService } from "@room";
+import { IRoomUpdate, useRoomPlayback, roomService } from "@room";
 import { Link } from "react-router-dom";
 import styles from "./RoomPage.module.scss";
 import AudioPlayerOpener from "@/components/ui/player/AudioPlayerOpener/AudioPlayerOpener";
@@ -17,7 +17,7 @@ const RoomPage = () => {
             updateTrackPosition,
             localPosition, loadRoom,
             currentEntryId
-    } = useListeningRoom();
+    } = useRoomPlayback();
     const { started } = useGlobal();
     const { error } = useWebSocket();
     const [newRoomName, setNewRoomName] = useState<string>(room?.title || "");

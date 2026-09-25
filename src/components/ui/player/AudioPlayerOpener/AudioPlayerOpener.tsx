@@ -1,4 +1,4 @@
-import { useListeningRoom } from "@room";
+import { useRoomPlayback } from "@room";
 import { useEffect, useRef } from "react";
 
 import styles from "./AudioPlayerOpener.module.scss"
@@ -12,7 +12,7 @@ const AudioPlayerOpener = () => {
         localPosition, playNext, audioInfo, 
         fullPlayerOpen, setFullPlayerOpen, 
         paused, duration, togglePlay 
-    } = useListeningRoom();
+    } = useRoomPlayback();
 
     const headerRef = useRef<HTMLDivElement | null>(null);
     const textRef = useRef<HTMLDivElement | null>(null);

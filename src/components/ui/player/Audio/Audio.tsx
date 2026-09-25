@@ -1,4 +1,4 @@
-import { useListeningRoom } from "@room";
+import { useRoomPlayback } from "@room";
 import { useEffect, useRef } from "react";
 import { PlaybackModeToggle } from "../PlaybackModeToggle";
 import VolumeSlider from "../VolumeSlider/VolumeSlider";
@@ -21,7 +21,7 @@ const Audio = () => {
         togglePlay, seek,
         bufferedRanges,
         currentEntryId
-    } = useListeningRoom();
+    } = useRoomPlayback();
 
     const headerRef = useRef<HTMLDivElement | null>(null);
     const textRef = useRef<HTMLDivElement | null>(null);

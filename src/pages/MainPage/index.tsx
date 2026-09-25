@@ -1,5 +1,5 @@
 import styles from "./MainPage.module.scss";
-import { IShortRoom, useListeningRoom, roomService } from "@room";
+import { IShortRoom, useRoomPlayback, roomService } from "@room";
 import { useEffect, useState } from "react";
 import AudioPlayerOpener from "@/components/ui/player/AudioPlayerOpener/AudioPlayerOpener";
 import clsx from "clsx";
@@ -13,7 +13,7 @@ import { useNavigate } from "react-router-dom";
 
 const MainPage = () => {
 
-    const { roomLoaded } = useListeningRoom();
+    const { roomLoaded } = useRoomPlayback();
 
     const [rooms, setRooms] = useState<IShortRoom[] | null>(null);
     const [isOpen, setOpen] = useState<boolean>(false);

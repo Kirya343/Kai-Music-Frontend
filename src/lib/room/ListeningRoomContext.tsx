@@ -15,7 +15,6 @@ interface ListeningRoomContextType {
     playNext: () => void;
     playPrev: () => void;
     roomLoaded: boolean;
-    setRoomLoaded: Dispatch<SetStateAction<boolean>>;
     duration: number;
     paused: boolean;
     setPaused: Dispatch<SetStateAction<boolean>>;
@@ -66,8 +65,9 @@ export const ListeningRoomProvider = ({ children }: { children?: React.ReactNode
         unsyncedStateRef
     } = useAudioStream();
 
-    const [roomLoaded, setRoomLoaded] = useState<boolean>(true);
+    const roomLoaded: boolean = !!room;
     const duration = Number(audioInfo?.duration);
+    const prevRoomRef = useRef<number | null>(null);
     const debounceTimeoutRef = useRef<number | null>(null);
 
     // info
@@ -89,6 +89,19 @@ export const ListeningRoomProvider = ({ children }: { children?: React.ReactNode
             setUpdateMessage(`${newState.user} seeked to ${countPosition(newState.position)}`);
         }
     }
+
+    useEffect(() => {
+        if (!room) return;
+
+        if (
+            prevRoomRef.current !== null &&
+            prevRoomRef.current !== room.id
+        ) {
+            pausePlayback();
+        }
+
+        prevRoomRef.current = room.id;
+    }, [room?.id]);
 
     // Обновление позиции и паузы от сервера
     useEffect(() => {
@@ -201,14 +214,14 @@ export const ListeningRoomProvider = ({ children }: { children?: React.ReactNode
     }, [setAudioChunkHandler]);
 
     useEffect(() => {
-        if (!("mediaSession" in navigator) || !room || !localPosition) {
+        if (!("mediaSession" in navigator) || !room || !localPosition || !room?.audio) {
             return;
         }
 
         navigator.mediaSession.metadata = new MediaMetadata({
-            title: room?.audio.title,
-            artist: room?.audio.artist,
-            album: room?.audio.album,
+            title: room?.audio.title || "",
+            artist: room?.audio.artist || "",
+            album: room?.audio.album || "",
             artwork: [
                 {
                     src: "/images/face.webp",
@@ -278,7 +291,7 @@ export const ListeningRoomProvider = ({ children }: { children?: React.ReactNode
             updateTrackPosition, 
             addToQueue, removeFromQueue, 
             localPosition, setLocalPosition,
-            roomLoaded, setRoomLoaded,
+            roomLoaded,
             duration, 
             fullPlayerOpen, setFullPlayerOpen,
             updateMessage,

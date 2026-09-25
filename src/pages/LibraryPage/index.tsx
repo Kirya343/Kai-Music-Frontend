@@ -17,6 +17,7 @@ import TrashIcon from "@/components/icons/TrashIcon";
 import AudioPlayerOpener from "@/components/ui/player/AudioPlayerOpener/AudioPlayerOpener";
 import PenIcon from "@/components/icons/PenIcon";
 import ShazamIcon from "@/components/icons/ShazamIcon";
+import PlusIcon from "@/components/icons/PlusIcon";
 
 interface IUploadingAudio {
     file: File;
@@ -28,19 +29,10 @@ interface IUploadingAudio {
 const LibraryPage = () => {
 
     const [audios, setAudios] = useState<IAudio[] | null>(null);
-    const [selectedTracks, setSelectedTracks] = useState<number[]>([])
     const [uploading, setUploading] = useState<IUploadingAudio[]>([]);
-    const [roomTopUpMode, setRoomTopUpMode] = useState<boolean>(false);
-    const [searchParams] = useSearchParams();
     const [audioFileView, setAudioFileView] = useState<IAudio | null>(null);
-    const roomId = searchParams.get("roomId");
-    const navigate = useNavigate()
 
     const { roomLoaded } = useListeningRoom();
-
-    useEffect(() => {
-        if (roomId) setRoomTopUpMode(true);
-    }, [roomId]);
 
     const recognizeAudio = async (audio: IAudio) => {
         const updatedAudio: IAudio = await audioService.recognizeAudio(audio.id)
@@ -53,19 +45,6 @@ const LibraryPage = () => {
             ) ?? ([updatedAudio])
         );
     }
-
-    const handleClick = (id: number) => {
-        if (roomTopUpMode) {
-            setSelectedTracks(prev =>
-                prev?.includes(id)
-                    ? prev.filter(trackId => trackId !== id)
-                    : [...prev, id]
-            );
-        } else {
-            const audio = audios?.find(a => a.id == id);
-            console.log("audio для просмотра: ", audio)
-        }
-    };
 
     const handleDelete = async (audio: IAudio) => {
         const success = confirm(`Ary you sure deleting audio ${audio.name}`)
@@ -81,20 +60,6 @@ const LibraryPage = () => {
     }
 
     const { addToQueue } = useListeningRoom();
-
-    const addSelectedToRoom = () => {
-        if (selectedTracks.length < 1) return;
-
-        const list: IQueueItemCreate[] = selectedTracks.map(t => ({ audioId: t }))
-        
-        addToQueue(list)
-
-        for (const trackId of selectedTracks) {
-            setSelectedTracks(prev => prev.filter(id => id !== trackId))
-        }
-
-        navigate("/room");
-    }
 
     const loadLibrary = useCallback(async () => {
         const data = await audioService.loadLibrary();
@@ -220,17 +185,9 @@ const LibraryPage = () => {
                         {audios?.map(audio => (
                             <div 
                                 key={audio.id} 
-                                className={styles.track} 
-                                onClick={() => handleClick(audio.id)}
+                                className={styles.track}
                             >
                                 <div className={styles.body}>
-                                    {roomTopUpMode && (
-                                        <input
-                                            type="checkbox"
-                                            checked={selectedTracks.includes(audio.id)}
-                                            readOnly
-                                        />
-                                    )}
 
                                     <div className={styles.audioCover}>
                                         <MusicNoteIcon/>
@@ -248,6 +205,7 @@ const LibraryPage = () => {
                                 </div>
 
                                 <div className={styles.actions}>
+                                    <button onClick={() => addToQueue([{audioId: audio.id}])}><PlusIcon/></button>
                                     <button onClick={() => recognizeAudio(audio)}><ShazamIcon/></button>
                                     <button onClick={() => setAudioFileView(audio)}><PenIcon/></button>
                                     <button onClick={() => handleDelete(audio)}><TrashIcon/></button>
@@ -256,36 +214,6 @@ const LibraryPage = () => {
                         ))}
                     </div>
                 </Loader>
-
-                {roomTopUpMode && selectedTracks.length > 0 && (
-                    <div className={styles.roomTopUpActions}>
-                        {roomId && (
-                            <button 
-                                onClick={addSelectedToRoom}
-                                className={styles.listAction}
-                            >
-                                Add to room #{roomId}
-                            </button>
-                        )}
-
-                        <button 
-                            onClick={() => setSelectedTracks([])}
-                            className={styles.listAction}
-                        >
-                            Clean list
-                        </button>
-
-                        <button 
-                            onClick={() =>  {
-                                setRoomTopUpMode(false)
-                                setSelectedTracks([])
-                            }}
-                            className={styles.listAction}
-                        >
-                            Cancel
-                        </button>
-                    </div>
-                )}
 
                 <input 
                     type="file"

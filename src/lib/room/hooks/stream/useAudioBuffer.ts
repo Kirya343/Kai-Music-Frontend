@@ -6,9 +6,15 @@ export function useAudioBuffer() {
     const sourceBufferRef = useRef<SourceBuffer | null>(null);
     const isInitializedRef = useRef(false);
     const initializedChunkRef = useRef<AudioChunk | null>(null)
-    const [bufferedRanges, setBufferedRanges] = useState<TimeRange[] | null>(null);
+    const [bufferedRanges, setBufferedRanges] = useState<Map<number, TimeRange[]>>(new Map());
+    const onBufferUpdateRef = useRef<((entryId: number) => void) | null>(null);
 
-    const updateBufferedRanges = useCallback(() => {
+    const setBufferUpdateHandler = useCallback(
+        (callback: (entryId: number) => void) => {
+            onBufferUpdateRef.current = callback;
+        }, []);
+
+    const updateBufferedRanges = useCallback((entryId: number) => {
         const sourceBuffer = sourceBufferRef.current;
 
         if (!sourceBuffer) {
@@ -24,13 +30,14 @@ export function useAudioBuffer() {
             });
         }
 
-        setBufferedRanges(ranges);
+        const updated = bufferedRanges.set(entryId, ranges);
 
-        /* console.log(
-            'MSE buffered:',
-            ranges
-        ); */
-    }, []);
+        console.log("buffer", updated)
+
+        setBufferedRanges(updated);
+
+        onBufferUpdateRef.current?.(entryId)
+    }, [bufferedRanges]);
 
     const appendChunk = useCallback((chunk: AudioChunk) => {
         const sourceBuffer = sourceBufferRef.current;
@@ -85,12 +92,12 @@ export function useAudioBuffer() {
         sourceBufferRef.current = null;
         initializedChunkRef.current = null;
         isInitializedRef.current = false;
-        setBufferedRanges([]);
+        setBufferedRanges(new Map());
     }, []);
 
     return {
-        updateBufferedRanges,
-        bufferedRanges,
+        updateBufferedRanges, setBufferUpdateHandler,
+        bufferedRanges, onBufferUpdateRef,
         sourceBufferRef,
         appendChunk,
         processInitializationChunk,

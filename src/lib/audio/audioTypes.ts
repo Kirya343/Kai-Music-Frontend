@@ -1,10 +1,9 @@
-import { PlaybackMode } from "@/components/ui/player/PlaybackModeToggle";
-
 export interface AudioChunk {
     bytes: Uint8Array;
     sequence: number;
     duration: number;
     initialization: boolean;
+    entryId: number;
 };
 
 export interface TimeRange {

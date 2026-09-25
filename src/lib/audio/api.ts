@@ -25,3 +25,4 @@ export const updateAudio = (audioId: number, audio: IAudioUpdate) =>
         }, {})
 
 export const deleteAudio = (audioId: number) => apiFetch(`/audio/${audioId}`, { method: "DELETE" })
+export const recognizeAudio = (audioId: number) => apiFetchJson(`/audio/recognize/${audioId}`, { method: "POST" })

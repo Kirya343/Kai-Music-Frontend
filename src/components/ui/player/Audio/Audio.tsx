@@ -1,5 +1,5 @@
 import { useListeningRoom } from "@room";
-import React, { useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { PlaybackModeToggle } from "../PlaybackModeToggle";
 import VolumeSlider from "../VolumeSlider/VolumeSlider";
 import { countPosition } from "@common";
@@ -13,42 +13,15 @@ import DownIcon from "@/components/icons/DownIcon";
 
 const Audio = () => {
     const { 
-        localPosition, setLocalPosition, 
+        localPosition,
         playNext, playPrev, duration, 
         paused, updateMessage, 
         fullPlayerOpen, audioInfo,
-        setFullPlayerOpen, pausePlayback,
+        setFullPlayerOpen,
         togglePlay, seek,
-        bufferedRanges, unsyncedPositionRef
+        bufferedRanges,
+        currentEntryId
     } = useListeningRoom();
-
-    const debounceTimeoutRef = useRef<number | null>(null);
-
-    const handleSeek = (e: React.ChangeEvent<HTMLInputElement>) => {
-
-        console.log("handleSeek")
-
-        const newTime = Number(e.target.value);
-        console.log("handleSeek:", newTime)
-
-        try {
-            pausePlayback();
-        } finally {
-            unsyncedPositionRef.current = newTime
-            setLocalPosition(newTime);
-
-            // отменяем предыдущий таймаут, если был
-            if (debounceTimeoutRef.current) {
-                clearTimeout(debounceTimeoutRef.current);
-            }
-
-            // ставим новый таймаут на 300 мс
-            debounceTimeoutRef.current = setTimeout(() => {
-                seek(newTime);
-                debounceTimeoutRef.current = null;
-            }, 100);
-        }
-    };
 
     const headerRef = useRef<HTMLDivElement | null>(null);
     const textRef = useRef<HTMLDivElement | null>(null);
@@ -66,7 +39,7 @@ const Audio = () => {
         }
     }, [audioInfo, fullPlayerOpen]);
 
-    return (
+    return currentEntryId ? (
         <>
             <VolumeSlider visible={false}/>
 
@@ -85,7 +58,7 @@ const Audio = () => {
                     <div className={styles.tracker}>
                         <div className={styles.progress}>
                             <div className={styles.buffered}>
-                                {bufferedRanges?.map((range, index) => (
+                                {bufferedRanges.get(currentEntryId)?.map((range, index) => (
                                     <div
                                         key={index}
                                         className={styles.bufferedRange}
@@ -102,7 +75,7 @@ const Audio = () => {
                                 min={0}
                                 max={duration}
                                 value={localPosition}
-                                onChange={handleSeek}
+                                onChange={(e) => seek(Number(e.target.value))}
                                 style={{
                                     width: "100%",
                                     background: `linear-gradient(
@@ -142,7 +115,7 @@ const Audio = () => {
                 </div>
             )}
         </>
-    )
+    ) : <></>
 };
 
 export default Audio;

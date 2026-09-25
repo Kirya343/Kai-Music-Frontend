@@ -24,8 +24,6 @@ export function useStompClient(): UseStompClientResult {
     const [error, setError] = useState(false);
     const [reconnectAttempts, setReconnectAttempts] = useState(0);
 
-    const maxReconnects = 3;
-
     type Cleanup = () => void;
     type OnConnectHandler = (client: Client) => void | Cleanup;
 
@@ -105,18 +103,18 @@ export function useStompClient(): UseStompClientResult {
         stompClient.onWebSocketClose = async (evt: CloseEvent) => {
             setConnected(false);
 
-            if (evt.code === 1000 || reconnectAttempts >= maxReconnects) {
-                setError(reconnectAttempts >= maxReconnects);
+            if (evt.code === 1000) {
                 return;
             }
 
             const tokenRefreshed = await refreshToken();
+
             if (!tokenRefreshed?.ok) {
                 setError(true);
                 return;
             }
 
-            const delay = 2000 * (reconnectAttempts + 1);
+            const delay = 1000 * (reconnectAttempts + 1);
 
             reconnectTimer.current = setTimeout(() => {
                 setReconnectAttempts(prev => prev + 1);

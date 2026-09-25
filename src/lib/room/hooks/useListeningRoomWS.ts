@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useWebSocket } from "@websocket";
 import { AudioChunk, IAudio } from "@audio";
-import { roomService, IListeningRoom, IPlaybackState, IQueueItem, IQueueItemCreate } from "@room";
+import { roomService, IListeningRoom, IPlaybackState, IQueueItemCreate } from "@room";
 
 export const useListeningRoomWS = () => {
     
@@ -10,6 +10,17 @@ export const useListeningRoomWS = () => {
     const [audioInfo, setAudioInfo] = useState<IAudio | null>(null);
     const [room, setRoom] = useState<IListeningRoom | null>(null);
     const onAudioChunkRef = useRef<((chunk: AudioChunk) => void) | null>(null);
+    const playbackStateCallbackRef = useRef<((state: IPlaybackState) => void) | null>(null);
+
+    const setAudioChunkHandler = useCallback(
+        (handler: (chunk: AudioChunk) => void) => {
+            onAudioChunkRef.current = handler;
+        }, []);
+
+    const setPlaybackStateCallback = useCallback(
+        (callback: (state: IPlaybackState) => void) => {
+            playbackStateCallbackRef.current = callback;
+        }, []);
 
     useEffect(() => {
         async function loadState(roomId: number) {
@@ -73,13 +84,6 @@ export const useListeningRoomWS = () => {
         client.publish({ destination: `/app/room/load` });
     }, [client])
 
-    const setAudioChunkHandler = useCallback(
-        (handler: (chunk: AudioChunk) => void) => {
-            onAudioChunkRef.current = handler;
-        },
-        []
-    );
-
     useEffect(() => {
         const unsubscribe = addOnConnectHandler((client) => {
 
@@ -97,6 +101,8 @@ export const useListeningRoomWS = () => {
                 console.log("Пришло обновление playback: ", state)
                 
                 setPlaybackState(state);
+
+                playbackStateCallbackRef.current?.(state);
             });
 
             const audioSub = client.subscribe(`/user/queue/audio`, (message) => {
@@ -104,6 +110,7 @@ export const useListeningRoomWS = () => {
                     bytes: message.binaryBody,
                     sequence: Number(message.headers["sequence"]),
                     duration: Number(message.headers["duration"]),
+                    entryId: Number(message.headers["entry-id"]),
                     initialization: message.headers["initialization"] === "true"
                 };
 
@@ -131,6 +138,7 @@ export const useListeningRoomWS = () => {
         audioInfo,
         addToQueue, removeFromQueue,
         room, loadRoom,
-        setAudioChunkHandler
+        setAudioChunkHandler,
+        setPlaybackStateCallback
     };
 }

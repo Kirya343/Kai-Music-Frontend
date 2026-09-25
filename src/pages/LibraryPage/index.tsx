@@ -16,6 +16,7 @@ import AudioFileModal from "@/components/pages/library/AudioFileModal/AudioFileM
 import TrashIcon from "@/components/icons/TrashIcon";
 import AudioPlayerOpener from "@/components/ui/player/AudioPlayerOpener/AudioPlayerOpener";
 import PenIcon from "@/components/icons/PenIcon";
+import ShazamIcon from "@/components/icons/ShazamIcon";
 
 interface IUploadingAudio {
     file: File;
@@ -40,6 +41,18 @@ const LibraryPage = () => {
     useEffect(() => {
         if (roomId) setRoomTopUpMode(true);
     }, [roomId]);
+
+    const recognizeAudio = async (audio: IAudio) => {
+        const updatedAudio: IAudio = await audioService.recognizeAudio(audio.id)
+        console.log("recognition result:", updatedAudio)
+        setAudios(prev =>
+            prev?.map(item =>
+                item.id === updatedAudio.id
+                    ? updatedAudio
+                    : item
+            ) ?? ([updatedAudio])
+        );
+    }
 
     const handleClick = (id: number) => {
         if (roomTopUpMode) {
@@ -235,6 +248,7 @@ const LibraryPage = () => {
                                 </div>
 
                                 <div className={styles.actions}>
+                                    <button onClick={() => recognizeAudio(audio)}><ShazamIcon/></button>
                                     <button onClick={() => setAudioFileView(audio)}><PenIcon/></button>
                                     <button onClick={() => handleDelete(audio)}><TrashIcon/></button>
                                 </div>

@@ -1,14 +1,14 @@
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useAudioBuffer } from "./useAudioBuffer";
 import { IPlaybackState } from "@room/roomTypes";
 
 export const useMediaResource = (processQueueRef: React.RefObject<() => void>) => {
 
     const { 
-        sourceBufferRef, updateBufferedRanges, 
-        processInitializationChunk, setBufferedRanges,
+        sourceBufferRef, updateBufferedRanges, setBufferUpdateHandler,
+        processInitializationChunk,
         bufferedRanges, appendChunk,
-        resetBuffer
+        resetBuffer, onBufferUpdateRef
     } = useAudioBuffer();
 
     const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -22,7 +22,7 @@ export const useMediaResource = (processQueueRef: React.RefObject<() => void>) =
 
     const unsyncedStateRef = useRef<IPlaybackState | null>(null);
 
-    const initMediaSource = useCallback(() => {
+    const initMediaSource = useCallback((entryId: number) => {
         if (mediaSourceRef.current) {
             return;
         }
@@ -54,7 +54,8 @@ export const useMediaResource = (processQueueRef: React.RefObject<() => void>) =
                 sourceBufferRef.current = sourceBuffer;
 
                 sourceBuffer.addEventListener('updateend', () => {
-                    updateBufferedRanges();
+                    console.log("mediaResource updateend")
+                    updateBufferedRanges(entryId);
                     processQueueRef.current();
                 });
 
@@ -77,7 +78,7 @@ export const useMediaResource = (processQueueRef: React.RefObject<() => void>) =
         });
 
         addEventListener();
-    }, [updateBufferedRanges]);
+    }, [updateBufferedRanges, currentEntryId]);
 
     const cleanupAudio = useCallback(() => {
         console.log("Очищаем playback")
@@ -99,9 +100,7 @@ export const useMediaResource = (processQueueRef: React.RefObject<() => void>) =
         objectUrlRef.current = null;
 
         resetBuffer();
-
-        //streamGenerationRef.current++;
-    }, [setBufferedRanges]);
+    }, []);
 
     const pausePlayback = useCallback(() => {
         const audio = audioRef.current;
@@ -165,6 +164,48 @@ export const useMediaResource = (processQueueRef: React.RefObject<() => void>) =
             audio.removeEventListener("timeupdate", handleTimeUpdate);
         };
     }, [setLocalPosition]);
+
+    const playIfBuffered = useCallback((entryId: number) => {
+        const audio = audioRef.current;
+        const state = unsyncedStateRef.current;
+
+        if (!audio || !bufferedRanges || state === null) {
+            return;
+        }
+
+        const ranges = bufferedRanges.get(entryId)
+
+        if (!ranges) return;
+
+        const isBuffered = ranges.some(
+            range =>
+                state.position >= range.start &&
+                state.position <= range.end
+        );
+
+        if (!isBuffered) {
+            return;
+        }
+
+        audio.currentTime = state.position;
+        unsyncedStateRef.current = null;
+
+        if (!state.pause) {
+            console.log("start playing")
+            setPaused(false)
+            resumePlayback();
+        }
+    }, [bufferedRanges]);
+
+    useEffect(() => {
+        setBufferUpdateHandler((entryId: number) => {
+            playIfBuffered(entryId)
+        })
+
+        return () => {
+            setBufferUpdateHandler(() => {});
+        };
+    }, [])
 
     return {
         audioRef,

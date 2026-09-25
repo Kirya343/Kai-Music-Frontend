@@ -132,7 +132,7 @@ export const useAudioStream = () => {
 
             cleanupAudio();
 
-            initMediaSource();
+            initMediaSource(chunk.entryId);
 
             processInitializationChunk(chunk);
         },

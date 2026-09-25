@@ -26,10 +26,11 @@ interface ListeningRoomContextType {
     audioRef: React.RefObject<HTMLAudioElement | null>;
     togglePlay: () => void;
     sendUserUpdate: (position: number, pausedState: boolean) => void;
-    bufferedRanges: TimeRange[] | null;
+    bufferedRanges: Map<number, TimeRange[] | []>;
     pausePlayback: () => void;
     unsyncedStateRef: React.RefObject<IPlaybackState | null>;
-    seek: (position: number) => void
+    seek: (position: number) => void;
+    currentEntryId: number | null;
 }
 
 const ListeningRoomContext = createContext<ListeningRoomContextType | null>(null);
@@ -44,11 +45,13 @@ export const useListeningRoom = () => {
 
 export const ListeningRoomProvider = ({ children }: { children?: React.ReactNode }) => {
 
-    const { playbackState, updateTrackPosition, 
-            playNext, playPrev, 
-            audioInfo, room, 
-            addToQueue, removeFromQueue, 
-            loadRoom, setAudioChunkHandler,
+    const { 
+        playbackState, updateTrackPosition, 
+        playNext, playPrev, 
+        audioInfo, room, 
+        addToQueue, removeFromQueue, 
+        loadRoom, setAudioChunkHandler,
+        setPlaybackStateCallback
     } = useListeningRoomWS();
 
     const { 
@@ -65,6 +68,7 @@ export const ListeningRoomProvider = ({ children }: { children?: React.ReactNode
 
     const [roomLoaded, setRoomLoaded] = useState<boolean>(true);
     const duration = Number(audioInfo?.duration);
+    const debounceTimeoutRef = useRef<number | null>(null);
 
     // info
     const [updateMessage, setUpdateMessage] = useState<string>("");
@@ -85,32 +89,39 @@ export const ListeningRoomProvider = ({ children }: { children?: React.ReactNode
             setUpdateMessage(`${newState.user} seeked to ${countPosition(newState.position)}`);
         }
     }
-    
+
     // Обновление позиции и паузы от сервера
     useEffect(() => {
-        if (!playbackState) return;
+        setPlaybackStateCallback((state: IPlaybackState) => {
+            startNewPlaybackStream();
+            updateLocalPlayback(state);
+            unsyncedStateRef.current = state;
 
-        startNewPlaybackStream();
-        updateLocalPlayback(playbackState);
+            writeUpdateMessage(state);
+        });
 
-        unsyncedStateRef.current = playbackState;
-
-        writeUpdateMessage(playbackState)
-    }, [playbackState]);
+        return () => {
+            setPlaybackStateCallback(() => {});
+        };
+    }, [
+        setPlaybackStateCallback,
+        startNewPlaybackStream,
+        updateLocalPlayback
+    ]);
 
     useEffect(() => {
         const audio = audioRef.current;
         const state = unsyncedStateRef.current;
 
-        if (!audio || !bufferedRanges || !playbackState || state === null) {
+        if (!audio || !bufferedRanges || state === null || !currentEntryId) {
             return;
         }
 
-        if (state.entryId !== currentEntryId) {
-            return;
-        }
+        const ranges = bufferedRanges.get(currentEntryId)
 
-        const isBuffered = bufferedRanges.some(
+        if (!ranges) return;
+
+        const isBuffered = ranges.some(
             range =>
                 state.position >= range.start &&
                 state.position <= range.end
@@ -123,12 +134,12 @@ export const ListeningRoomProvider = ({ children }: { children?: React.ReactNode
         audio.currentTime = state.position;
         unsyncedStateRef.current = null;
 
-        if (!playbackState.pause) {
+        if (!state.pause) {
             console.log("start playing")
             setPaused(false)
             resumePlayback();
         }
-    }, [bufferedRanges, playbackState, currentEntryId]);
+    }, [bufferedRanges, currentEntryId]);
 
     const sendUserUpdate = useCallback((position: number, pausedState: boolean) => {
         console.log(`Отправляем апдейт на position: ${position}, paused: ${pausedState}, entryId: ${playbackState?.entryId}`);
@@ -151,13 +162,30 @@ export const ListeningRoomProvider = ({ children }: { children?: React.ReactNode
 
     const seek = useCallback((position: number) => {
 
-        console.log("paused", paused, "position", position)
-        if (playbackState) {
-            updateTrackPosition(
-                playbackState.entryId,
-                position,
-                paused
-            );
+        if (!playbackState?.entryId) return;
+
+        try {
+            pausePlayback();
+        } finally {
+            unsyncedStateRef.current = {pause: paused, position: position, entryId: playbackState?.entryId}
+            setLocalPosition(position);
+
+            // отменяем предыдущий таймаут, если был
+            if (debounceTimeoutRef.current) {
+                clearTimeout(debounceTimeoutRef.current);
+            }
+
+            // ставим новый таймаут на 300 мс
+            debounceTimeoutRef.current = setTimeout(() => {
+                if (playbackState) {
+                    updateTrackPosition(
+                        playbackState.entryId,
+                        position,
+                        paused
+                    );
+                }
+                debounceTimeoutRef.current = null;
+            }, 100);
         }
     }, [playbackState, updateTrackPosition, pausePlayback, paused]);
 
@@ -173,45 +201,76 @@ export const ListeningRoomProvider = ({ children }: { children?: React.ReactNode
     }, [setAudioChunkHandler]);
 
     useEffect(() => {
-        if ("mediaSession" in navigator) {
-            navigator.mediaSession.metadata = new MediaMetadata({
-                title: room?.audio.title,
-                artist: room?.audio.artist,
-                album: room?.audio.album,
-                artwork: [
-                    {
-                        src: "/images/face.webp",
-                        sizes: "512x512",
-                        type: "image/webp",
-                    },
-                ],
-            });
-
-            navigator.mediaSession.setActionHandler("play", () => {
-                sendUserUpdate(localPosition, false);
-            });
-
-            navigator.mediaSession.setActionHandler("pause", () => {
-                sendUserUpdate(localPosition, true);
-            });
-
-            navigator.mediaSession.setActionHandler("nexttrack", () => {
-                playNext();
-            });
-
-            navigator.mediaSession.setActionHandler("previoustrack", () => {
-                playPrev();
-            });
-
-            navigator.mediaSession.setActionHandler("seekbackward", () => {
-                seek(Math.max(0, localPosition - 10));
-            });
-
-            navigator.mediaSession.setActionHandler("seekforward", () => {
-                seek(localPosition + 10);
-            });
+        if (!("mediaSession" in navigator) || !room || !localPosition) {
+            return;
         }
-    }, [])
+
+        navigator.mediaSession.metadata = new MediaMetadata({
+            title: room?.audio.title,
+            artist: room?.audio.artist,
+            album: room?.audio.album,
+            artwork: [
+                {
+                    src: "/images/face.webp",
+                    sizes: "512x512",
+                    type: "image/webp"
+                }
+            ]
+        });
+
+        navigator.mediaSession.setActionHandler("play", () => {
+            sendUserUpdate(localPosition, false);
+        });
+
+        navigator.mediaSession.setActionHandler("pause", () => {
+            sendUserUpdate(localPosition, true);
+        });
+
+        navigator.mediaSession.setActionHandler("nexttrack", () => {
+            playNext();
+        });
+
+        navigator.mediaSession.setActionHandler("previoustrack", () => {
+            playPrev();
+        });
+
+        navigator.mediaSession.setActionHandler("seekbackward", () => {
+            seek(Math.max(0, localPosition - 10));
+        });
+
+        navigator.mediaSession.setActionHandler("seekforward", () => {
+            seek(localPosition + 10);
+        });
+
+        navigator.mediaSession.setActionHandler("seekto", (details) => {
+            if (details.seekTime != null) {
+                seek(details.seekTime);
+            }
+        });
+
+        navigator.mediaSession.setPositionState({
+            playbackRate: 1,
+            position: Math.min(localPosition, room?.audio.duration),
+            duration: room?.audio.duration
+        })
+
+        return () => {
+            navigator.mediaSession.setActionHandler("play", null);
+            navigator.mediaSession.setActionHandler("pause", null);
+            navigator.mediaSession.setActionHandler("nexttrack", null);
+            navigator.mediaSession.setActionHandler("previoustrack", null);
+            navigator.mediaSession.setActionHandler("seekbackward", null);
+            navigator.mediaSession.setActionHandler("seekforward", null);
+            navigator.mediaSession.setActionHandler("seekto", null);
+        };
+    }, [
+        room,
+        localPosition,
+        sendUserUpdate,
+        playNext,
+        playPrev,
+        seek
+    ]);
     
     return (
         <ListeningRoomContext.Provider value={{ 
@@ -229,7 +288,7 @@ export const ListeningRoomProvider = ({ children }: { children?: React.ReactNode
             audioRef, togglePlay,
             sendUserUpdate, bufferedRanges,
             pausePlayback, unsyncedStateRef,
-            seek
+            seek, currentEntryId
         }}>
             {children}
         </ListeningRoomContext.Provider>

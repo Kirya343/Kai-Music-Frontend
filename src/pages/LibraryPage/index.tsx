@@ -16,6 +16,7 @@ import PenIcon from "@/components/icons/PenIcon";
 import ShazamIcon from "@/components/icons/ShazamIcon";
 import PlusIcon from "@/components/icons/PlusIcon";
 import Track from "@/components/ui/Track/Track";
+import { useSearchParams } from "react-router-dom";
 
 interface IUploadingAudio {
     file: File;
@@ -28,7 +29,9 @@ const LibraryPage = () => {
 
     const [audios, setAudios] = useState<IAudio[] | null>(null);
     const [uploading, setUploading] = useState<IUploadingAudio[]>([]);
+    const [searchParams] = useSearchParams();
     const [audioFileView, setAudioFileView] = useState<IAudio | null>(null);
+    const roomId = searchParams.get("roomId");
 
     const { roomLoaded } = useRoomPlayback();
 
@@ -184,6 +187,13 @@ const LibraryPage = () => {
                                 key={audio.id}
                                 audio={audio}
                                 id={idx + 1}
+                                actions={roomId ? [
+                                    {
+                                        icon: <PlusIcon/>,
+                                        title: "Add to Room",
+                                        func: () => addToQueue([{audioId: audio.id}])
+                                    }
+                                ] : []}
                                 extraActions={[
                                     {
                                         icon: <PlusIcon/>,

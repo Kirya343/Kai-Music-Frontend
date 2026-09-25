@@ -1,4 +1,4 @@
-@use "@core/css/components/global-mixins" as *;
+@use "@/css/components/mixins/" as *;
 
 .button {
     border-radius: 1rem;
@@ -21,11 +21,12 @@
 
     padding: 0.5rem;
 
-    background-color: var(--background-l1);
-    border: 2px solid var(--border-color);
-    border-radius: var(--radius);
+    border: 1px solid;
+    border-radius: 12px;
 
     z-index: 20;
+
+    @include glass;
 
     // Radix сам задаёт позицию через transform/left/top
     // Поэтому position: absolute здесь НЕ нужен.
@@ -55,4 +56,8 @@
     display: flex;
     align-items: center;
     justify-content: center;
+
+    svg {
+        width: 20px;
+    }
 }

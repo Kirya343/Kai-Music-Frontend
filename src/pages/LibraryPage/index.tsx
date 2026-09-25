@@ -18,6 +18,7 @@ import AudioPlayerOpener from "@/components/ui/player/AudioPlayerOpener/AudioPla
 import PenIcon from "@/components/icons/PenIcon";
 import ShazamIcon from "@/components/icons/ShazamIcon";
 import PlusIcon from "@/components/icons/PlusIcon";
+import Track from "@/components/ui/Track/Track";
 
 interface IUploadingAudio {
     file: File;
@@ -181,35 +182,34 @@ const LibraryPage = () => {
 
                 <Loader loadingActive={!audios}>
                     <div className={styles.trackList}>
-                        {audios?.map(audio => (
-                            <div 
-                                key={audio.id} 
-                                className={styles.track}
-                            >
-                                <div className={styles.body}>
-
-                                    <div className={styles.audioCover}>
-                                        <MusicNoteIcon/>
-                                    </div>
-
-                                    <div className={styles.meta}>
-                                        <span className={styles.id}>#{audio.id}</span>
-                                        <span className={styles.name}>{audio?.title ?? audio?.name}</span>
-                                        <span className={styles.artist}>{audio?.artist || "Unknown artist"}</span>
-                                        <span className={styles.info}>
-                                            {audio?.album && (<>{audio?.album} • </>)}
-                                            {audio?.duration && (<>{countPosition(audio?.duration)}</>)}
-                                        </span>
-                                    </div>
-                                </div>
-
-                                <div className={styles.actions}>
-                                    <button onClick={() => addToQueue([{audioId: audio.id}])}><PlusIcon/></button>
-                                    <button onClick={() => recognizeAudio(audio)}><ShazamIcon/></button>
-                                    <button onClick={() => setAudioFileView(audio)}><PenIcon/></button>
-                                    <button onClick={() => handleDelete(audio)}><TrashIcon/></button>
-                                </div>
-                            </div>
+                        {audios?.map((audio, idx) => (
+                            <Track
+                                key={audio.id}
+                                audio={audio}
+                                id={idx + 1}
+                                extraActions={[
+                                    {
+                                        icon: <PlusIcon/>,
+                                        title: "Add to Room",
+                                        func: () => addToQueue([{audioId: audio.id}])
+                                    },
+                                    {
+                                        icon: <ShazamIcon/>,
+                                        title: "Autofill info with Shazam",
+                                        func: () => recognizeAudio(audio)
+                                    },
+                                    {
+                                        icon: <PenIcon/>,
+                                        title: "Edit audio info",
+                                        func: () => setAudioFileView(audio)
+                                    },
+                                    {
+                                        icon: <TrashIcon/>,
+                                        title: "Delete from library",
+                                        func: () => handleDelete(audio)
+                                    }
+                                ]}
+                            />
                         ))}
                     </div>
                 </Loader>

@@ -1,42 +1,27 @@
 import { useRef, useState } from "react";
 import { IRoomUpdate, useListeningRoom, roomService } from "@room";
 import { Link } from "react-router-dom";
-import PlayIcon from "@/components/icons/PlayIcon";
-import PauseIcon from "@/components/icons/PauseIcon";
 import styles from "./RoomPage.module.scss";
 import AudioPlayerOpener from "@/components/ui/player/AudioPlayerOpener/AudioPlayerOpener";
 import { useGlobal } from "@common";
-import clsx from "clsx";
-import MusicNoteIcon from "@/components/icons/MusicNoteIcon";
 import { useWebSocket } from "@websocket";
+import Track from "@/components/ui/Track/Track";
+import TrashIcon from "@/components/icons/TrashIcon";
+import ActionMenu from "@/components/ui/ActionMenu/ActionMenu";
+import CheckBoxIcon from "@/components/icons/CheckBoxIcon";
 
 const RoomPage = () => {
     const [selectedTracks, setSelectedTracks] = useState<number[]>([]);
     const [selectMode, setSelectMode] = useState<boolean>(false);
     const { room, removeFromQueue, 
-            updateTrackPosition, playbackState, 
-            localPosition, loadRoom 
+            updateTrackPosition,
+            localPosition, loadRoom,
+            currentEntryId
     } = useListeningRoom();
     const { started } = useGlobal();
     const { error } = useWebSocket();
     const [newRoomName, setNewRoomName] = useState<string>(room?.title || "");
     const [editMode, setEditMode] = useState<boolean>(false);
-
-    const timeoutRef = useRef<number | null>(null);
-
-    const handleMouseDown = (id: number) => {
-        timeoutRef.current = setTimeout(() => {
-            setSelectedTracks([id]);
-            setSelectMode(true);
-        }, 1200);
-    };
-
-    const clearTimer = () => {
-        if (timeoutRef.current) {
-            clearTimeout(timeoutRef.current);
-            timeoutRef.current = null;
-        }
-    };
 
     const toggleTrack = (id: number) => {
         setSelectedTracks(prev =>
@@ -107,52 +92,45 @@ const RoomPage = () => {
                 <div className={styles.queue}>
                     <div className={styles.header}>
                         <h3>Playback queue</h3>
+                        <ActionMenu
+                            actions={[
+                                {
+                                    icon: <CheckBoxIcon/>,
+                                    title: "Select tracks",
+                                    func: () => setSelectMode(prev => !prev)
+                                }
+                            ]}
+                        />
                     </div>
 
                     <div className={styles.trackList}>
-                        {room?.queue.map(queueItem => (
-                            <div 
-                                key={queueItem.id} 
-                                className={clsx(styles.track, queueItem.id == playbackState?.entryId ? styles.active : "")}
-                                onClick={() => toggleTrack(queueItem.id)}
-                                onMouseDown={() => handleMouseDown(queueItem.id)}
-                                onMouseUp={clearTimer}
-                                onMouseLeave={clearTimer}
-                                onTouchStart={() => handleMouseDown(queueItem.id)}
-                                onTouchEnd={clearTimer}
-                            >
-                                {selectMode && (
-                                    <input
-                                        type="checkbox"
-                                        checked={selectedTracks.includes(queueItem.id)}
-                                        readOnly
-                                    />
-                                )}
-                                <div className={styles.audioCover}>
-                                    <MusicNoteIcon/>
+                        {room?.queue.map(qi => (
+                            <Track
+                                onClick={selectMode ? 
+                                    () => toggleTrack(qi.id) : 
+                                    () => updateTrackPosition(qi.id, currentEntryId === qi.id ? localPosition : 0, true)
+                                }
+                                key={qi.id}
+                                audio={qi.audio}
+                                id={qi.position + 1}
+                                noBorder
+                                actions={[
+                                    {
+                                        icon: <TrashIcon/>,
+                                        title: "deleteAudio",
+                                        func: () => removeFromQueue([qi.id])
+                                    }
+                                ]}
+                                props={{
+                                    title: true,
+                                    artist: true
+                                }}
+                                
+                                selectionMode={selectMode}
+                                selected={selectedTracks.some(t => t == qi.id)}
 
-                                    {queueItem.id == playbackState?.entryId && !playbackState.pause ? (
-                                        <button 
-                                            className={clsx(styles.action, styles.pause)}
-                                            onClick={() => updateTrackPosition(queueItem.id, localPosition, true)} 
-                                        >
-                                            <PauseIcon />
-                                        </button>
-                                    ) : (
-                                        <button 
-                                            className={clsx(styles.action, styles.play)}
-                                            onClick={() => updateTrackPosition(queueItem.id, 0, false)} 
-                                        >
-                                            <PlayIcon />
-                                        </button>
-                                    )}
-                                </div>
-
-                                <div className={styles.meta}>
-                                    <span className={styles.name}>{queueItem?.name}</span>
-                                    <span className={styles.artist}>{queueItem?.artist || "Unknown artist"}</span>
-                                </div>
-                            </div>
+                                playing={currentEntryId === qi.id}
+                            />
                         ))}
                     </div>
 
@@ -164,7 +142,7 @@ const RoomPage = () => {
                     </Link>
                 </div>
 
-                {selectMode && selectedTracks.length > 0 && (
+                {selectMode && (
                     <div className={styles.selectedTracksActions}>
                         <button 
                             onClick={deleteFromRoom}

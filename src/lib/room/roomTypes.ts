@@ -21,10 +21,8 @@ export interface IRoomUpdate {
 
 export interface IQueueItem {
     id: number;
-    audioId: number;
-    artist: number;
-    name: string;
     position: number;
+    audio: IAudio;
 }
 
 export interface IQueueItemCreate {

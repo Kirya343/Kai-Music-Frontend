@@ -4,11 +4,12 @@ import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import styles from "./ActionMenu.module.scss";
 import EllipsisVerticalIcon from "@/components/icons/EllipsisVerticalIcon";
 import clsx from "clsx";
+import { ReactNode } from "react";
 
 export interface IKebabAction {
     title: string,
     func: () => void,
-    icon?: string,
+    icon?: ReactNode,
     access?: boolean
 };
 
@@ -50,9 +51,7 @@ const ActionMenu = ({ actions, className }: ActionMenuProps) => {
                         >
                             {action.icon && (
                                 <div className={styles.itemIcon}>
-                                    <i
-                                        className={`fa-regular fa-${action.icon} fa-lg`}
-                                    />
+                                    {action.icon}
                                 </div>
                             )}
 

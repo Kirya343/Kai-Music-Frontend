@@ -1,7 +1,7 @@
-import RepeatAllIcon from "@/components/icons/player/RepeatAllIcon";
-import NoRepeatIcon from "@/components/icons/player/NoRepeatIcon";
-import RepeatOneIcon from "@/components/icons/player/RepeatOneIcon";
-import ShuffleIcon from "@/components/icons/player/ShuffleIcon";
+import RepeatAllIcon from "@/components/icons/playbackmode/RepeatAllIcon";
+import NoRepeatIcon from "@/components/icons/playbackmode/NoRepeatIcon";
+import RepeatOneIcon from "@/components/icons/playbackmode/RepeatOneIcon";
+import ShuffleIcon from "@/components/icons/playbackmode/ShuffleIcon";
 import { useListeningRoom, roomService } from "@room";
 import { useState } from "react";
 

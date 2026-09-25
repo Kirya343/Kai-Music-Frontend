@@ -19,8 +19,7 @@ export const useAudioStream = () => {
         appendChunk, processInitializationChunk,
         sourceBufferRef, bufferedRanges,
 
-        currentEntryId, paused, localPosition,
-        updateLocalPlayback, setPaused, setLocalPosition,
+        playbackState, setPlaybackState,
         
         unsyncedStateRef
     } = useMediaResource(processQueueRef);
@@ -171,8 +170,7 @@ export const useAudioStream = () => {
         bufferedRanges,
         startNewPlaybackStream,
 
-        currentEntryId, paused, localPosition,
-        updateLocalPlayback, setPaused, setLocalPosition,
+        playbackState, setPlaybackState,
 
         unsyncedStateRef
     };

@@ -13,14 +13,13 @@ import DownIcon from "@/components/icons/DownIcon";
 
 const Audio = () => {
     const { 
-        localPosition,
         playNext, playPrev, duration, 
-        paused, updateMessage, 
+        updateMessage, 
         fullPlayerOpen, audioInfo,
         setFullPlayerOpen,
         togglePlay, seek,
         bufferedRanges,
-        currentEntryId
+        playbackState
     } = useRoomPlayback();
 
     const headerRef = useRef<HTMLDivElement | null>(null);
@@ -39,7 +38,7 @@ const Audio = () => {
         }
     }, [audioInfo, fullPlayerOpen]);
 
-    return currentEntryId ? (
+    return playbackState ? (
         <>
             <VolumeSlider visible={false}/>
 
@@ -58,7 +57,7 @@ const Audio = () => {
                     <div className={styles.tracker}>
                         <div className={styles.progress}>
                             <div className={styles.buffered}>
-                                {bufferedRanges.get(currentEntryId)?.map((range, index) => (
+                                {bufferedRanges.get(playbackState.entryId)?.map((range, index) => (
                                     <div
                                         key={index}
                                         className={styles.bufferedRange}
@@ -74,14 +73,14 @@ const Audio = () => {
                                 type="range"
                                 min={0}
                                 max={duration}
-                                value={localPosition}
+                                value={playbackState.position}
                                 onChange={(e) => seek(Number(e.target.value))}
                                 style={{
                                     width: "100%",
                                     background: `linear-gradient(
                                         to right,
-                                        #ffffff ${(localPosition / duration) * 100}%,
-                                        #00000000 ${(localPosition / duration) * 100}%
+                                        #ffffff ${(playbackState.position / duration) * 100}%,
+                                        #00000000 ${(playbackState.position / duration) * 100}%
                                     )`
                                 }}
                             />
@@ -89,7 +88,7 @@ const Audio = () => {
 
                         <div className={styles.positionMeta}>
                             <span className={styles.currentPosition}>
-                                {countPosition(localPosition)}
+                                {countPosition(playbackState.position)}
                             </span>
 
                             <span className={styles.duration}>
@@ -103,7 +102,7 @@ const Audio = () => {
                             <LeftIcon />
                         </button>
                         <button onClick={togglePlay}>
-                            {paused ? <PlayIcon /> : <PauseIcon />}
+                            {playbackState.pause ? <PlayIcon /> : <PauseIcon />}
                         </button>
                         <button onClick={playNext}>
                             <RightIcon />

@@ -13,10 +13,10 @@ import CheckBoxIcon from "@/components/icons/CheckBoxIcon";
 const RoomPage = () => {
     const [selectedTracks, setSelectedTracks] = useState<number[]>([]);
     const [selectMode, setSelectMode] = useState<boolean>(false);
-    const { room, removeFromQueue, 
-            updateTrackPosition,
-            localPosition, loadRoom,
-            currentEntryId
+    const { 
+        room, removeFromQueue, 
+        updateTrackPosition,
+        playbackState, loadRoom
     } = useRoomPlayback();
     const { started } = useGlobal();
     const { error } = useWebSocket();
@@ -84,7 +84,7 @@ const RoomPage = () => {
                 </div>
 
                 <div className={styles.members}>
-                    3 Listners
+                    {room?.listeners} Listners
                 </div>
 
                 {error && (<div className={styles.error}>Error while connecting to room</div>)}
@@ -108,7 +108,10 @@ const RoomPage = () => {
                             <Track
                                 onClick={selectMode ? 
                                     () => toggleTrack(qi.id) : 
-                                    () => updateTrackPosition(qi.id, currentEntryId === qi.id ? localPosition : 0, true)
+                                    () => updateTrackPosition({
+                                        entryId: qi.id, 
+                                        position: playbackState?.entryId === qi.id ? playbackState?.position : 0, 
+                                        pause: true})
                                 }
                                 key={qi.id}
                                 audio={qi.audio}
@@ -128,8 +131,6 @@ const RoomPage = () => {
                                 
                                 selectionMode={selectMode}
                                 selected={selectedTracks.some(t => t == qi.id)}
-
-                                playing={currentEntryId === qi.id}
                             />
                         ))}
                     </div>

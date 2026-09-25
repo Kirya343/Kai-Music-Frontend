@@ -13,7 +13,7 @@ export interface IShortRoom {
     title: string;
     ownerId: number;
     code: string;
-    membersCount: number;
+    listeners: number;
 }
 
 export interface IRoomUpdate {

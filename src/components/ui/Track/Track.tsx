@@ -58,9 +58,9 @@ const Track = ({
     selected = false
 }: TrackProps) => {
 
-    const { room, currentEntryId, paused } = useRoomPlayback();
+    const { room, playbackState } = useRoomPlayback();
 
-    const playing = room?.queue.find(i => currentEntryId === i.id)?.audio.id === audio.id;
+    const playing = room?.queue.find(i => playbackState?.entryId === i.id)?.audio.id === audio.id;
 
     return (
         <div className={clsx(styles.track, noBorder && styles.noBorder, playing && styles.playing)}>
@@ -81,7 +81,7 @@ const Track = ({
                 <div className={styles.meta}>
                     {(!props || props.title) && (
                         <span className={styles.title}>
-                            {playing && <PlayingAudioIcon playing={!paused} />}
+                            {playing && <PlayingAudioIcon playing={!playbackState?.pause} />}
 
                             {(!props || props.id) && <span className={styles.id}>#{id ? id :audio.id}</span>} 
                             {audio?.title ?? audio?.name}

@@ -1,12 +1,12 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useWebSocket } from "@websocket";
 import { AudioChunk, IAudio } from "@audio";
-import { roomService, IListeningRoom, IPlaybackState, IQueueItemCreate } from "@room";
+import { IListeningRoom } from "@room";
+import { IPlaybackState, IQueueItemCreate } from "@playback";
 
 export const useListeningRoomWS = () => {
     
     const { client, addOnConnectHandler} = useWebSocket();
-    const [playbackState, setPlaybackState] = useState<IPlaybackState | null>(null);
     const [audioInfo, setAudioInfo] = useState<IAudio | null>(null);
     const [room, setRoom] = useState<IListeningRoom | null>(null);
     const onAudioChunkRef = useRef<((chunk: AudioChunk) => void) | null>(null);
@@ -22,19 +22,8 @@ export const useListeningRoomWS = () => {
             playbackStateCallbackRef.current = callback;
         }, []);
 
-    useEffect(() => {
-        async function loadState(roomId: number) {
-            const data: IPlaybackState = await roomService.getCurrentRoomState(roomId);
-            setPlaybackState(data);
-        }
-
-        if (room?.id) loadState(room?.id)
-    }, [room?.id])
-
-    const updateTrackPosition = useCallback(async (entryId: number, position: number, pause: boolean) => {
-        if (!client || !entryId || !room?.id) return;
-
-        const state: IPlaybackState = {entryId, position, pause};
+    const updateTrackPosition = useCallback(async (state: IPlaybackState) => {
+        if (!client || !state || !room?.id) return;
 
         console.log("Отправляем обновление позиции: ", state, room?.id)
 
@@ -99,8 +88,6 @@ export const useListeningRoomWS = () => {
                 const state: IPlaybackState = JSON.parse(message.body);
 
                 console.log("Пришло обновление playback: ", state)
-                
-                setPlaybackState(state);
 
                 playbackStateCallbackRef.current?.(state);
             });
@@ -132,7 +119,6 @@ export const useListeningRoomWS = () => {
     }, [addOnConnectHandler]);
 
     return {
-        playbackState, 
         updateTrackPosition, 
         playNext, playPrev, 
         audioInfo,

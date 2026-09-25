@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useAudioBuffer } from "./useAudioBuffer";
-import { IPlaybackState } from "@room/roomTypes";
+import { IPlaybackState } from "@playback";
 
 export const useMediaResource = (processQueueRef: React.RefObject<() => void>) => {
 
@@ -16,9 +16,7 @@ export const useMediaResource = (processQueueRef: React.RefObject<() => void>) =
     const objectUrlRef = useRef<string | null>(null);
 
     // audio state
-    const [paused, setPaused] = useState(true);
-    const [currentEntryId, setCurrentEntryId] = useState<number | null>(null);
-    const [localPosition, setLocalPosition] = useState<number>(0);
+    const [playbackState, setPlaybackState] = useState<IPlaybackState | null>(null);
 
     const unsyncedStateRef = useRef<IPlaybackState | null>(null);
 
@@ -78,7 +76,7 @@ export const useMediaResource = (processQueueRef: React.RefObject<() => void>) =
         });
 
         addEventListener();
-    }, [updateBufferedRanges, currentEntryId]);
+    }, [updateBufferedRanges]);
 
     const cleanupAudio = useCallback(() => {
         console.log("Очищаем playback")
@@ -135,16 +133,7 @@ export const useMediaResource = (processQueueRef: React.RefObject<() => void>) =
             );
         }
     }, []);
-
-    const updateLocalPlayback = useCallback((playbackState: IPlaybackState) => {
-
-        console.log("устанавливаем setLocalPosition на playbackState.position")
-
-        setCurrentEntryId(playbackState.entryId);
-        setLocalPosition(playbackState.position);
-        setPaused(playbackState.pause);
-    }, [])
-
+    
     // События пользователя
     const addEventListener = useCallback(() => {
         const audio = audioRef.current;
@@ -156,14 +145,14 @@ export const useMediaResource = (processQueueRef: React.RefObject<() => void>) =
                 console.log("unsyncedStateRef.current", unsyncedStateRef.current)
                 return;
             }
-            setLocalPosition(audio.currentTime);
+            setPlaybackState(prev => ({...prev!, position: audio.currentTime}));
         }
         audio.addEventListener("timeupdate", handleTimeUpdate);
 
         return () => {
             audio.removeEventListener("timeupdate", handleTimeUpdate);
         };
-    }, [setLocalPosition]);
+    }, [setPlaybackState]);
 
     const playIfBuffered = useCallback((entryId: number) => {
         const audio = audioRef.current;
@@ -192,7 +181,7 @@ export const useMediaResource = (processQueueRef: React.RefObject<() => void>) =
 
         if (!state.pause) {
             console.log("start playing")
-            setPaused(false)
+            setPlaybackState(prev => ({...prev!, pause: false}))
             resumePlayback();
         }
     }, [bufferedRanges]);
@@ -219,8 +208,7 @@ export const useMediaResource = (processQueueRef: React.RefObject<() => void>) =
         sourceBufferRef, 
         bufferedRanges,
 
-        currentEntryId, paused, localPosition,
-        updateLocalPlayback, setPaused, setLocalPosition,
+        playbackState, setPlaybackState,
 
         unsyncedStateRef
     }

@@ -9,9 +9,9 @@ import RightIcon from "@/components/icons/RightIcon";
 const AudioPlayerOpener = () => {
 
     const { 
-        localPosition, playNext, audioInfo, 
+        playbackState, playNext, audioInfo, 
         fullPlayerOpen, setFullPlayerOpen, 
-        paused, duration, togglePlay 
+        duration, togglePlay 
     } = useRoomPlayback();
 
     const headerRef = useRef<HTMLDivElement | null>(null);
@@ -30,7 +30,7 @@ const AudioPlayerOpener = () => {
         }
     }, [audioInfo, fullPlayerOpen]);
 
-    return audioInfo && (
+    return audioInfo && playbackState && (
         <div className={styles.audioTracker} onClick={() => setFullPlayerOpen(true)}>
             <div ref={headerRef} className={styles.header}>
                 <div ref={textRef} className={styles.headerText}>
@@ -39,12 +39,17 @@ const AudioPlayerOpener = () => {
             </div>
             <div 
                 className={styles.trackPosition}
-                style={{ background: `linear-gradient(to right, #ffffff ${(localPosition / duration) * 100}%, #444 ${(localPosition / duration) * 100}%)`}}
+                style={{ 
+                    background: `
+                        linear-gradient(to right, #ffffff ${(playbackState.position / duration) * 100}%, 
+                        #444 ${(playbackState.position / duration) * 100}%)
+                    `
+                }}
             />
             
             <div className={styles.navigation} onClick={(e) => e.stopPropagation()}>
                 <button onClick={togglePlay}>
-                    {paused ? <PlayIcon /> : <PauseIcon />}
+                    {playbackState.pause ? <PlayIcon /> : <PauseIcon />}
                 </button>
                 <button onClick={playNext}>
                     <RightIcon />

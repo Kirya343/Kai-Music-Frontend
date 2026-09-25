@@ -107,7 +107,7 @@ const MainPage = () => {
                                     <div className={styles.meta}>
                                         <span className={styles.roomName}>{r.title}</span>
                                         <span className={styles.audioName}>Audio name</span>
-                                        <span className={styles.listnersCount}>- {r.membersCount} lisners</span>
+                                        <span className={styles.listnersCount}>- {r.listeners} lisners</span>
                                     </div>
                                 </div>
                             ))}

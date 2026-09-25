@@ -4,7 +4,7 @@
     background-color: var(--glass-background);
     border-color: var(--glass-border);
     backdrop-filter: blur(3px);
-    -webkit-backdrop-filter: blur(3px);
+    //-webkit-backdrop-filter: blur(3px);
     transition: 
         outline-color 0.1s ease,
         background-color 0.2s ease;
@@ -16,8 +16,8 @@
     }
 
     @include mobile {
-        backdrop-filter: blur(20px);
-        -webkit-backdrop-filter: blur(20px);                
+        backdrop-filter: blur(3px);
+        //-webkit-backdrop-filter: blur(3px);           
     }
 
     @if $hover {
@@ -34,11 +34,11 @@
     background-color: rgb(221, 221, 221);
     color: #000;
     backdrop-filter: blur(3px);
-    -webkit-backdrop-filter: blur(3px);
+    //-webkit-backdrop-filter: blur(3px);
 
     @include mobile {
-        backdrop-filter: blur(20px);
-        -webkit-backdrop-filter: blur(20px);                
+        backdrop-filter: blur(3px);
+        //-webkit-backdrop-filter: blur(3px);                
     }
 
     @if $hover {

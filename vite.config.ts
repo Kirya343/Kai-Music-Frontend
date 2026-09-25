@@ -32,4 +32,7 @@ export default defineConfig({
     preview: {
         port: 30004
     },
+    css: {
+        transformer: 'postcss'
+    },
 })

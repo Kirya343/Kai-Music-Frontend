@@ -1,6 +1,6 @@
 import { useRoomPlayback } from "@room";
 import { audioService, IAudio } from "@audio";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import styles from "./LibraryPage.module.scss"
 import CirclePlusIcon from "@/components/icons/CirclePlusIcon";
 import PlaylistIcon from "@/components/icons/PlaylistIcon";
@@ -33,7 +33,36 @@ const LibraryPage = () => {
     const [audioFileView, setAudioFileView] = useState<IAudio | null>(null);
     const roomId = searchParams.get("roomId");
 
+    const [searchQuery, setSearchQuery] = useState<string>("")
+
     const { roomLoaded } = useRoomPlayback();
+
+    const filteredAudios = useMemo<IAudio[]>(() => {
+        if (!audios) {
+            return [];
+        }
+
+        const query = searchQuery.trim().toLowerCase();
+
+        if (!query) {
+            return audios;
+        }
+
+        return audios.filter(audio =>
+            [
+                audio.id,
+                audio.name,
+                audio.format,
+                audio.title,
+                audio.artist,
+                audio.album,
+                audio.duration,
+                audio.coverUrl,
+            ].some(value =>
+                String(value).toLowerCase().includes(query)
+            )
+        );
+    }, [audios, searchQuery]);
 
     const recognizeAudio = async (audio: IAudio) => {
         const updatedAudio: IAudio = await audioService.recognizeAudio(audio.id)
@@ -156,6 +185,17 @@ const LibraryPage = () => {
                         <span className={styles.subtitle}>Favorite</span>
                     </button>
                 </div>
+                
+                <div className={styles.sorting}>
+                    <input 
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        className={styles.search}
+                        placeholder="Search audios..."
+                    />
+
+                    {searchQuery.length != 0 && <span>Found {filteredAudios.length} audios</span>}
+                </div>
 
                 {uploading.length > 0 && (
                     <>
@@ -170,7 +210,7 @@ const LibraryPage = () => {
                             {uploading.map(item => (
                                 <div key={item.id} className={styles.uploadItem}>
                                     <div className={styles.progressBar} style={{ width: `${item.progress}%` }}/>
-                                    <span>{item.file.name}</span>
+                                    <span>{item.file?.name}</span>
                                     <span className={styles.percent}>{item.progress}%</span>
                                     {item.success && <CheckmarkIcon className={`${styles.status} ${styles.success}`} />}
                                     {item.success === false && <CrossIcon className={`${styles.status} ${styles.error}`} />}
@@ -182,7 +222,7 @@ const LibraryPage = () => {
 
                 <Loader loadingActive={!audios}>
                     <div className={styles.trackList}>
-                        {audios?.map((audio, idx) => (
+                        {filteredAudios?.map((audio, idx) => (
                             <Track
                                 key={audio.id}
                                 audio={audio}

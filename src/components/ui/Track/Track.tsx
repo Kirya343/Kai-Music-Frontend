@@ -99,7 +99,7 @@ const Track = ({
 
             <div className={styles.actions}>
                 {actions?.map(act => (
-                    <button onClick={act.func}>{act.icon}</button>
+                    <button onClick={act.func} key={act.title}>{act.icon}</button>
                 ))}
                 {extraActions && <ActionMenu actions={extraActions}/>}
             </div>

@@ -104,7 +104,7 @@ const RoomPage = () => {
                     </div>
 
                     <div className={styles.trackList}>
-                        {room?.queue.map(qi => (
+                        {room?.playlist.queue.map(qi => (
                             <Track
                                 onClick={selectMode ? 
                                     () => toggleTrack(qi.id) : 

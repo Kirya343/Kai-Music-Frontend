@@ -60,7 +60,7 @@ const Track = ({
 
     const { room, playbackState } = useRoomPlayback();
 
-    const playing = room?.queue.find(i => playbackState?.entryId === i.id)?.audio.id === audio.id;
+    const playing = room?.playlist.queue.find(i => playbackState?.entryId === i.id)?.audio.id === audio.id;
 
     return (
         <div className={clsx(styles.track, noBorder && styles.noBorder, playing && styles.playing)}>

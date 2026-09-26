@@ -28,7 +28,7 @@ export const useListeningRoomWS = () => {
         console.log("Отправляем обновление позиции: ", state, room?.id)
 
         client?.publish({
-            destination: `/app/room/${room?.id}/update-playback-state`,
+            destination: `/app/playback/${room?.id}/update-playback-state`,
             body: JSON.stringify(state)
         });
     }, [client, room?.id])
@@ -38,7 +38,7 @@ export const useListeningRoomWS = () => {
 
         if (!client) return;
 
-        client.publish({ destination: `/app/room/${room?.id}/next` });
+        client.publish({ destination: `/app/playback/${room?.id}/next` });
     }
 
     const playPrev = () => {
@@ -46,7 +46,7 @@ export const useListeningRoomWS = () => {
 
         if (!client) return;
 
-        client.publish({ destination: `/app/room/${room?.id}/prev` });
+        client.publish({ destination: `/app/playback/${room?.id}/prev` });
     }
 
     const addToQueue = useCallback((list: IQueueItemCreate[]) => {
@@ -54,7 +54,7 @@ export const useListeningRoomWS = () => {
 
         if (!client) return;
 
-        client.publish({ destination: `/app/room/queue.add`, body: JSON.stringify(list) });
+        client.publish({ destination: `/app/playlist/queue.add`, body: JSON.stringify(list) });
     }, [client])
 
     const removeFromQueue = useCallback((list: number[]) => {
@@ -62,7 +62,7 @@ export const useListeningRoomWS = () => {
 
         if (!client) return;
 
-        client.publish({ destination: `/app/room/queue.remove`, body: JSON.stringify(list) });
+        client.publish({ destination: `/app/playlist/queue.remove`, body: JSON.stringify(list) });
     }, [client])
 
     const loadRoom = useCallback(async() => {

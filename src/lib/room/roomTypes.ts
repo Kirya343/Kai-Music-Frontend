@@ -1,10 +1,8 @@
-import { PlaybackMode } from "@/components/ui/player/PlaybackModeToggle";
 import { IAudio } from "../audio";
-import { IQueueItem } from "../playback/playbackTypes";
+import { Playlist } from "../playlist";
 
 export interface IListeningRoom extends IShortRoom{
-    mode: PlaybackMode;
-    queue: IQueueItem[];
+    playlist: Playlist;
     audio: IAudio;
 }
 

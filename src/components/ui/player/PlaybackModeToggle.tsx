@@ -4,6 +4,7 @@ import RepeatOneIcon from "@/components/icons/playbackmode/RepeatOneIcon";
 import ShuffleIcon from "@/components/icons/playbackmode/ShuffleIcon";
 import { useRoomPlayback, roomService } from "@room";
 import { useState } from "react";
+import { playlistService } from "@/lib/playlist";
 
 export enum PlaybackMode {
     NORMAL = "NORMAL",
@@ -16,7 +17,7 @@ export const PlaybackModeToggle = () => {
 
     const { room } = useRoomPlayback();
 
-    const [currentMode, setCurrentMode] = useState<PlaybackMode>(room?.mode || PlaybackMode.NORMAL);
+    const [currentMode, setCurrentMode] = useState<PlaybackMode>(room?.playlist.mode || PlaybackMode.NORMAL);
     const nextMode = async () => {
         if (!room) return;
         const next = (() => {
@@ -28,7 +29,7 @@ export const PlaybackModeToggle = () => {
             }
         })();
 
-        const res = await roomService.setRoomPlaybackMode(room?.id, next);
+        const res = await playlistService.setPlaylistPlaybackMode(room?.id, next);
         if (res.ok) setCurrentMode(next)
     };
 

@@ -78,7 +78,7 @@ const LibraryPage = () => {
         if (success) {
             try {
                 await audioService.deleteAudio(audio.id)
-                setAudios(prev => prev?.filter(a => a.id == audio.id) || []);
+                setAudios(prev => prev?.filter(a => a.id !== audio.id) || []);
             } catch (e) {
                 console.error(e)
             }
@@ -248,8 +248,10 @@ const LibraryPage = () => {
                                         }}
                                     >
                                         <LibraryTrack
+                                            key={audio.id}
                                             audio={audio}
                                             id={item.index + 1}
+                                            audios={audios || []}
                                             updateAudio={updateAudio}
                                             openEditModal={setAudioFileView}
                                             handleDelete={handleDelete}
@@ -281,18 +283,20 @@ const LibraryPage = () => {
 const LibraryTrack = ({
     audio, 
     id,
+    audios,
     updateAudio,
     openEditModal,
     handleDelete
 }: {
     audio: IAudio, 
     id: number,
+    audios: IAudio[],
     updateAudio: (audio: IAudio) => void,
     openEditModal: (audio: IAudio) => void,
     handleDelete: (audio: IAudio) => void
 }) => {
 
-    const { addToQueue } = useRoomPlayback();
+    const { addToQueue, room, playbackState } = useRoomPlayback();
     const [searchParams] = useSearchParams();
     const roomId = searchParams.get("roomId");
 
@@ -314,7 +318,7 @@ const LibraryTrack = ({
 
     const extraActions = [
             {
-                icon: <PlusIcon/>,
+                icon: audios.some(a => a.id === audio.id) ? <CheckmarkIcon/> : <PlusIcon/> ,
                 title: "Add to Room",
                 func: () => addToQueue([{audioId: audio.id}])
             },
@@ -336,12 +340,12 @@ const LibraryTrack = ({
         ]
     return (
         <Track
-            key={audio.id}
             audio={audio}
             id={id}
             actions={actions}
             extraActions={extraActions}
             className={styles.track}
+            playing={room?.playlist.queue.find(i => playbackState?.entryId === i.id)?.audio.id === audio.id}
         />
     )
 }

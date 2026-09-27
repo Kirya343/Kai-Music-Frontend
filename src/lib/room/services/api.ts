@@ -1,9 +1,7 @@
-import { PlaybackMode } from "@/components/ui/player/PlaybackModeToggle";
 import { apiFetch, apiFetchJson } from "@common";
 import { IRoomUpdate } from "@room";
 
 export const loadCurrentRoom = () => apiFetchJson("/room")
-export const setRoomPlaybackMode = (roomId: number, mode: PlaybackMode) => apiFetch(`/room/${roomId}/mode`, {method: "PATCH"}, {mode})
 
 export const getCurrentRoomState = (roomId: number) => apiFetchJson(`/room/${roomId}/playback-state`);
 export const getRoomsPage = () => apiFetchJson(`/room/list/page`)

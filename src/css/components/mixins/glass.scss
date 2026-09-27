@@ -15,6 +15,15 @@
         outline-color: var(--glass-border);
     }
 
+    &:is(button):active {
+        transition: transform 0.2s ease, filter 0.2s ease;
+
+        &:active {
+            transform: scale(0.96);
+            filter: brightness(0.8);
+        }
+    }
+
     @include mobile {
         backdrop-filter: blur(3px);
         //-webkit-backdrop-filter: blur(3px);           

@@ -1,7 +1,7 @@
 import * as api from './api';
 // import * as hooks from './hooks';
 
-export const roomService = {
+export const playlistService = {
     ...api,
     // ...hooks
 };

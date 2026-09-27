@@ -1,4 +1,4 @@
-const CheckmarkIcon = ({className}: {className: string}) => {
+const CheckmarkIcon = ({className}: {className?: string}) => {
     return (
         <svg 
             className={className}

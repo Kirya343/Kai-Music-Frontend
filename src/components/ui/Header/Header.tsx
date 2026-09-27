@@ -18,7 +18,7 @@ const Header = () => {
                 <img className={styles.logo} src="/image/logo.png" onClick={() => navigate("/")}/>
                 <div className={styles.navigation}>
                     {room && (
-                        <NavLink to="/room" className={styles.link}>
+                        <NavLink to="/room" className={styles.link} onClick={() => console.log("ROOM CLICK")}>
                             <DoorIcon className={styles.linkIcon}/>
                             <span className={styles.subtitle}>Room</span>
                         </NavLink>

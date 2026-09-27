@@ -15,7 +15,7 @@ import { IQueueItem } from "@playback";
 const RoomPage = () => {
     const [selectedTracks, setSelectedTracks] = useState<number[]>([]);
     const [selectMode, setSelectMode] = useState<boolean>(false);
-    const { room, removeFromQueue, loadRoom } = useRoomPlayback();
+    const { room, removeFromQueue, loadRoom, playbackState } = useRoomPlayback();
 
     const { started } = useGlobal();
     const { error } = useWebSocket();
@@ -106,10 +106,12 @@ const RoomPage = () => {
                         <div className={styles.trackList}>
                             {room?.playlist.queue.map(qi => (
                                 <RoomTrack
+                                    key={qi.id}
                                     queueItem={qi}
                                     selected={selectedTracks.some(t => t == qi.id)}
                                     selectMode={selectMode}
                                     toggleTrack={toggleTrack}
+                                    playing={playbackState?.entryId === qi.id}
                                 />
                             ))}
                         </div>
@@ -155,11 +157,12 @@ const RoomPage = () => {
     )
 }
 
-const RoomTrack = ({queueItem, selected, selectMode, toggleTrack}: {
+const RoomTrack = ({queueItem, selected, selectMode, toggleTrack, playing}: {
     queueItem: IQueueItem, 
     selected: boolean, 
     selectMode: boolean,
-    toggleTrack: (id: number) => void
+    toggleTrack: (id: number) => void,
+    playing: boolean
 }) => {
 
     const { 
@@ -197,7 +200,6 @@ const RoomTrack = ({queueItem, selected, selectMode, toggleTrack}: {
     return (
         <Track
             onClick={() => handleTrackClick(queueItem.id)}
-            key={queueItem.id}
             audio={queueItem.audio}
             id={queueItem.position + 1}
             noBorder
@@ -209,6 +211,8 @@ const RoomTrack = ({queueItem, selected, selectMode, toggleTrack}: {
             
             selectionMode={selectMode}
             selected={selected}
+
+            playing={playing}
         />
     )
 }

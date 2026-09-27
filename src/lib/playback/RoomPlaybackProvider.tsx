@@ -219,13 +219,11 @@ export const RoomPlaybackProvider = ({ children }: { children?: React.ReactNode 
         });
 
         navigator.mediaSession.setActionHandler("play", () => {
-            const state: IPlaybackState = {...playbackState, pause: false};
-            updateTrackPosition(state)
+            togglePlay()
         });
 
         navigator.mediaSession.setActionHandler("pause", () => {
-            const state: IPlaybackState = {...playbackState, pause: true};
-            updateTrackPosition(state)
+            togglePlay()
         });
 
         navigator.mediaSession.setActionHandler("nexttrack", () => {

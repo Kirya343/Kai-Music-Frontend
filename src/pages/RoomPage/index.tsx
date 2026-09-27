@@ -7,18 +7,16 @@ import { useGlobal } from "@common";
 import { useWebSocket } from "@websocket";
 import Track from "@/components/ui/Track/Track";
 import TrashIcon from "@/components/icons/TrashIcon";
-import ActionMenu from "@/components/ui/ActionMenu/ActionMenu";
+import ActionMenu, { IKebabAction } from "@/components/ui/ActionMenu/ActionMenu";
 import CheckBoxIcon from "@/components/icons/CheckBoxIcon";
 import Loader from "@/components/ui/Loader/Loader";
+import { IQueueItem } from "@playback";
 
 const RoomPage = () => {
     const [selectedTracks, setSelectedTracks] = useState<number[]>([]);
     const [selectMode, setSelectMode] = useState<boolean>(false);
-    const { 
-        room, removeFromQueue, 
-        updateTrackPosition,
-        playbackState, loadRoom
-    } = useRoomPlayback();
+    const { room, removeFromQueue, loadRoom } = useRoomPlayback();
+
     const { started } = useGlobal();
     const { error } = useWebSocket();
     const [newRoomName, setNewRoomName] = useState<string>(room?.title || "");
@@ -107,32 +105,11 @@ const RoomPage = () => {
 
                         <div className={styles.trackList}>
                             {room?.playlist.queue.map(qi => (
-                                <Track
-                                    onClick={selectMode ? 
-                                        () => toggleTrack(qi.id) : 
-                                        () => updateTrackPosition({
-                                            entryId: qi.id, 
-                                            position: playbackState?.entryId === qi.id ? playbackState?.position : 0, 
-                                            pause: true})
-                                    }
-                                    key={qi.id}
-                                    audio={qi.audio}
-                                    id={qi.position + 1}
-                                    noBorder
-                                    actions={[
-                                        {
-                                            icon: <TrashIcon/>,
-                                            title: "deleteAudio",
-                                            func: () => removeFromQueue([qi.id])
-                                        }
-                                    ]}
-                                    props={{
-                                        title: true,
-                                        artist: true
-                                    }}
-                                    
-                                    selectionMode={selectMode}
+                                <RoomTrack
+                                    queueItem={qi}
                                     selected={selectedTracks.some(t => t == qi.id)}
+                                    selectMode={selectMode}
+                                    toggleTrack={toggleTrack}
                                 />
                             ))}
                         </div>
@@ -175,6 +152,64 @@ const RoomPage = () => {
 
             {started && <AudioPlayerOpener />}
         </>
+    )
+}
+
+const RoomTrack = ({queueItem, selected, selectMode, toggleTrack}: {
+    queueItem: IQueueItem, 
+    selected: boolean, 
+    selectMode: boolean,
+    toggleTrack: (id: number) => void
+}) => {
+
+    const { 
+        removeFromQueue, 
+        updateTrackPosition,
+        playbackState,
+        togglePlay
+    } = useRoomPlayback();
+
+    const handleTrackClick = (qiId: number) => {
+        if (selectMode) {
+            toggleTrack(qiId)
+        } else {
+            if (playbackState?.entryId === qiId) {
+                togglePlay()
+            } else {
+                updateTrackPosition({
+                    entryId: qiId, 
+                    position: 0, 
+                    pause: false
+                })
+            }
+        }
+    }
+
+    const actions: IKebabAction[] = [
+        {
+            icon: <TrashIcon/>,
+            title: "deleteAudio",
+            func: () => removeFromQueue([queueItem.id])
+        }
+    ]
+
+
+    return (
+        <Track
+            onClick={() => handleTrackClick(queueItem.id)}
+            key={queueItem.id}
+            audio={queueItem.audio}
+            id={queueItem.position + 1}
+            noBorder
+            actions={actions}
+            props={{
+                title: true,
+                artist: true
+            }}
+            
+            selectionMode={selectMode}
+            selected={selected}
+        />
     )
 }
 

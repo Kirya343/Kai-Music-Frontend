@@ -1,6 +1,6 @@
 import { useRoomPlayback } from "@room";
 import { audioService, IAudio } from "@audio";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import styles from "./LibraryPage.module.scss"
 import CirclePlusIcon from "@/components/icons/CirclePlusIcon";
 import PlaylistIcon from "@/components/icons/PlaylistIcon";
@@ -17,6 +17,7 @@ import ShazamIcon from "@/components/icons/ShazamIcon";
 import PlusIcon from "@/components/icons/PlusIcon";
 import Track from "@/components/ui/Track/Track";
 import { useSearchParams } from "react-router-dom";
+import { useVirtualizer } from "@tanstack/react-virtual";
 
 interface IUploadingAudio {
     file: File;
@@ -29,13 +30,13 @@ const LibraryPage = () => {
 
     const [audios, setAudios] = useState<IAudio[] | null>(null);
     const [uploading, setUploading] = useState<IUploadingAudio[]>([]);
-    const [searchParams] = useSearchParams();
     const [audioFileView, setAudioFileView] = useState<IAudio | null>(null);
-    const roomId = searchParams.get("roomId");
 
     const [searchQuery, setSearchQuery] = useState<string>("")
 
     const { roomLoaded } = useRoomPlayback();
+
+    const parentRef = useRef<HTMLDivElement>(null);
 
     const filteredAudios = useMemo<IAudio[]>(() => {
         if (!audios) {
@@ -64,34 +65,25 @@ const LibraryPage = () => {
         );
     }, [audios, searchQuery]);
 
-    const recognizeAudio = async (audio: IAudio) => {
-        const updatedAudio: IAudio = await audioService.recognizeAudio(audio.id)
+    const rowVirtualizer = useVirtualizer({
+        count: filteredAudios.length,
+        getScrollElement: () => parentRef.current,
+        estimateSize: () => 80,
+        overscan: 10,
+    });
 
-        console.log("recognition result:", updatedAudio)
-
-        setAudios(prev =>
-            prev?.map(item =>
-                item.id === updatedAudio.id
-                    ? updatedAudio
-                    : item
-            ) ?? ([updatedAudio])
-        );
-    }
-
-    const handleDelete = async (audio: IAudio) => {
+    const handleDelete = useCallback(async (audio: IAudio) => {
         const success = confirm(`Ary you sure deleting audio ${audio.name}`)
 
         if (success) {
             try {
                 await audioService.deleteAudio(audio.id)
-                audios?.filter(a => a.id == audio.id);
+                setAudios(prev => prev?.filter(a => a.id == audio.id) || []);
             } catch (e) {
                 console.error(e)
             }
         }
-    }
-
-    const { addToQueue } = useRoomPlayback();
+    }, [setAudios])
 
     const loadLibrary = useCallback(async () => {
         const data = await audioService.loadLibrary();
@@ -101,6 +93,16 @@ const LibraryPage = () => {
     useEffect(() => {
         loadLibrary()
     }, []);
+
+    const updateAudio = useCallback((audio: IAudio) => {
+        setAudios(prev =>
+            prev?.map(item =>
+                item.id === audio.id
+                    ? audio
+                    : item
+            ) ?? ([audio])
+        );
+    }, [setAudios])
 
     const handleAudioUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const files = e.target.files;
@@ -221,43 +223,41 @@ const LibraryPage = () => {
                 )}
 
                 <Loader loadingActive={!audios}>
-                    <div className={styles.trackList}>
-                        {filteredAudios?.map((audio, idx) => (
-                            <Track
-                                key={audio.id}
-                                audio={audio}
-                                id={idx + 1}
-                                actions={roomId ? [
-                                    {
-                                        icon: <PlusIcon/>,
-                                        title: "Add to Room",
-                                        func: () => addToQueue([{audioId: audio.id}])
-                                    }
-                                ] : []}
-                                extraActions={[
-                                    {
-                                        icon: <PlusIcon/>,
-                                        title: "Add to Room",
-                                        func: () => addToQueue([{audioId: audio.id}])
-                                    },
-                                    {
-                                        icon: <ShazamIcon/>,
-                                        title: "Autofill info with Shazam",
-                                        func: () => recognizeAudio(audio)
-                                    },
-                                    {
-                                        icon: <PenIcon/>,
-                                        title: "Edit audio info",
-                                        func: () => setAudioFileView(audio)
-                                    },
-                                    {
-                                        icon: <TrashIcon/>,
-                                        title: "Delete from library",
-                                        func: () => handleDelete(audio)
-                                    }
-                                ]}
-                            />
-                        ))}
+                    <div 
+                        className={styles.trackList} 
+                        ref={parentRef}
+                    >
+                        <div
+                            style={{
+                                height: `${rowVirtualizer.getTotalSize()}px`,
+                                position: "relative",
+                            }}
+                        >
+                            {rowVirtualizer.getVirtualItems().map(item => {
+                                const audio = filteredAudios[item.index];
+
+                                return (
+                                    <div
+                                        key={audio.id}
+                                        style={{
+                                            position: "absolute",
+                                            top: 0,
+                                            left: 0,
+                                            width: "100%",
+                                            transform: `translateY(${item.start}px)`,
+                                        }}
+                                    >
+                                        <LibraryTrack
+                                            audio={audio}
+                                            id={item.index + 1}
+                                            updateAudio={updateAudio}
+                                            openEditModal={setAudioFileView}
+                                            handleDelete={handleDelete}
+                                        />
+                                    </div>
+                                );
+                            })}
+                        </div>
                     </div>
                 </Loader>
 
@@ -275,6 +275,74 @@ const LibraryPage = () => {
 
             {roomLoaded && <AudioPlayerOpener />}
         </>
+    )
+}
+
+const LibraryTrack = ({
+    audio, 
+    id,
+    updateAudio,
+    openEditModal,
+    handleDelete
+}: {
+    audio: IAudio, 
+    id: number,
+    updateAudio: (audio: IAudio) => void,
+    openEditModal: (audio: IAudio) => void,
+    handleDelete: (audio: IAudio) => void
+}) => {
+
+    const { addToQueue } = useRoomPlayback();
+    const [searchParams] = useSearchParams();
+    const roomId = searchParams.get("roomId");
+
+    const recognizeAudio = async (audio: IAudio) => {
+        const updatedAudio: IAudio = await audioService.recognizeAudio(audio.id)
+
+        console.log("recognition result:", updatedAudio)
+
+        updateAudio(updatedAudio);
+    }
+
+    const actions = roomId ? [
+            {
+                icon: <PlusIcon/>,
+                title: "Add to Room",
+                func: () => addToQueue([{audioId: audio.id}])
+            }
+        ] : []
+
+    const extraActions = [
+            {
+                icon: <PlusIcon/>,
+                title: "Add to Room",
+                func: () => addToQueue([{audioId: audio.id}])
+            },
+            {
+                icon: <ShazamIcon/>,
+                title: "Autofill info with Shazam",
+                func: () => recognizeAudio(audio)
+            },
+            {
+                icon: <PenIcon/>,
+                title: "Edit audio info",
+                func: () => openEditModal(audio)
+            },
+            {
+                icon: <TrashIcon/>,
+                title: "Delete from library",
+                func: () => handleDelete(audio)
+            }
+        ]
+    return (
+        <Track
+            key={audio.id}
+            audio={audio}
+            id={id}
+            actions={actions}
+            extraActions={extraActions}
+            className={styles.track}
+        />
     )
 }
 

@@ -41,7 +41,7 @@ interface TrackProps {
     selectionMode?: boolean;
     selected?: boolean;
 
-    playing?: boolean
+    className?: string
 }
 
 const Track = ({ 
@@ -55,7 +55,8 @@ const Track = ({
     onClick = () => {},
 
     selectionMode = false,
-    selected = false
+    selected = false,
+    className
 }: TrackProps) => {
 
     const { room, playbackState } = useRoomPlayback();
@@ -63,7 +64,7 @@ const Track = ({
     const playing = room?.playlist.queue.find(i => playbackState?.entryId === i.id)?.audio.id === audio.id;
 
     return (
-        <div className={clsx(styles.track, noBorder && styles.noBorder, playing && styles.playing)}>
+        <div className={clsx(styles.track, noBorder && styles.noBorder, playing && styles.playing, className)}>
             <div className={styles.body} onClick={onClick}>
 
                 {selectionMode && (

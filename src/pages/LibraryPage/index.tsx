@@ -18,11 +18,12 @@ import PlusIcon from "@/components/icons/PlusIcon";
 import Track from "@/components/ui/Track/Track";
 import { useSearchParams } from "react-router-dom";
 import { useVirtualizer } from "@tanstack/react-virtual";
+import { playlistService } from "@/lib/playlist";
 
 interface IUploadingAudio {
     file: File;
     progress: number;
-    id: string; // временный id
+    id: string;
     success?: boolean
 }
 
@@ -31,6 +32,8 @@ const LibraryPage = () => {
     const [audios, setAudios] = useState<IAudio[] | null>(null);
     const [uploading, setUploading] = useState<IUploadingAudio[]>([]);
     const [audioFileView, setAudioFileView] = useState<IAudio | null>(null);
+    
+    const { playlist, playbackState } = useRoomPlayback();
 
     const [searchQuery, setSearchQuery] = useState<string>("")
 
@@ -255,6 +258,7 @@ const LibraryPage = () => {
                                             updateAudio={updateAudio}
                                             openEditModal={setAudioFileView}
                                             handleDelete={handleDelete}
+                                            playing={playlist?.queue.find(i => playbackState?.entryId === i.id)?.audio.id === audio.id}
                                         />
                                     </div>
                                 );
@@ -284,6 +288,7 @@ const LibraryTrack = ({
     audio, 
     id,
     audios,
+    playing,
     updateAudio,
     openEditModal,
     handleDelete
@@ -291,12 +296,12 @@ const LibraryTrack = ({
     audio: IAudio, 
     id: number,
     audios: IAudio[],
+    playing: boolean,
     updateAudio: (audio: IAudio) => void,
     openEditModal: (audio: IAudio) => void,
     handleDelete: (audio: IAudio) => void
 }) => {
 
-    const { addToQueue, room, playbackState } = useRoomPlayback();
     const [searchParams] = useSearchParams();
     const roomId = searchParams.get("roomId");
 
@@ -312,7 +317,7 @@ const LibraryTrack = ({
             {
                 icon: <PlusIcon/>,
                 title: "Add to Room",
-                func: () => addToQueue([{audioId: audio.id}])
+                func: async () => await playlistService.addToQueue([{audioId: audio.id}])
             }
         ] : []
 
@@ -320,7 +325,7 @@ const LibraryTrack = ({
             {
                 icon: audios.some(a => a.id === audio.id) ? <CheckmarkIcon/> : <PlusIcon/> ,
                 title: "Add to Room",
-                func: () => addToQueue([{audioId: audio.id}])
+                func: async () => await playlistService.addToQueue([{audioId: audio.id}])
             },
             {
                 icon: <ShazamIcon/>,
@@ -345,7 +350,7 @@ const LibraryTrack = ({
             actions={actions}
             extraActions={extraActions}
             className={styles.track}
-            playing={room?.playlist.queue.find(i => playbackState?.entryId === i.id)?.audio.id === audio.id}
+            playing={playing}
         />
     )
 }

@@ -5,17 +5,21 @@ import styles from "./AudioPlayerOpener.module.scss"
 import PlayIcon from "@/components/icons/PlayIcon";
 import PauseIcon from "@/components/icons/PauseIcon";
 import RightIcon from "@/components/icons/RightIcon";
+import { playbackService } from "@playback/services";
 
 const AudioPlayerOpener = () => {
 
     const { 
-        playbackState, playNext, audioInfo, 
+        playbackState, audioInfo, 
         fullPlayerOpen, setFullPlayerOpen, 
-        duration, togglePlay 
+        togglePlay 
     } = useRoomPlayback();
+
+    const playTrack = playbackService.usePlayTrack();
 
     const headerRef = useRef<HTMLDivElement | null>(null);
     const textRef = useRef<HTMLDivElement | null>(null);
+    const duration = audioInfo?.duration || 0
 
     useEffect(() => {
         const header = headerRef.current;
@@ -51,7 +55,7 @@ const AudioPlayerOpener = () => {
                 <button onClick={togglePlay}>
                     {playbackState.pause ? <PlayIcon /> : <PauseIcon />}
                 </button>
-                <button onClick={playNext}>
+                <button onClick={() => playTrack("next")}>
                     <RightIcon />
                 </button>
             </div>

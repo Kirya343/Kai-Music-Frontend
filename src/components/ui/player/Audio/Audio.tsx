@@ -10,10 +10,10 @@ import RightIcon from "@/components/icons/RightIcon";
 import styles from "./Audio.module.scss";
 import PlusIcon from "@/components/icons/PlusIcon";
 import DownIcon from "@/components/icons/DownIcon";
+import { playbackService } from "@playback/services";
 
 const Audio = () => {
-    const { 
-        playNext, playPrev, duration, 
+    const {  
         updateMessage, 
         fullPlayerOpen, audioInfo,
         setFullPlayerOpen,
@@ -22,8 +22,11 @@ const Audio = () => {
         playbackState
     } = useRoomPlayback();
 
+    const playTrack = playbackService.usePlayTrack();
+
     const headerRef = useRef<HTMLDivElement | null>(null);
     const textRef = useRef<HTMLDivElement | null>(null);
+    const duration = audioInfo?.duration || 0
 
     useEffect(() => {
         const header = headerRef.current;
@@ -98,13 +101,16 @@ const Audio = () => {
                     </div>
                     <div className={styles.navigation}>
                         <PlaybackModeToggle />
-                        <button onClick={playPrev}>
+                        <button 
+                            onClick={() => playTrack("prev")}
+                        >
                             <LeftIcon />
                         </button>
                         <button onClick={togglePlay}>
                             {playbackState.pause ? <PlayIcon /> : <PauseIcon />}
                         </button>
-                        <button onClick={playNext}>
+                        <button 
+                            onClick={() => playTrack("next")}>
                             <RightIcon />
                         </button>
                         <button><PlusIcon/></button>

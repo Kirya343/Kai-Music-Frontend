@@ -11,11 +11,13 @@ import ActionMenu, { IKebabAction } from "@/components/ui/ActionMenu/ActionMenu"
 import CheckBoxIcon from "@/components/icons/CheckBoxIcon";
 import Loader from "@/components/ui/Loader/Loader";
 import { IQueueItem } from "@playback";
+import { playlistService } from "@/lib/playlist";
+import { playbackService } from "@playback/services";
 
 const RoomPage = () => {
     const [selectedTracks, setSelectedTracks] = useState<number[]>([]);
     const [selectMode, setSelectMode] = useState<boolean>(false);
-    const { room, removeFromQueue, loadRoom, playbackState } = useRoomPlayback();
+    const { room, playbackState, playlist } = useRoomPlayback();
 
     const { started } = useGlobal();
     const { error } = useWebSocket();
@@ -30,12 +32,12 @@ const RoomPage = () => {
         );
     };
 
-    const deleteFromRoom = () => {
+    const deleteFromRoom = async () => {
         for (const trackId of selectedTracks) {
             setSelectedTracks(prev => prev.filter(id => id !== trackId))
         }
 
-        removeFromQueue(selectedTracks)
+        await playlistService.removeFromQueue(selectedTracks)
     }
 
     const saveRoom = async () => {
@@ -46,7 +48,6 @@ const RoomPage = () => {
         const res = await roomService.updateRoom(room.id, roomUpdate);
         if (res.ok) {
             setEditMode(false)
-            loadRoom()
         }
     }
 
@@ -104,7 +105,7 @@ const RoomPage = () => {
                         </div>
 
                         <div className={styles.trackList}>
-                            {room?.playlist.queue.map(qi => (
+                            {playlist?.queue.map(qi => (
                                 <RoomTrack
                                     key={qi.id}
                                     queueItem={qi}
@@ -166,24 +167,23 @@ const RoomTrack = ({queueItem, selected, selectMode, toggleTrack, playing}: {
 }) => {
 
     const { 
-        removeFromQueue, 
-        updateTrackPosition,
         playbackState,
+        room,
         togglePlay
     } = useRoomPlayback();
 
-    const handleTrackClick = (qiId: number) => {
+    const playTrack = playbackService.usePlayTrack();
+
+    const handleTrackClick = async (qiId: number) => {
+        if (!room?.id) return;
+
         if (selectMode) {
             toggleTrack(qiId)
         } else {
             if (playbackState?.entryId === qiId) {
                 togglePlay()
             } else {
-                updateTrackPosition({
-                    entryId: qiId, 
-                    position: 0, 
-                    pause: false
-                })
+                playTrack(qiId)
             }
         }
     }
@@ -192,7 +192,7 @@ const RoomTrack = ({queueItem, selected, selectMode, toggleTrack, playing}: {
         {
             icon: <TrashIcon/>,
             title: "deleteAudio",
-            func: () => removeFromQueue([queueItem.id])
+            func: async () => await playlistService.removeFromQueue([queueItem.id])
         }
     ]
 

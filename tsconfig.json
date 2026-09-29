@@ -7,35 +7,33 @@
         "module": "ESNext",
         "moduleResolution": "Bundler",
         "jsx": "react-jsx",
-
-        "baseUrl": "./",
         "paths": {
             
-            "@user": ["src/lib/user/index.ts"],
-            "@user/*": ["src/lib/user/*"],
+            "@user": ["./src/lib/user/index.ts"],
+            "@user/*": ["./src/lib/user/*"],
 
-            "@audio": ["src/lib/audio/index.ts"],
-            "@audio/*": ["src/lib/audio/*"],
+            "@audio": ["./src/lib/audio/index.ts"],
+            "@audio/*": ["./src/lib/audio/*"],
 
-            "@room": ["src/lib/room/index.ts"],
-            "@room/*": ["src/lib/room/*"],
+            "@room": ["./src/lib/room/index.ts"],
+            "@room/*": ["./src/lib/room/*"],
 
-            "@playback": ["src/lib/playback/index.ts"],
-            "@playback/*": ["src/lib/playback/*"],
+            "@playback": ["./src/lib/playback/index.ts"],
+            "@playback/*": ["./src/lib/playback/*"],
 
-            "@websocket": ["src/lib/websocket/index.ts"],
-            "@websocket/*": ["src/lib/websocket/*"],
+            "@websocket": ["./src/lib/websocket/index.ts"],
+            "@websocket/*": ["./src/lib/websocket/*"],
 
-            "@permission": ["src/lib/permission/index.ts"],
-            "@permission/*": ["src/lib/permission/*"],
+            "@permission": ["./src/lib/permission/index.ts"],
+            "@permission/*": ["./src/lib/permission/*"],
 
-            "@common": ["src/lib/common/index.ts"],
-            "@common/*": ["src/lib/common/*"],
+            "@common": ["./src/lib/common/index.ts"],
+            "@common/*": ["./src/lib/common/*"],
 
-            "@auth": ["src/lib/auth/index.ts"],
-            "@auth/*": ["src/lib/auth/*"],
+            "@auth": ["./src/lib/auth/index.ts"],
+            "@auth/*": ["./src/lib/auth/*"],
 
-            "@/*": ["src/*"]
+            "@/*": ["./src/*"]
         },
 
         "allowImportingTsExtensions": true,

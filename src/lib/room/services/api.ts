@@ -14,4 +14,4 @@ export const updateRoom = (roomId: number, room: IRoomUpdate) =>
             method: "PATCH", 
             headers: { "Content-Type": "application/json" }, 
             body: JSON.stringify(room)
-        }, {})
+        })

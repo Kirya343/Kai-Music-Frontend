@@ -2,15 +2,15 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useAudioBuffer } from "./useAudioBuffer";
 import { IPlaybackState } from "@playback";
 
-export const useMediaResource = (processQueueRef: React.RefObject<() => void>) => {
+export const useMediaSource = () => {
 
     const { 
         sourceBufferRef, updateBufferedRanges, setBufferUpdateHandler,
-        processInitializationChunk,
-        bufferedRanges, appendChunk,
-        resetBuffer, onBufferUpdateRef
+        bufferedRanges, appendChunks,
+        resetBuffer
     } = useAudioBuffer();
 
+    const currentEntryIdRef = useRef<number | null>(null)
     const audioRef = useRef<HTMLAudioElement | null>(null);
     const mediaSourceRef = useRef<MediaSource | null>(null);
     const objectUrlRef = useRef<string | null>(null);
@@ -24,6 +24,8 @@ export const useMediaResource = (processQueueRef: React.RefObject<() => void>) =
         if (mediaSourceRef.current) {
             return;
         }
+
+        currentEntryIdRef.current = entryId;
 
         const audio = new Audio();
         const mediaSource = new MediaSource();
@@ -52,9 +54,13 @@ export const useMediaResource = (processQueueRef: React.RefObject<() => void>) =
                 sourceBufferRef.current = sourceBuffer;
 
                 sourceBuffer.addEventListener('updateend', () => {
-                    console.log("mediaResource updateend")
+                    const currentEntryId = currentEntryIdRef.current;
+
+                    if (!currentEntryId) {
+                        return;
+                    }
+
                     updateBufferedRanges(entryId);
-                    processQueueRef.current();
                 });
 
                 sourceBuffer.addEventListener('error', event => {
@@ -71,8 +77,6 @@ export const useMediaResource = (processQueueRef: React.RefObject<() => void>) =
                     event
                 );
             });
-
-            processInitializationChunk();
         });
 
         addEventListener();
@@ -203,10 +207,10 @@ export const useMediaResource = (processQueueRef: React.RefObject<() => void>) =
         cleanupAudio,
         pausePlayback,
         resumePlayback,
-        appendChunk,
-        processInitializationChunk,
+        appendChunks,
         sourceBufferRef, 
         bufferedRanges,
+        currentEntryIdRef,
 
         playbackState, setPlaybackState,
 

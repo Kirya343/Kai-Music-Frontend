@@ -1,8 +1,8 @@
 import { createContext, Dispatch, SetStateAction, useCallback, useContext, useEffect, useRef, useState } from "react";
 import { IAudio, TimeRange } from "@audio";
-import { IListeningRoom, useListeningRoomWS, useAudioStream, IShortRoom } from "@room";
+import { useListeningRoomWS, useAudioStream, IShortRoom } from "@room";
 import { countPosition } from "@common";
-import { IPlaybackState, IQueueItemCreate } from "@playback";
+import { IPlaybackState } from "@playback";
 import { PlaybackMode, Playlist } from "../playlist";
 import { playbackService } from "./services";
 
@@ -49,9 +49,9 @@ export const RoomPlaybackProvider = ({ children }: { children?: React.ReactNode 
 
     const { 
         handleAudioChunk, 
-        resumePlayback, pausePlayback, 
+        pausePlayback, 
         audioRef, bufferedRanges,
-        startNewPlaybackStream,
+        startNewAudio,
 
         playbackState, setPlaybackState,
 
@@ -98,8 +98,14 @@ export const RoomPlaybackProvider = ({ children }: { children?: React.ReactNode 
     // Обновление позиции и паузы от сервера
     useEffect(() => {
         setPlaybackStateCallback((state: IPlaybackState) => {
-            startNewPlaybackStream();
-            setPlaybackState(state);
+            setPlaybackState(prev => {
+
+                if (prev?.entryId !== state.entryId) {
+                    startNewAudio(state.entryId);
+                }
+
+                return state;
+            });
             unsyncedStateRef.current = state;
 
             writeUpdateMessage(state);
@@ -110,41 +116,9 @@ export const RoomPlaybackProvider = ({ children }: { children?: React.ReactNode 
         };
     }, [
         setPlaybackStateCallback,
-        startNewPlaybackStream,
+        startNewAudio,
         setPlaybackState
     ]);
-
-    useEffect(() => {
-        const audio = audioRef.current;
-        const state = unsyncedStateRef.current;
-
-        if (!audio || !bufferedRanges || state === null || !playbackState?.entryId) {
-            return;
-        }
-
-        const ranges = bufferedRanges.get(playbackState?.entryId)
-
-        if (!ranges) return;
-
-        const isBuffered = ranges.some(
-            range =>
-                state.position >= range.start &&
-                state.position <= range.end
-        );
-
-        if (!isBuffered) {
-            return;
-        }
-
-        audio.currentTime = state.position;
-        unsyncedStateRef.current = null;
-
-        if (!state.pause) {
-            console.log("start playing")
-            setPlaybackState(prev => ({...prev!, pause: false}))
-            resumePlayback();
-        }
-    }, [bufferedRanges, playbackState?.entryId]);
 
     // Play / Pause кнопка
     const togglePlay = useCallback(async () => {

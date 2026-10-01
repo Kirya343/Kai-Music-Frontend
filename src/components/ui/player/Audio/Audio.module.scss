@@ -1,3 +1,5 @@
+@use "@/css/components/mixins/" as *;
+
 .header {
     display: flex;
     justify-content: center;
@@ -26,6 +28,10 @@
     background-color: #0f0f0f;
     border-radius: 20px;
     border: 1px solid var(--border-color);
+
+    @include mobile {
+        bottom: 20px;
+    }
 }
 
 .settings {

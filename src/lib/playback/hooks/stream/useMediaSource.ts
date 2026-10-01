@@ -146,7 +146,7 @@ export const useMediaSource = () => {
 
         const handleTimeUpdate = () => {
             if (unsyncedStateRef.current !== null) {
-                console.log("unsyncedStateRef.current", unsyncedStateRef.current)
+                //console.log("unsyncedStateRef.current", unsyncedStateRef.current)
                 return;
             }
             setPlaybackState(prev => ({...prev!, position: audio.currentTime}));
@@ -159,6 +159,9 @@ export const useMediaSource = () => {
     }, [setPlaybackState]);
 
     const playIfBuffered = useCallback((entryId: number) => {
+
+        console.log('Попытка начать проигрывание', entryId);
+
         const audio = audioRef.current;
         const state = unsyncedStateRef.current;
 

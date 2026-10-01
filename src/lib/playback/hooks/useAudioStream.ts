@@ -71,14 +71,14 @@ export const useAudioStream = () => {
             return;
         }
 
-        console.log(
+        /* console.log(
             'Добавлен buffer:',
             chunksToAppend.map(chunk =>
                 chunk.initialization
                     ? 'init'
                     : chunk.sequence
             )
-        );
+        ); */
     }, [appendChunks]);
 
     const startNewAudio = useCallback((entryId: number) => {

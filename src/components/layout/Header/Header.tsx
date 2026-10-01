@@ -5,6 +5,7 @@ import DoorIcon from "@/components/icons/DoorIcon"
 import LibraryIcon from "@/components/icons/LibraryIcon"
 import UserIcon from "@/components/icons/UserIcon"
 import { useAuth } from "@/lib/auth";
+import PlaylistIcon from "@/components/icons/PlaylistIcon";
 
 const Header = () => {
 
@@ -24,10 +25,17 @@ const Header = () => {
                         </NavLink>
                     )}
                     {isAuthenticated && (
-                        <NavLink to="/library" className={styles.link}>
-                            <LibraryIcon className={styles.linkIcon}/>
-                            <span className={styles.subtitle}>Library</span>
-                        </NavLink>
+                        <>
+                            <NavLink to="/library" className={styles.link}>
+                                <LibraryIcon className={styles.linkIcon}/>
+                                <span className={styles.subtitle}>Library</span>
+                            </NavLink>
+
+                            <NavLink to={"/playlists"} className={styles.link}>
+                                <PlaylistIcon className={styles.linkIcon} />
+                                <span className={styles.subtitle}>Playlists</span>
+                            </NavLink>
+                        </>
                     )}
                 </div>
                 {isAuthenticated ? (

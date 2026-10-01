@@ -1,4 +1,4 @@
-const LibraryIcon = ({className}: {className: string}) => {
+const LibraryIcon = ({className}: {className?: string}) => {
     return (
         <svg 
             className={className}

@@ -1,14 +1,9 @@
 import { useRoomPlayback } from "@room";
 import { audioService, IAudio } from "@audio";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import styles from "./LibraryPage.module.scss"
-import CirclePlusIcon from "@/components/icons/CirclePlusIcon";
-import PlaylistIcon from "@/components/icons/PlaylistIcon";
-import HeartIcon from "@/components/icons/HeartIcon";
-import { AxiosProgressEvent } from "axios";
 import CheckmarkIcon from "@/components/icons/CheckmarkIcon";
 import CrossIcon from "@/components/icons/CrossIcon";
-import Loader from "@/components/ui/Loader/Loader";
 import AudioFileModal from "@/components/pages/library/AudioFileModal/AudioFileModal";
 import TrashIcon from "@/components/icons/TrashIcon";
 import AudioPlayerOpener from "@/components/ui/player/AudioPlayerOpener/AudioPlayerOpener";
@@ -19,185 +14,92 @@ import Track from "@/components/ui/Track/Track";
 import { useSearchParams } from "react-router-dom";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { playlistService } from "@/lib/playlist";
-
-interface IUploadingAudio {
-    file: File;
-    progress: number;
-    id: string;
-    success?: boolean
-}
+import { useLibrary } from "@audio/hooks/useLibrary";
+import LoadingSpinnerIcon from "@/components/icons/LoadingSpinnerIcon";
+import CirclePlusIcon from "@/components/icons/CirclePlusIcon";
 
 const LibraryPage = () => {
 
-    const [audios, setAudios] = useState<IAudio[] | null>(null);
-    const [uploading, setUploading] = useState<IUploadingAudio[]>([]);
+    const { 
+        visibleAudios, loading, 
+        setAudios, deleteAudio, 
+        updateAudio, setSearchQuery,
+        searchQuery, uploadAudios,
+        uploading, filteredAudios,
+        visibleCount, setVisibleCount
+    } = useLibrary();
+
     const [audioFileView, setAudioFileView] = useState<IAudio | null>(null);
     
-    const { playlist, playbackState } = useRoomPlayback();
-
-    const [searchQuery, setSearchQuery] = useState<string>("")
-
-    const { roomLoaded } = useRoomPlayback();
+    const { playlist, playbackState, roomLoaded } = useRoomPlayback();
 
     const parentRef = useRef<HTMLDivElement>(null);
 
-    const filteredAudios = useMemo<IAudio[]>(() => {
-        if (!audios) {
-            return [];
-        }
-
-        const query = searchQuery.trim().toLowerCase();
-
-        if (!query) {
-            return audios;
-        }
-
-        return audios.filter(audio =>
-            [
-                audio.id,
-                audio.name,
-                audio.format,
-                audio.title,
-                audio.artist,
-                audio.album,
-                audio.duration,
-                audio.coverUrl,
-            ].some(value =>
-                String(value).toLowerCase().includes(query)
-            )
-        );
-    }, [audios, searchQuery]);
-
     const rowVirtualizer = useVirtualizer({
-        count: filteredAudios.length,
+        count: visibleAudios.length,
         getScrollElement: () => parentRef.current,
         estimateSize: () => 80,
         overscan: 10,
-    });
 
-    const handleDelete = useCallback(async (audio: IAudio) => {
-        const success = confirm(`Ary you sure deleting audio ${audio.name}`)
-
-        if (success) {
-            try {
-                await audioService.deleteAudio(audio.id)
-                setAudios(prev => prev?.filter(a => a.id !== audio.id) || []);
-            } catch (e) {
-                console.error(e)
+        onChange: (instance, sync) => {
+            if (!sync) {
+                return;
             }
-        }
-    }, [setAudios])
 
-    const loadLibrary = useCallback(async () => {
-        const data = await audioService.loadLibrary();
-        setAudios(data)
-    }, [])
+            const items = instance.getVirtualItems();
 
-    useEffect(() => {
-        loadLibrary()
-    }, []);
+            if (!items.length) {
+                return;
+            }
 
-    const updateAudio = useCallback((audio: IAudio) => {
-        setAudios(prev =>
-            prev?.map(item =>
-                item.id === audio.id
-                    ? audio
-                    : item
-            ) ?? ([audio])
-        );
-    }, [setAudios])
+            const lastItem = items[items.length - 1];
 
-    const handleAudioUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-        const files = e.target.files;
-
-        if (!files) return;
-
-        const fileList = Array.from(files);
-
-        let identifiedList: { id: string, file: File}[] = [];
-
-        for (const file of fileList) {
-            const uploadId = `${file.name}-${Date.now()}`;
-
-            setUploading(prev => [
-                ...prev,
-                {
-                    id: uploadId,
-                    file,
-                    progress: 0
-                }
-            ]);
-
-            identifiedList.push({id: uploadId, file})
-        }
-
-        for (const fileItem of identifiedList) {
-
-            const file = fileItem.file;
-
-            const formData = new FormData();
-            formData.append("file", file);
-
-            try {
-                await audioService.upload(formData, (progressEvent: AxiosProgressEvent) => {
-                    if (!progressEvent.total) return;
-
-                    const percent = Math.round(
-                        (progressEvent.loaded * 100) / progressEvent.total
-                    );
-
-                    setUploading(prev =>
-                        prev.map(item =>
-                            item.id === fileItem.id
-                                ? {
-                                    ...item,
-                                    progress: percent,
-                                    success: percent >= 100 ? true : undefined
-                                }
-                                : item
-                        )
-                    );
-                });
-            } catch (error) {
-                setUploading(prev =>
-                    prev.map(item =>
-                        item.id === fileItem.id
-                            ? { ...item, success: false }
-                            : item
+            if (
+                lastItem.index >= visibleAudios.length - 10 &&
+                visibleCount < filteredAudios.length
+            ) {
+                setVisibleCount(count =>
+                    Math.min(
+                        count + 50,
+                        filteredAudios.length
                     )
                 );
             }
-        }
+        },
+    });
 
-        loadLibrary();
-    };
+    const playlistAudioIds = useMemo(() => {
+        return new Set(
+            playlist?.queue.map(item => item.audio.id)
+        );
+    }, [playlist?.queue]);
+
+    const playingAudioId = useMemo(() => {
+        return playlist?.queue.find(
+            item => item.id === playbackState?.entryId
+        )?.audio.id;
+    }, [playlist?.queue, playbackState?.entryId]);
 
     return (
         <>
-            <div className={styles.library}>
-                <h1 className={styles.header}>Track Library</h1>
-                <div className={styles.topPanel}>
-                    <label htmlFor="uploadAudio" className={styles.action}>
-                        <CirclePlusIcon solid />
-                        <span className={styles.subtitle}>Upload new</span>
-                    </label>
-                    <button className={styles.action}>
-                        <PlaylistIcon />
-                        <span className={styles.subtitle}>Playlists</span>
-                    </button>
-                    <button className={styles.action}>
-                        <HeartIcon filled={false}/>
-                        <span className={styles.subtitle}>Favorite</span>
-                    </button>
-                </div>
+            <div className={styles.page} ref={parentRef}>
+                <h2 className={styles.header}>Library</h2>
                 
                 <div className={styles.sorting}>
-                    <input 
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                        className={styles.search}
-                        placeholder="Search audios..."
-                    />
+
+                    <div className={styles.row}>
+                        <label htmlFor="uploadAudio" className={styles.upload}>
+                            <CirclePlusIcon solid />
+                            <span>Upload new</span>
+                        </label>
+
+                        <input 
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                            className={styles.search}
+                            placeholder="Search audios..."
+                        />
+                    </div>
 
                     {searchQuery.length != 0 && <span>Found {filteredAudios.length} audios</span>}
                 </div>
@@ -225,47 +127,48 @@ const LibraryPage = () => {
                     </>
                 )}
 
-                <Loader loadingActive={!audios}>
-                    <div 
-                        className={styles.trackList} 
-                        ref={parentRef}
-                    >
-                        <div
-                            style={{
-                                height: `${rowVirtualizer.getTotalSize()}px`,
-                                position: "relative",
-                            }}
-                        >
-                            {rowVirtualizer.getVirtualItems().map(item => {
-                                const audio = filteredAudios[item.index];
-
-                                return (
-                                    <div
-                                        key={audio.id}
-                                        style={{
-                                            position: "absolute",
-                                            top: 0,
-                                            left: 0,
-                                            width: "100%",
-                                            transform: `translateY(${item.start}px)`,
-                                        }}
-                                    >
-                                        <LibraryTrack
-                                            key={audio.id}
-                                            audio={audio}
-                                            id={item.index + 1}
-                                            audios={audios || []}
-                                            updateAudio={updateAudio}
-                                            openEditModal={setAudioFileView}
-                                            handleDelete={handleDelete}
-                                            playing={playlist?.queue.find(i => playbackState?.entryId === i.id)?.audio.id === audio.id}
-                                        />
-                                    </div>
-                                );
-                            })}
-                        </div>
+                {loading && (
+                    <div className={styles.synchronization}>
+                        <LoadingSpinnerIcon/>
+                        <span>synchronization</span>
                     </div>
-                </Loader>
+                )}
+                
+                <div className={styles.trackList}>
+                    <div
+                        style={{
+                            height: `${rowVirtualizer.getTotalSize()}px`,
+                            position: "relative",
+                        }}
+                    >
+                        {rowVirtualizer.getVirtualItems().map(item => {
+                            const audio = visibleAudios[item.index];
+
+                            return (
+                                <div
+                                    key={audio.id}
+                                    style={{
+                                        position: "absolute",
+                                        top: 0,
+                                        left: 0,
+                                        width: "100%",
+                                        transform: `translateY(${item.start}px)`,
+                                    }}
+                                >
+                                    <LibraryTrack
+                                        audio={audio}
+                                        id={item.index + 1}
+                                        isInPlaylist={playlistAudioIds.has(audio.id)}
+                                        updateAudio={updateAudio}
+                                        openEditModal={setAudioFileView}
+                                        handleDelete={deleteAudio}
+                                        playing={playingAudioId === audio.id}
+                                    />
+                                </div>
+                            );
+                        })}
+                    </div>
+                </div>
 
                 <input 
                     type="file"
@@ -273,7 +176,7 @@ const LibraryPage = () => {
                     id="uploadAudio"
                     className={styles.uploadAudio}
                     multiple
-                    onChange={handleAudioUpload}
+                    onChange={uploadAudios}
                 />
 
                 <AudioFileModal audioFile={audioFileView} setAudioFile={setAudioFileView} setAudios={setAudios}/>
@@ -287,16 +190,16 @@ const LibraryPage = () => {
 const LibraryTrack = ({
     audio, 
     id,
-    audios,
     playing,
+    isInPlaylist,
     updateAudio,
     openEditModal,
     handleDelete
 }: {
     audio: IAudio, 
     id: number,
-    audios: IAudio[],
     playing: boolean,
+    isInPlaylist: boolean,
     updateAudio: (audio: IAudio) => void,
     openEditModal: (audio: IAudio) => void,
     handleDelete: (audio: IAudio) => void
@@ -323,7 +226,7 @@ const LibraryTrack = ({
 
     const extraActions = [
             {
-                icon: audios.some(a => a.id === audio.id) ? <CheckmarkIcon/> : <PlusIcon/> ,
+                icon: isInPlaylist ? <CheckmarkIcon/> : <PlusIcon/> ,
                 title: "Add to Room",
                 func: async () => await playlistService.addToQueue([{audioId: audio.id}])
             },

@@ -1,4 +1,4 @@
-import { IQueueItem } from "../playback/playbackTypes";
+import { IQueueItem, IQueueItemCreate } from "../playback/playbackTypes";
 
 export enum PlaybackMode {
     NORMAL = "NORMAL",
@@ -13,4 +13,10 @@ export interface Playlist {
     title: string;
     mode: PlaybackMode;
     queue: IQueueItem[];
+}
+
+
+export interface CreatePlaylist {
+    title: string;
+    audios?: IQueueItemCreate[];
 }

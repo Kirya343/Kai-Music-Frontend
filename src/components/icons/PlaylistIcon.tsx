@@ -1,6 +1,7 @@
-const PlaylistIcon = () => {
+const PlaylistIcon = ({className}: {className?: string}) => {
     return (
         <svg 
+            className={className}
             width={35}  
             height={35} 
             viewBox="0 0 24 24" 

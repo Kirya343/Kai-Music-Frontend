@@ -8,7 +8,7 @@ const AudioFileModal = ({
 }: { 
     audioFile: IAudio | null, 
     setAudioFile: Dispatch<SetStateAction<IAudio | null>>,
-    setAudios: Dispatch<SetStateAction<IAudio[] | null>>,
+    setAudios: Dispatch<SetStateAction<IAudio[]>>,
 }) => {
 
     const [editMode, setEditMode] = useState<boolean>(false);

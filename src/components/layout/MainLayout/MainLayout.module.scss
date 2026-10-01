@@ -8,9 +8,6 @@
     width: 100%;
     height: 100%;
     margin: 0 auto;
-    min-height: 0;
-    overflow-y: auto;
-    overflow-x: hidden;
 
     @include mobile {
         max-width: 100vw;

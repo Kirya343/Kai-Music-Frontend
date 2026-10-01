@@ -1,0 +1,43 @@
+@use "@/css/components/mixins/" as *;
+
+.submitBtn {
+    width: fit-content;
+    margin: 0 auto;
+    padding: 10px 17px;
+    border-radius: 10px;
+    font-size: medium;
+    
+    @include dirty-glass(true);
+}
+
+.label {
+    color: var(--text-color-l2);
+}
+
+.editable {
+    font-size: 1rem;
+    padding: 8px;
+    color: var(--text-color);
+    border-radius: 8px;
+    width: 100%;
+    border: 1px solid;
+    text-align: left;
+
+    @include glass;
+
+    @include mobile {
+        width: 100%;
+    }
+    
+    &:is(span) {
+        border-color: transparent;
+    }
+}
+
+.section {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    align-items: flex-start;
+
+}

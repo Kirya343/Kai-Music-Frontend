@@ -17,6 +17,7 @@
         padding: 0.5rem;
         padding-bottom: 0;
     }
+    
 }
 
 .header {
@@ -28,22 +29,6 @@
     align-items: center;
     justify-content: center;
     gap: 1rem;
-}
-
-.trackList {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-    contain: layout paint;
-
-    @include mobile {
-        width: 100%;
-    }
-}
-
-.track {
-    content-visibility: auto;
-    contain-intrinsic-size: 80px;
 }
 
 .sorting {
@@ -112,90 +97,30 @@
     @include glass;
 }
 
-.uploadingStat {
-    display: flex;
-    gap: 1rem;
-}
+.playlistCard {
 
-.uploadingList {
-    display: flex;
-    flex-direction: column;
-    max-height: 150px;
-    overflow: auto;
-    min-height: 0;
-    gap: 1px
-}
+    border: 1px solid;
+    border-radius: 1rem;
+    padding: 1rem;
 
-.uploadItem {
-    padding: 10px;
-    background-color: #0000001a;
-    display: flex;
-    align-items: center;
-    justify-content: left;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
     position: relative;
 
-    .progressBar {
-        position: absolute;
-        left: 0;
-        top: 0;
-        z-index: 1;
-        width: 0px;
-        height: 100%;
-        background-color: #80808050;
-    }
+    @include glass;
 
-    span {
-        z-index: 2;
-    }
-
-    .percent {
-        position: absolute;
-        right: 3rem;
-    }
-
-    .status {
-        position: absolute;
-        right: .5rem;
-
-        &.success {
-            *, &::before, &::after {
-                color: #25c417fd !important;
-            }
-        }
-
-        &.error {
-            *, &::before, &::after {
-                color: #c4172e !important;
-            }
-        }
-    }
-}
-
-input.uploadAudio {
-    display: none;
-}
-
-.roomTopUpActions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1rem;
-    position: fixed;
-    bottom: 70px;
-    z-index: 100;
-    justify-content: center;
-    width: 100%;
-    max-width: 1000px;
-
-    .listAction {
-        padding: 10px;
-        border-radius: 10px;
+    .title {
+        font-size: 1.4rem;
         font-weight: 600;
-        cursor: pointer;
-        border: 1px solid;
-
-        @include glass(true);
     }
+
+    .actions {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+    }
+}
+
+.list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
 }

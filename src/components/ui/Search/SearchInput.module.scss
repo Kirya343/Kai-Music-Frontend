@@ -1,0 +1,10 @@
+.searchInput {
+    border: 2px solid;
+    padding: 8px 15px;
+    max-width: 500px;
+    width: 100%;
+    border-radius: 100px;
+    color: #cac9c8;
+
+    @include glass;
+}

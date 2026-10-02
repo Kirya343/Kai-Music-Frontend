@@ -16,17 +16,17 @@ export const createPlaylist = (playlist: CreatePlaylist) =>
             body: JSON.stringify(playlist) 
         })
 
-export const addToQueue = (list: IQueueItemCreate[]) => 
+export const addToQueue = (playlistId: number, list: IQueueItemCreate[]) => 
     apiFetch(
-        `/playlist/queue`, 
+        `/playlist/${playlistId}/queue`, 
         {
             method: "POST",
             headers: { "Content-Type": "application/json" },  
             body: JSON.stringify(list) 
         })
-export const removeFromQueue = (list: number[]) => 
+export const removeFromQueue = (playlistId: number, list: number[]) => 
     apiFetch(
-        `/playlist/queue`, 
+        `/playlist/${playlistId}/queue`, 
         { 
             method: "DELETE", 
             headers: { "Content-Type": "application/json" }, 

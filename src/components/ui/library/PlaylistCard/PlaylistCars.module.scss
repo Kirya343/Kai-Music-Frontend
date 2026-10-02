@@ -1,0 +1,21 @@
+.playlistCard {
+
+    border: 1px solid;
+    border-radius: 1rem;
+    padding: 1rem;
+
+    position: relative;
+
+    @include glass;
+
+    .title {
+        font-size: 1.4rem;
+        font-weight: 600;
+    }
+
+    .actions {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+    }
+}

@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { CreatePlaylist, Playlist } from "../playlistTypes";
 import { playlistService } from "../services";
+import { useSearch } from "@common/utils/hooks/useSearch";
 
 export const usePlaylists = () => {
 
@@ -10,28 +11,8 @@ export const usePlaylists = () => {
         return saved ? JSON.parse(saved) : [];
     });
     const [loading, setLoading] = useState<boolean>(true);
-    const [searchQuery, setSearchQuery] = useState<string>("")
 
-    const filteredPlaylists = useMemo<Playlist[]>(() => {
-        if (!playlists) {
-            return [];
-        }
-
-        const query = searchQuery.trim().toLowerCase();
-
-        if (!query) {
-            return playlists.slice().sort((a, b) => b.id - a.id);
-        }
-
-        return playlists.filter(playlist =>
-            [
-                playlist.id,
-                playlist.title
-            ].some(value =>
-                String(value).toLowerCase().includes(query)
-            )
-        );
-    }, [playlists, searchQuery]);
+    const { filteredList, searchQuery, setSearchQuery} = useSearch(playlists);
 
     const syncPlaylists = useCallback(async () => {
         try {
@@ -94,7 +75,7 @@ export const usePlaylists = () => {
     return {  
         loading, setSearchQuery,
         searchQuery, deletePlaylist,
-        updatePlaylist, filteredPlaylists,
+        updatePlaylist, filteredList,
         createPlaylist, importToRoom
     };
 }

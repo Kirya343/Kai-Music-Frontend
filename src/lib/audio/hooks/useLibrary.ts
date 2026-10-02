@@ -1,7 +1,9 @@
 import { audioService } from "@audio/audioService";
 import { IAudio } from "@audio/audioTypes";
+import { useSearch } from "@common/utils/hooks/useSearch";
+import { useVirtualizer } from "@tanstack/react-virtual";
 import { AxiosProgressEvent } from "axios";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 interface IUploadingAudio {
     file: File;
@@ -17,42 +19,17 @@ export const useLibrary = () => {
 
         return saved ? JSON.parse(saved) : [];
     });
+    
     const [loading, setLoading] = useState<boolean>(true);
-    const [searchQuery, setSearchQuery] = useState<string>("")
     const [uploading, setUploading] = useState<IUploadingAudio[]>([]);
-
+    const parentRef = useRef<HTMLDivElement>(null);
     const [visibleCount, setVisibleCount] = useState(50);
 
-    const filteredAudios = useMemo<IAudio[]>(() => {
-        if (!audios) {
-            return [];
-        }
-
-        const query = searchQuery.trim().toLowerCase();
-
-        if (!query) {
-            return audios.slice().sort((a, b) => b.id - a.id);
-        }
-
-        return audios.filter(audio =>
-            [
-                audio.id,
-                audio.name,
-                audio.format,
-                audio.title,
-                audio.artist,
-                audio.album,
-                audio.duration,
-                audio.coverUrl,
-            ].some(value =>
-                String(value).toLowerCase().includes(query)
-            )
-        );
-    }, [audios, searchQuery]);
+    const { filteredList, searchQuery, setSearchQuery} = useSearch(audios);
 
     const visibleAudios = useMemo(() => {
-        return filteredAudios.slice(0, visibleCount);
-    }, [filteredAudios, visibleCount]);
+        return filteredList.slice(0, visibleCount);
+    }, [filteredList, visibleCount]);
 
     const syncLibrary = useCallback(async () => {
         try {
@@ -75,6 +52,14 @@ export const useLibrary = () => {
             }
         }
     }, [setAudios])
+
+    const recognizeAudio = useCallback(async (audio: IAudio) => {
+        const updatedAudio: IAudio = await audioService.recognizeAudio(audio.id)
+
+        console.log("recognition result:", updatedAudio)
+
+        updateAudio(updatedAudio);
+    }, [])
 
     const updateAudio = useCallback((audio: IAudio) => {
         setAudios(prev =>
@@ -151,6 +136,39 @@ export const useLibrary = () => {
         syncLibrary();
     };
 
+    const rowVirtualizer = useVirtualizer({
+        count: visibleAudios.length,
+        getScrollElement: () => parentRef.current,
+        estimateSize: () => 80,
+        overscan: 10,
+
+        onChange: (instance, sync) => {
+            if (!sync) {
+                return;
+            }
+
+            const items = instance.getVirtualItems();
+
+            if (!items.length) {
+                return;
+            }
+
+            const lastItem = items[items.length - 1];
+
+            if (
+                lastItem.index >= visibleAudios.length - 10 &&
+                visibleCount < filteredList.length
+            ) {
+                setVisibleCount(count =>
+                    Math.min(
+                        count + 50,
+                        filteredList.length
+                    )
+                );
+            }
+        },
+    });
+
     useEffect(() => {
         if (audios) localStorage.setItem("libraryAudios", JSON.stringify(audios));
     }, [audios]);
@@ -164,11 +182,12 @@ export const useLibrary = () => {
     }, []);
 
     return { 
-        visibleAudios, setAudios, 
+        visibleAudios, 
         deleteAudio, updateAudio, 
         loading, setSearchQuery,
         searchQuery, uploadAudios,
-        uploading, filteredAudios,
-        visibleCount, setVisibleCount
+        uploading, rowVirtualizer,
+        parentRef, filteredList,
+        recognizeAudio
     };
 }

@@ -8,13 +8,15 @@ import { useState } from "react";
 import PlaylistCreateModal from "@/components/pages/playlists/PlaylistCreateModal/PlaylistCreateModal";
 import ActionMenu, { IKebabAction } from "@/components/ui/ActionMenu/ActionMenu";
 import TrashIcon from "@/components/icons/TrashIcon";
+import PlaylistCard from "@/components/ui/library/PlaylistCard/PlaylistCard";
+import LibraryPlaylist from "@/components/ui/library/LibraryPlaylist";
 
 const PlaylistsPage = () => {
 
     const {
         loading, setSearchQuery,
         searchQuery, deletePlaylist,
-        updatePlaylist, filteredPlaylists,
+        updatePlaylist, filteredList,
         createPlaylist, importToRoom
     } = usePlaylists();
 
@@ -43,7 +45,7 @@ const PlaylistsPage = () => {
                         />
                     </div>
 
-                    {searchQuery.length != 0 && <span>Found {filteredPlaylists.length} playlists</span>}
+                    {searchQuery.length != 0 && <span>Found {filteredList.length} playlists</span>}
                 </div>
 
                 {loading && (
@@ -54,8 +56,8 @@ const PlaylistsPage = () => {
                 )}
                 
                 <div className={styles.list}>
-                    {filteredPlaylists.map((playlist) => (
-                        <PlaylistCard
+                    {filteredList.map((playlist) => (
+                        <LibraryPlaylist
                             key={playlist.id}
                             playlist={playlist}
                             deletePlaylist={() => deletePlaylist(playlist)}
@@ -73,35 +75,6 @@ const PlaylistsPage = () => {
 
             {roomLoaded && <AudioPlayerOpener />}
         </>
-    )
-}
-
-const PlaylistCard = ({
-    playlist,
-    deletePlaylist,
-    importToRoom
-}: {
-    playlist: Playlist
-    deletePlaylist: () => void,
-    importToRoom: () => void
-}) => {
-
-    const actions: IKebabAction[] = [
-        {
-            title: "Delete playlist",
-            func: deletePlaylist,
-            icon: <TrashIcon />
-        },
-        {
-            title: "Import to room",
-            func: deletePlaylist,
-        }
-    ]
-    return (
-        <article className={styles.playlistCard}>
-            <span className={styles.title}>{playlist.title}</span>
-            <ActionMenu actions={actions} className={styles.actions}/>
-        </article>
     )
 }
 

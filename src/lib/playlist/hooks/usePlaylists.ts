@@ -45,12 +45,14 @@ export const usePlaylists = () => {
         }
     }, [setPlaylists])
 
-    const importToRoom = useCallback(async (playlist: Playlist) => {
+    const importToRoom = useCallback(async (importPlaylist: Playlist, targetPlaylist: Playlist) => {
+
+        if (!targetPlaylist?.id) return;
 
         const success = confirm(`Ary you sure replace playlist in room?`)
 
         if (success) {
-            await playlistService.importToRoom(playlist.id)
+            await playlistService.importToRoom(importPlaylist.id, targetPlaylist.id)
         }
     }, [])
 

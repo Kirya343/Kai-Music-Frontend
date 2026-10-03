@@ -1,11 +1,12 @@
 import { Route, Routes } from "react-router-dom";
 import { LoginPage, LoginSuccessPage, LogoutPage, MainPage, RegisterPage } from "./pages";
 import MainLayout from "./components/layout/MainLayout/MainLayout";
-import RoomPage from "./pages/RoomPage";
+import RoomPage from "./pages/RoomPage/RoomPage";
 import PrivateRoute from "./PrivateRoute";
 import StartLayout from "./components/layout/StartLayout/StartLayout";
-import PlaylistsPage from "./pages/PlaylistsPage";
-import LibraryPage from "./pages/LibraryPage";
+import PlaylistsPage from "./pages/playlists/PlaylistsPage/PlaylistsPage";
+import LibraryPage from "./pages/LibraryPage/LibraryPage";
+import PlaylistPage from "./pages/playlists/PlaylistPage/PlaylistPage";
 
 const AppRouter = () => {
     return (
@@ -19,7 +20,10 @@ const AppRouter = () => {
 
                             <Route path="library" element={<LibraryPage />}/>
 
-                            <Route path="playlists" element={<PlaylistsPage />}/>
+                            <Route path="playlists" >
+                                <Route index element={<PlaylistsPage />}/>
+                                <Route path=":id" element={<PlaylistPage/>} />
+                            </Route>
                         </Route>
 
                         <Route path="login" element={<LoginPage />} />

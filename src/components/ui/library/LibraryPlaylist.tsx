@@ -2,6 +2,7 @@ import { Playlist } from "@/lib/playlist";
 import PlaylistCard from "./PlaylistCard/PlaylistCard";
 import { IKebabAction } from "../ActionMenu/ActionMenu";
 import TrashIcon from "@/components/icons/TrashIcon";
+import { useNavigate } from "react-router-dom";
 
 const LibraryPlaylist = ({
     playlist,
@@ -13,7 +14,9 @@ const LibraryPlaylist = ({
     importToRoom: () => void
 }) => {
 
-    const actions: IKebabAction[] = [
+    const navigate = useNavigate();
+
+    const extraActions: IKebabAction[] = [
         {
             title: "Delete playlist",
             func: deletePlaylist,
@@ -25,7 +28,7 @@ const LibraryPlaylist = ({
         }
     ]
 
-    return <PlaylistCard playlist={playlist} actions={actions}/>
+    return <PlaylistCard onClick={() => navigate(`/playlists/${playlist.id}`)} playlist={playlist} extraActions={extraActions}/>
 }
 
 export default LibraryPlaylist;

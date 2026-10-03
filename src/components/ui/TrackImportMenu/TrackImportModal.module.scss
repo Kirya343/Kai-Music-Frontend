@@ -1,0 +1,73 @@
+@use "@/css/components/mixins/" as *;
+
+.layout {
+    z-index: 99;
+    width: 100vw;
+    height: 100dvh;
+    position: fixed;
+    background-color: #201313;
+    top: 0;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    padding-top: var(--header-height);
+
+    @include mobile {
+        padding-top: var(--mobile-header-height);
+    }
+}
+
+.page {
+    max-width: 1200px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    flex: 1;
+    overflow: hidden;
+    gap: 1rem;
+    padding: 0.5rem 0;
+
+    @include mobile {
+        gap: 0.5rem;
+    }
+}
+
+.header {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin-bottom: 0.5rem;
+
+    @include mobile {
+        width: 100%;
+    }
+
+    svg {
+        width: 30px;
+    }
+
+    .closeBtn {
+        position: absolute;
+        left: 1rem;
+    }
+}
+
+.menusList {
+    display: flex;
+    gap: 1rem;
+
+    .menu {
+        font-size: 17px;
+        background-color: rgba(240, 255, 240, 0.068);
+        padding: 3px 12px;
+        border-radius: 100px;
+        transition: all 0.2s ease-in;
+
+        &.active {
+            background-color: rgba(240, 255, 240, 0.199);
+        } 
+    }
+}

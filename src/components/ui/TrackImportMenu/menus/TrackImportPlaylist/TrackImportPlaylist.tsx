@@ -1,11 +1,11 @@
 import ImportingTrack from "@/components/ui/library/ImportingTrack";
-import styles from "./Library.module.scss"
+import styles from "./TrackImportPlaylist.module.scss"
 import { usePlaylist } from "@/lib/playlist/hooks/usePlaylist";
 import LoadingSpinnerIcon from "@/components/icons/LoadingSpinnerIcon";
 import { useMemo } from "react";
 import { Playlist } from "@/lib/playlist";
 
-const Playlist = ({
+const TrackImportPlaylist = ({
     playlistId,
     importPlaylist
 }: {
@@ -16,7 +16,7 @@ const Playlist = ({
     const { 
         loading, 
         setSearchQuery, searchQuery,
-        filteredList
+        filteredList, pagePlaylist
     } = usePlaylist(playlistId);
     
     const playlistAudioIds = useMemo(() => {
@@ -27,7 +27,7 @@ const Playlist = ({
 
     return (
         <div className={styles.page}>
-            <h2 className={styles.header}>Playlist {importPlaylist.title}</h2>
+            <h2 className={styles.header}>Playlist <strong>{pagePlaylist?.title}</strong></h2>
             
             <div className={styles.sorting}>
 
@@ -51,11 +51,11 @@ const Playlist = ({
             )}
             
             <div className={styles.trackList}>
-                {filteredList.map((audio, idx) => (
+                {filteredList.map((qi, idx) => (
                     <ImportingTrack
-                        audio={audio}
+                        audio={qi.audio}
                         id={idx + 1}
-                        isInPlaylist={playlistAudioIds.has(audio.id)}
+                        isInPlaylist={playlistAudioIds.has(qi.audio.id)}
                         importPlaylistId={importPlaylist.id}
                         className={styles.track}
                     />
@@ -65,4 +65,4 @@ const Playlist = ({
     )
 }
 
-export default Playlist;
+export default TrackImportPlaylist;

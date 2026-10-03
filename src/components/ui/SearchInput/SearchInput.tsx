@@ -1,5 +1,5 @@
 import clsx from "clsx";
-import styles from "./Search.module.scss"
+import styles from "./SearchInput.module.scss"
 
 interface SearchInputProps {
     value: string;

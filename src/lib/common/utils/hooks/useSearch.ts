@@ -15,13 +15,19 @@ export const useSearch = <T extends { id: number }>(list: T[]) => {
             return list.slice().sort((a, b) => b.id - a.id);
         }
 
-        return list.filter(playlist =>
-            Object.values(playlist)
-                .filter(value => value === null || typeof value !== "object")
-                .some(value =>
-                    String(value).toLowerCase().includes(query.toLowerCase())
-                )
-        );
+        const containsQuery = (value: unknown): boolean => {
+            if (value === null || value === undefined) {
+                return false;
+            }
+
+            if (typeof value === "object") {
+                return Object.values(value).some(containsQuery);
+            }
+
+            return String(value).toLowerCase().includes(query);
+        };
+
+        return list.filter(item => containsQuery(item));
     }, [list, searchQuery]);
 
     return {

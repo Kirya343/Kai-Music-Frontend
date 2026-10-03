@@ -117,7 +117,6 @@ const LibraryPage = () => {
                                     <LibraryTrack
                                         audio={audio}
                                         id={item.index + 1}
-                                        isInPlaylist={playlistAudioIds.has(audio.id)}
                                         recognizeAudio={recognizeAudio}
                                         playlistId={playlist?.id}
                                         openEditModal={setAudioFileView}

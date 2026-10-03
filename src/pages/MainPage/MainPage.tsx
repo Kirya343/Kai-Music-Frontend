@@ -114,11 +114,11 @@ const MainPage = () => {
                         </div>
                     </section>
                 </div>
+
+                {roomLoaded && <AudioPlayerOpener />}
             </div>
 
             <JoinRoomModal isOpen={isOpen} setOpen={setOpen}/>
-
-            {roomLoaded && <AudioPlayerOpener />}
         </>
     )
 }

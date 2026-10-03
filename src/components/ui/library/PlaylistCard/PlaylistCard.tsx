@@ -1,7 +1,6 @@
 import { Playlist } from "@/lib/playlist"
 import ActionMenu, { IKebabAction } from "../../ActionMenu/ActionMenu"
-import TrashIcon from "@/components/icons/TrashIcon"
-import styles from "./PlaylistCars.module.scss"
+import styles from "./PlaylistCard.module.scss"
 import { ReactNode } from "react";
 
 interface IPlaylistAction {

@@ -1,10 +1,10 @@
 import SelectPlaylist from "@/components/ui/library/SelectPlaylist";
 import { usePlaylists } from "@/lib/playlist/hooks/usePlaylists";
-import styles from "./Playlists.module.scss"
+import styles from "./TrackImportPlaylists.module.scss"
 import LoadingSpinnerIcon from "@/components/icons/LoadingSpinnerIcon";
-import { SearchInput } from "@/components/ui/Search/SearchInput";
+import { SearchInput } from "@/components/ui/SearchInput/SearchInput";
 
-const Playlists = ({
+const TrackImportPlaylists = ({
     seePlaylist,
     importPlaylistId
 }: {
@@ -51,4 +51,4 @@ const Playlists = ({
     )
 }
 
-export default Playlists;
+export default TrackImportPlaylists;

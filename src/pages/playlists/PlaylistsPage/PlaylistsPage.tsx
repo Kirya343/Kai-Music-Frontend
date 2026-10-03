@@ -22,7 +22,7 @@ const PlaylistsPage = () => {
 
     const [isOpen, setOpen] = useState(false);
 
-    const { roomLoaded } = useRoomPlayback();
+    const { roomLoaded, playlist } = useRoomPlayback();
 
     return (
         <>
@@ -56,12 +56,12 @@ const PlaylistsPage = () => {
                 )}
                 
                 <div className={styles.list}>
-                    {filteredList.map((playlist) => (
+                    {filteredList.map((p) => (
                         <LibraryPlaylist
-                            key={playlist.id}
-                            playlist={playlist}
-                            deletePlaylist={() => deletePlaylist(playlist)}
-                            importToRoom={() => importToRoom(playlist)}
+                            key={p.id}
+                            playlist={p}
+                            deletePlaylist={() => deletePlaylist(p)}
+                            importToRoom={() => playlist && importToRoom(playlist, p)}
                         />
                     ))}
                 </div>

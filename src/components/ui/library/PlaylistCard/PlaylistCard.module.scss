@@ -1,3 +1,5 @@
+@use "@/css/components/mixins/" as *;
+
 .playlistCard {
 
     border: 1px solid;
@@ -5,6 +7,10 @@
     padding: 1rem;
 
     position: relative;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 
     @include glass;
 
@@ -14,8 +20,6 @@
     }
 
     .actions {
-        position: absolute;
-        top: 1rem;
-        right: 1rem;
+        display: flex;
     }
 }

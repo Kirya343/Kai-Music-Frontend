@@ -13,27 +13,19 @@
 html, body {
     scroll-behavior: smooth;
     scrollbar-gutter: auto;
-    height: 100vh;
+    height: 100dvh;
     scrollbar-color: var(--scrollbar-color) var(--scrollbar-background);
     scrollbar-width: thin;
     font-family: 'Montserrat', sans-serif;
     color: var(--text-color);
 
     #root {
-        min-height: 100vh;
+        min-height: 100dvh;
         height: 100%;
         overflow: hidden;
         display: flex;
         flex-direction: column;
         background: linear-gradient(120deg, #1d1d1d, #000000);
-
-        @include mobile {
-            min-height: 100dvh;
-        }   
-    }
-
-    @include mobile {
-        height: 100dvh;
     }
 }
 

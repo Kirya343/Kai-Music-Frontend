@@ -5,7 +5,6 @@
     flex-direction: column;
     padding: 1rem 0;
     gap: 0.5rem;
-    height: 100%;
     overflow: hidden;
 
     flex: 1;
@@ -67,20 +66,27 @@
 }
 
 .queue {
-    border: 1px solid;
-    border-radius: 1rem;
-    padding: 10px 20px;
+    flex: 1;
+    min-height: 0;
+
     width: 500px;
     padding: 1rem 1.5rem;
+
     display: flex;
     flex-direction: column;
     gap: 0.7rem;
-    height: fit-content;
-    max-height: 100%;
-    overflow: auto;
-    min-height: 0;
+
+    overflow: hidden;
+
+    border: 1px solid;
+    border-radius: 1rem;
 
     @include glass;
+
+    @include mobile {
+        height: 100%;
+        width: 100%;
+    }
 
     .header {
         display: flex;
@@ -95,10 +101,6 @@
         text-align: center;
 
         @include glass;
-    }
-
-    @include mobile {
-        width: 100%;
     }
 }
 

@@ -1,11 +1,12 @@
 import { useLibrary } from "@audio/hooks/useLibrary";
-import styles from "./Library.module.scss"
+import styles from "./TrackImportLibrary.module.scss"
 import LoadingSpinnerIcon from "@/components/icons/LoadingSpinnerIcon";
 import ImportingTrack from "@/components/ui/library/ImportingTrack";
 import { useMemo } from "react";
 import { useRoomPlayback } from "@playback";
+import { Playlist } from "@/lib/playlist";
 
-const Library = ({ importPlaylistId }: { importPlaylistId: number }) => {
+const TrackImportLibrary = ({ importPlaylist }: { importPlaylist: Playlist }) => {
 
     const { 
         visibleAudios, loading, 
@@ -14,18 +15,14 @@ const Library = ({ importPlaylistId }: { importPlaylistId: number }) => {
         filteredList
     } = useLibrary();
 
-    const { playlist } = useRoomPlayback();
-
     const playlistAudioIds = useMemo(() => {
         return new Set(
-            playlist?.queue.map(item => item.audio.id)
+            importPlaylist?.queue.map(item => item.audio.id)
         );
-    }, [playlist?.queue]);
+    }, [importPlaylist?.queue]);
 
     return (
         <div className={styles.page} ref={parentRef}>
-            <h2 className={styles.header}>Add tracks</h2>
-            
             <div className={styles.sorting}>
 
                 <div className={styles.row}>
@@ -72,7 +69,7 @@ const Library = ({ importPlaylistId }: { importPlaylistId: number }) => {
                                     audio={audio}
                                     id={item.index + 1}
                                     isInPlaylist={playlistAudioIds.has(audio.id)}
-                                    importPlaylistId={importPlaylistId}
+                                    importPlaylistId={importPlaylist.id}
                                     className={styles.track}
                                 />
                             </div>
@@ -84,4 +81,4 @@ const Library = ({ importPlaylistId }: { importPlaylistId: number }) => {
     )
 }
 
-export default Library;
+export default TrackImportLibrary;

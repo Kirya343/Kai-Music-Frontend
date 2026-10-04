@@ -3,7 +3,7 @@ import { IShortRoom, useRoomPlayback, roomService } from "@room";
 import { useEffect, useState } from "react";
 import AudioPlayerOpener from "@/components/ui/player/AudioPlayerOpener/AudioPlayerOpener";
 import clsx from "clsx";
-import DoorIcon from "@/components/icons/DoorIcon";
+import DoorIcon from "@/components/icons/navigation/DoorIcon";
 import CirclePlusIcon from "@/components/icons/CirclePlusIcon";
 import MusicNoteIcon from "@/components/icons/MusicNoteIcon";
 import UserGroupIcon from "@/components/icons/UserGroupIcon";

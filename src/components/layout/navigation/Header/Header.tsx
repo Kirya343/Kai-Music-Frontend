@@ -1,17 +1,21 @@
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { useRoomPlayback } from "@room";
 import styles from "./Header.module.scss"
-import DoorIcon from "@/components/icons/DoorIcon"
-import LibraryIcon from "@/components/icons/LibraryIcon"
+import DoorIcon from "@/components/icons/navigation/DoorIcon"
+import LibraryIcon from "@/components/icons/navigation/LibraryIcon"
 import UserIcon from "@/components/icons/UserIcon"
 import { useAuth } from "@/lib/auth";
-import PlaylistIcon from "@/components/icons/PlaylistIcon";
+import PlaylistIcon from "@/components/icons/navigation/PlaylistIcon";
 
 const Header = () => {
 
     const { user, isAuthenticated } = useAuth();
     const { room } = useRoomPlayback();
     const navigate = useNavigate();
+
+    const isMobile = window.innerWidth < 768;
+
+    if (isMobile) return null;
     
     return (
         <header className={styles.header}>

@@ -1,8 +1,6 @@
 import { IAudio } from "../audio";
-import { Playlist } from "../playlist";
 
 export interface IListeningRoom extends IShortRoom{
-    playlist: Playlist;
     audio: IAudio;
 }
 
@@ -12,6 +10,7 @@ export interface IShortRoom {
     ownerId: number;
     code: string;
     listeners: number;
+    playlistId: number;
 }
 
 export interface IRoomUpdate {

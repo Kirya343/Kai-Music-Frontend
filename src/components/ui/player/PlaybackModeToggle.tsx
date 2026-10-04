@@ -7,10 +7,10 @@ import { PlaybackMode, playlistService } from "@/lib/playlist";
 
 export const PlaybackModeToggle = () => {
 
-    const { playlist, playbackMode } = useRoomPlayback();
+    const { roomPlaylist, playbackMode } = useRoomPlayback();
 
     const nextMode = async () => {
-        if (!playlist) return;
+        if (!roomPlaylist) return;
         
         const modes = [
             PlaybackMode.NORMAL,
@@ -22,7 +22,7 @@ export const PlaybackModeToggle = () => {
         const index = modes.indexOf(playbackMode);
         const next = modes[(index + 1) % modes.length];
 
-        await playlistService.setPlaylistPlaybackMode(playlist?.id, next);
+        await playlistService.setPlaylistPlaybackMode(roomPlaylist?.id, next);
     };
 
     const icon = (() => {

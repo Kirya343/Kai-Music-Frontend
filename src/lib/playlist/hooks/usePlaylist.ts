@@ -1,32 +1,28 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { Playlist } from "../playlistTypes";
 import { playlistService } from "../services";
 import { useSearch } from "@common/utils/hooks/useSearch";
 import { audioService, IAudio } from "@audio";
 import { IQueueItem } from "@playback";
+import { useData } from "@common";
 
 export const usePlaylist = (playlistId: number) => {
 
-    const [playlist, setPlaylist] = useState<Playlist | null>(null);
+    const { playlists } = useData();
+
+    const playlist = useMemo<Playlist | null>(() => {
+        if (!playlistId) return null;
+
+        return playlists.find(p => p.id === playlistId) || null
+    }, [playlists])
 
     const queue = useMemo<IQueueItem[]>(() => {
         if (!playlist?.queue) return []
 
         return playlist?.queue
     }, [playlist?.queue])
-
-    const [loading, setLoading] = useState<boolean>(true);
     
     const { filteredList, searchQuery, setSearchQuery } = useSearch(queue);
-
-    const syncPlaylist = useCallback(async () => {
-        try {
-            const data = await playlistService.loadPlaylistById(playlistId);
-            setPlaylist(data)
-        } finally {
-            setLoading(false)
-        }
-    }, [playlistId])
 
     const importToRoom = useCallback(async (importPlaylist: Playlist) => {
 
@@ -43,57 +39,15 @@ export const usePlaylist = (playlistId: number) => {
         if (!playlist?.id) return;
         try {
             await playlistService.removeFromQueue(playlist?.id, [queueItem.id])
-            setPlaylist(prev => {
-                if (!prev) {
-                    return prev;
-                }
-
-                return {
-                    ...prev,
-                    queue: prev.queue.filter(
-                        item => item.id !== queueItem.id
-                    )
-                };
-            });
         } catch (e) {
             console.error(e)
         }
-    }, [playlist?.id, setPlaylist])
-
-    useEffect(() => {
-        syncPlaylist()
-    }, []);
-
-    const recognizeAudio = useCallback(async (audio: IAudio) => {
-        const updatedAudio: IAudio = await audioService.recognizeAudio(audio.id)
-
-        console.log("recognition result:", updatedAudio)
-
-        updateAudio(updatedAudio);
-    }, [])
-
-    const updateAudio = useCallback((audio: IAudio) => {
-        setPlaylist(prev => {
-            if (!prev) {
-                return prev;
-            }
-
-            return {
-                ...prev,
-                queue: prev.queue.map(item =>
-                    item.audio.id === audio.id
-                        ? { ...item, audio }
-                        : item
-                )
-            };
-        });
-    }, [setPlaylist]);
+    }, [playlist?.id])
 
     return {  
-        loading, setSearchQuery,
+        setSearchQuery,
         searchQuery, filteredList, 
-        importToRoom, pagePlaylist: playlist,
-        recognizeAudio, updateAudio,
+        importToRoom, playlist,
         removeAudio
     };
 }

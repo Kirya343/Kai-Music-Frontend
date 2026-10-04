@@ -5,7 +5,7 @@ import { useMemo, useState } from "react";
 import { useRoomPlayback } from "@/lib/playlist";
 import { IAudio } from "@audio";
 import AudioFileModal from "@/components/pages/library/AudioFileModal/AudioFileModal";
-import PlaylistTrack from "@/components/ui/library/PlaylistTrack";
+import PlaylistTrack from "@/components/ui/track/PlaylistTrack";
 import { useParams } from "react-router-dom";
 import TrackImportModal from "@/components/ui/TrackImportMenu/TrackImportModal";
 import CirclePlusIcon from "@/components/icons/CirclePlusIcon";
@@ -19,26 +19,25 @@ const PlaylistPage = ({}: {}) => {
     const [audioFileView, setAudioFileView] = useState<IAudio | null>(null);
     const [importOpen, setImportOpen] = useState<boolean>(false)
 
-    const { playlist, playbackState } = useRoomPlayback();
+    const { roomPlaylist, playbackState } = useRoomPlayback();
 
     const { 
-        loading, recognizeAudio,
         setSearchQuery, searchQuery,
-        filteredList, pagePlaylist,
-        updateAudio, removeAudio
+        filteredList, playlist,
+        removeAudio
     } = usePlaylist(playlistId);
 
     const playingAudioId = useMemo(() => {
-        return playlist?.queue.find(
+        return roomPlaylist?.queue.find(
             item => item.id === playbackState?.entryId
         )?.audio.id;
-    }, [playlist?.queue, playbackState?.entryId]);
+    }, [roomPlaylist?.queue, playbackState?.entryId]);
 
 
     return (
         <>
             <div className={styles.page}>
-                <h2 className={styles.header}>Playlist <strong>{pagePlaylist?.title}</strong></h2>
+                <h2 className={styles.header}>Playlist <strong>{playlist?.title}</strong></h2>
                 
                 <div className={styles.sorting}>
 
@@ -58,13 +57,6 @@ const PlaylistPage = ({}: {}) => {
 
                     {searchQuery.length != 0 && <span>Found {filteredList.length} audios</span>}
                 </div>
-
-                {loading && (
-                    <div className={styles.synchronization}>
-                        <LoadingSpinnerIcon />
-                        <span>synchronization</span>
-                    </div>
-                )}
                 
                 <div className={styles.trackList}>
                     {filteredList.map((qi, idx) => (
@@ -72,8 +64,7 @@ const PlaylistPage = ({}: {}) => {
                             queueItem={qi}
                             id={idx + 1}
                             isInPlaylist={false}
-                            recognizeAudio={recognizeAudio}
-                            playlistId={pagePlaylist?.id}
+                            playlistId={playlist?.id}
                             openEditModal={setAudioFileView}
                             handleRemove={removeAudio}
                             playing={playingAudioId === qi.audio.id}
@@ -84,11 +75,10 @@ const PlaylistPage = ({}: {}) => {
                 <AudioFileModal
                     audioFile={audioFileView} 
                     onClose={() => setAudioFileView(null)} 
-                    updateAudio={updateAudio}
                 />
             </div>
 
-            {pagePlaylist && <TrackImportModal importPlaylist={pagePlaylist} isOpen={importOpen} onClose={() => setImportOpen(false)} />}
+            {playlist && <TrackImportModal importPlaylist={playlist} isOpen={importOpen} onClose={() => setImportOpen(false)} />}
         </>
     )
 }

@@ -1,7 +1,8 @@
 import Audio from "@/components/ui/player/Audio/Audio";
 import { Outlet } from "react-router-dom";
 import styles from "./MainLayout.module.scss"
-import Header from "../Header/Header";
+import Header from "../navigation/Header/Header";
+import MobileNav from "../navigation/MobileNav/MobileNav";
 
 const MainLayout = () => {
 
@@ -14,6 +15,7 @@ const MainLayout = () => {
             </main>
 
             <Audio />
+            <MobileNav />
         </>
     )
 }

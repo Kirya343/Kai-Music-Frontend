@@ -1,15 +1,15 @@
-import { createContext, Dispatch, SetStateAction, useCallback, useContext, useEffect, useRef, useState } from "react";
+import { createContext, Dispatch, SetStateAction, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import { IAudio, TimeRange } from "@audio";
 import { useListeningRoomWS, useAudioStream, IShortRoom } from "@room";
-import { countPosition } from "@common";
+import { countPosition, useData } from "@common";
 import { IPlaybackState } from "@playback";
 import { PlaybackMode, Playlist } from "../playlist";
 import { playbackService } from "./services";
 
 interface RoomPlaybackContextType {
     room: IShortRoom | null;
-    playlist: Playlist | null;
-    audioInfo: IAudio | null;
+    roomPlaylist: Playlist | null;
+    playingAudio: IAudio | null;
     playbackMode: PlaybackMode;
 
     playbackState: IPlaybackState | null;
@@ -37,10 +37,9 @@ export const useRoomPlayback = () => {
 
 export const RoomPlaybackProvider = ({ children }: { children?: React.ReactNode }) => {
 
+    const { room, roomPlaylist } = useData();
+
     const { 
-        room,
-        playlist,
-        audioInfo,
         playbackMode,
         
         setAudioChunkHandler,
@@ -58,7 +57,16 @@ export const RoomPlaybackProvider = ({ children }: { children?: React.ReactNode 
         unsyncedStateRef
     } = useAudioStream();
 
+    const playingAudio = useMemo<IAudio | null>(() => {
+        const queueItem = roomPlaylist?.queue.find(qi => qi.id === playbackState?.entryId)
+
+        if (!queueItem?.audio) return null;
+
+        return queueItem.audio;
+    }, [roomPlaylist, playbackState])
+
     const roomLoaded: boolean = !!room;
+
     const prevRoomRef = useRef<number | null>(null);
     const debounceTimeoutRef = useRef<number | null>(null);
 
@@ -173,14 +181,14 @@ export const RoomPlaybackProvider = ({ children }: { children?: React.ReactNode 
     }, [setAudioChunkHandler]);
 
     useEffect(() => {
-        if (!("mediaSession" in navigator) || !playbackState || !audioInfo || !room?.id) {
+        if (!("mediaSession" in navigator) || !playbackState || !playingAudio || !room?.id) {
             return;
         }
 
         navigator.mediaSession.metadata = new MediaMetadata({
-            title: audioInfo.title || "",
-            artist: audioInfo.artist || "",
-            album: audioInfo.album || "",
+            title: playingAudio.title || "",
+            artist: playingAudio.artist || "",
+            album: playingAudio.album || "",
             artwork: [
                 {
                     src: "/images/face.webp",
@@ -222,8 +230,8 @@ export const RoomPlaybackProvider = ({ children }: { children?: React.ReactNode 
 
         navigator.mediaSession.setPositionState({
             playbackRate: 1,
-            position: Math.min(playbackState?.position || 0, audioInfo.duration),
-            duration: audioInfo.duration
+            position: Math.min(playbackState?.position || 0, playingAudio.duration),
+            duration: playingAudio.duration
         })
 
         return () => {
@@ -236,7 +244,7 @@ export const RoomPlaybackProvider = ({ children }: { children?: React.ReactNode 
             navigator.mediaSession.setActionHandler("seekto", null);
         };
     }, [
-        audioInfo,
+        playingAudio,
         playbackState,
         room?.id,
         seek
@@ -245,8 +253,8 @@ export const RoomPlaybackProvider = ({ children }: { children?: React.ReactNode 
     return (
         <RoomPlaybackContext.Provider value={{ 
             room,
-            playlist,
-            audioInfo,
+            roomPlaylist,
+            playingAudio,
             playbackMode,
 
             playbackState, 

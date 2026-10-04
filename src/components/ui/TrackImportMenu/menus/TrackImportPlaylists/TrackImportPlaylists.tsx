@@ -1,4 +1,4 @@
-import SelectPlaylist from "@/components/ui/library/SelectPlaylist";
+import SelectPlaylist from "@/components/ui/playlist/SelectPlaylist";
 import { usePlaylists } from "@/lib/playlist/hooks/usePlaylists";
 import styles from "./TrackImportPlaylists.module.scss"
 import LoadingSpinnerIcon from "@/components/icons/LoadingSpinnerIcon";

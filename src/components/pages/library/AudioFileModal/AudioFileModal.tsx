@@ -4,11 +4,10 @@ import styles from "./AudioFileModal.module.scss"
 import Modal from "@/components/ui/Modal/Modal";
 
 const AudioFileModal = ({ 
-    audioFile, onClose, updateAudio
+    audioFile, onClose
 }: { 
     audioFile: IAudio | null, 
-    onClose: () => void,
-    updateAudio: (audio: IAudio) => void,
+    onClose: () => void
 }) => {
 
     const [editMode, setEditMode] = useState<boolean>(false);
@@ -33,18 +32,7 @@ const AudioFileModal = ({
             artist: artist || "",
             coverUrl: coverUrl || ""
         }
-        const res = await audioService.updateAudio(audioFile.id, audioUpdate);
-        if (res.ok) {
-            const updated = {
-                ...audioFile,
-                title: audioUpdate.title,
-                album: audioUpdate.album,
-                artist: audioUpdate.artist,
-                coverUrl: audioUpdate.coverUrl,
-            } 
-            updateAudio(updated);
-            setEditMode(false)
-        }
+        await audioService.updateAudio(audioFile.id, audioUpdate);
     }
 
     return (

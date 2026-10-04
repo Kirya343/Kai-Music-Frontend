@@ -1,33 +1,28 @@
 import CheckmarkIcon from "@/components/icons/CheckmarkIcon"
 import PenIcon from "@/components/icons/PenIcon"
-import PlusIcon from "@/components/icons/PlusIcon"
+import PlusIcon from "@/components/icons/player/PlusIcon"
 import ShazamIcon from "@/components/icons/ShazamIcon"
 import TrashIcon from "@/components/icons/TrashIcon"
 import { playlistService } from "@/lib/playlist"
-import { IAudio } from "@audio"
+import { audioService, IAudio } from "@audio"
 import Track from "./Track/Track"
-import { IQueueItem } from "@playback"
 
-const PlaylistTrack = ({
-    queueItem, 
+const LibraryTrack = ({
+    audio, 
     id,
     playing,
-    isInPlaylist,
     playlistId,
     className,
-    recognizeAudio,
     openEditModal,
-    handleRemove
+    handleDelete
 }: {
-    queueItem: IQueueItem, 
+    audio: IAudio, 
     id: number,
     playing: boolean,
     playlistId?: number,
-    isInPlaylist: boolean,
     className?: string,
-    recognizeAudio: (audio: IAudio) => void,
     openEditModal: (audio: IAudio) => void,
-    handleRemove: (queueItem: IQueueItem) => void
+    handleDelete: (audio: IAudio) => void
 }) => {
 
     const actions = [];
@@ -36,36 +31,33 @@ const PlaylistTrack = ({
             {
                 icon: <ShazamIcon/>,
                 title: "Autofill info with Shazam",
-                func: () => recognizeAudio(queueItem.audio)
+                func: async () => await audioService.recognizeAudio(audio.id)
             },
             {
                 icon: <PenIcon/>,
                 title: "Edit audio info",
-                func: () => openEditModal(queueItem.audio)
+                func: () => openEditModal(audio)
             },
             {
                 icon: <TrashIcon/>,
-                title: "Remove from playlist",
-                func: () => handleRemove(queueItem)
+                title: "Delete from library",
+                func: () => handleDelete(audio)
             }
         ]
 
     if (playlistId) {
         const action = {
-            icon: isInPlaylist ? <CheckmarkIcon/> : <PlusIcon/>,
+            icon: <PlusIcon/>,
             title: "Add to Room",
-            func: async () => await playlistService.addToQueue(playlistId, [{audioId: queueItem.audio.id}])
+            func: async () => await playlistService.addToQueue(playlistId, [{audioId: audio.id}])
         }
 
         extraActions.push(action)
-        actions.push(action)
     }
-
     return (
         <Track
-            audio={queueItem.audio}
+            audio={audio}
             id={id}
-            actions={actions}
             extraActions={extraActions}
             className={className}
             playing={playing}
@@ -73,4 +65,4 @@ const PlaylistTrack = ({
     )
 }
 
-export default PlaylistTrack;
+export default LibraryTrack;

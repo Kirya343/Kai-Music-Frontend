@@ -9,7 +9,7 @@ import CheckBoxIcon from "@/components/icons/CheckBoxIcon";
 import Loader from "@/components/ui/Loader/Loader";
 import { playlistService } from "@/lib/playlist";
 import TrackImportModal from "@/components/ui/TrackImportMenu/TrackImportModal";
-import RoomTrack from "@/components/ui/library/RoomTrack";
+import RoomTrack from "@/components/ui/track/RoomTrack";
 
 const RoomPage = () => {
     const [selectedTracks, setSelectedTracks] = useState<number[]>([]);

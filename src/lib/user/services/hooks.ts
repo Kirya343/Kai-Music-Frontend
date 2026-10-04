@@ -4,13 +4,21 @@ import { userService } from ".";
 
 
 export function useCurrentUser() {
-    const [user, setUser] = useState<IUser | null>(null);
+    const [user, setUser] = useState<IUser | null>(() => {
+        const saved = localStorage.getItem("user");
+
+        return saved ? JSON.parse(saved) : null;
+    });
+
     const [loading, setLoading] = useState(true);
+
     const isAuthenticated = useMemo<boolean>(() => {
         if (!user) return false;
         return user?.email?.length > 0;
     }, [user]);
+
     const isAdmin = useMemo<boolean>(() => user?.roles?.some(r => r.name === "ADMIN") ?? false, [user]);
+
     const shortUser = useMemo<IShortUser | null>(() => {
         if (!isAuthenticated || !user) return null;
         return { openId: user.openId, name: user.name, avatarUrl: user.avatarUrl ?? "" }
@@ -24,6 +32,10 @@ export function useCurrentUser() {
             }
         });
     }, [])
+
+    useEffect(() => {
+        localStorage.setItem("user", JSON.stringify(user));
+    }, [user]);
 
     useEffect(() => {
         let cancelled = false;

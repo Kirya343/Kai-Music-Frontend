@@ -2,26 +2,13 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { CreatePlaylist, Playlist } from "../playlistTypes";
 import { playlistService } from "../services";
 import { useSearch } from "@common/utils/hooks/useSearch";
+import { useData } from "@common";
 
 export const usePlaylists = () => {
 
-    const [playlists, setPlaylists] = useState<Playlist[]>(() => {
-        const saved = localStorage.getItem("playlists");
-
-        return saved ? JSON.parse(saved) : [];
-    });
-    const [loading, setLoading] = useState<boolean>(true);
+    const { playlists } = useData();
 
     const { filteredList, searchQuery, setSearchQuery} = useSearch(playlists);
-
-    const syncPlaylists = useCallback(async () => {
-        try {
-            const data = await playlistService.loadPlaylists();
-            setPlaylists(data)
-        } finally {
-            setLoading(false)
-        }
-    }, [])
 
     const deletePlaylist = useCallback(async (playlist: Playlist) => {
         const success = confirm(`Ary you sure deleting playlist ${playlist.title}`)
@@ -29,21 +16,19 @@ export const usePlaylists = () => {
         if (success) {
             try {
                 await playlistService.deletePlaylist(playlist.id)
-                setPlaylists(prev => prev?.filter(a => a.id !== playlist.id) || []);
             } catch (e) {
                 console.error(e)
             }
         }
-    }, [setPlaylists])
+    }, [])
 
     const createPlaylist = useCallback(async (playlist: CreatePlaylist) => {
         try {
-            const newPlaylist = await playlistService.createPlaylist(playlist)
-            setPlaylists(prev => ([...prev, newPlaylist]));
+            await playlistService.createPlaylist(playlist)
         } catch (e) {
             console.error(e)
         }
-    }, [setPlaylists])
+    }, [])
 
     const importToRoom = useCallback(async (importPlaylist: Playlist, targetPlaylist: Playlist) => {
 
@@ -56,28 +41,10 @@ export const usePlaylists = () => {
         }
     }, [])
 
-    const updatePlaylist = useCallback((playlist: Playlist) => {
-        setPlaylists(prev =>
-            prev?.map(item =>
-                item.id === playlist.id
-                    ? playlist
-                    : item
-            ) ?? ([playlist])
-        );
-    }, [setPlaylists])
-
-    useEffect(() => {
-        if (playlists) localStorage.setItem("playlists", JSON.stringify(playlists));
-    }, [playlists]);
-
-    useEffect(() => {
-        syncPlaylists()
-    }, []);
-
     return {  
-        loading, setSearchQuery,
+        setSearchQuery,
         searchQuery, deletePlaylist,
-        updatePlaylist, filteredList,
+        filteredList,
         createPlaylist, importToRoom
     };
 }

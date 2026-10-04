@@ -7,37 +7,35 @@ import CrossIcon from "@/components/icons/CrossIcon";
 import AudioFileModal from "@/components/pages/library/AudioFileModal/AudioFileModal";
 import AudioPlayerOpener from "@/components/ui/player/AudioPlayerOpener/AudioPlayerOpener";
 import { useLibrary } from "@audio/hooks/useLibrary";
-import LoadingSpinnerIcon from "@/components/icons/LoadingSpinnerIcon";
 import CirclePlusIcon from "@/components/icons/CirclePlusIcon";
-import LibraryTrack from "@/components/ui/library/LibraryTrack";
+import LibraryTrack from "@/components/ui/track/LibraryTrack";
 
 const LibraryPage = () => {
 
     const { 
-        visibleAudios, loading, 
+        visibleAudios, 
         deleteAudio, 
-        updateAudio, setSearchQuery,
+        setSearchQuery,
         searchQuery, uploadAudios,
         uploading, filteredList,
-        rowVirtualizer, parentRef,
-        recognizeAudio
+        rowVirtualizer, parentRef
     } = useLibrary();
 
     const [audioFileView, setAudioFileView] = useState<IAudio | null>(null);
     
-    const { playlist, playbackState, roomLoaded } = useRoomPlayback();
+    const { roomPlaylist, playbackState, roomLoaded } = useRoomPlayback();
 
     const playlistAudioIds = useMemo(() => {
         return new Set(
-            playlist?.queue.map(item => item.audio.id)
+            roomPlaylist?.queue.map(item => item.audio.id)
         );
-    }, [playlist?.queue]);
+    }, [roomPlaylist?.queue]);
 
     const playingAudioId = useMemo(() => {
-        return playlist?.queue.find(
+        return roomPlaylist?.queue.find(
             item => item.id === playbackState?.entryId
         )?.audio.id;
-    }, [playlist?.queue, playbackState?.entryId]);
+    }, [roomPlaylist?.queue, playbackState?.entryId]);
 
     return (
         <>
@@ -85,13 +83,6 @@ const LibraryPage = () => {
                         </div>
                     </>
                 )}
-
-                {loading && (
-                    <div className={styles.synchronization}>
-                        <LoadingSpinnerIcon/>
-                        <span>synchronization</span>
-                    </div>
-                )}
                 
                 <div className={styles.trackList}>
                     <div
@@ -117,8 +108,7 @@ const LibraryPage = () => {
                                     <LibraryTrack
                                         audio={audio}
                                         id={item.index + 1}
-                                        recognizeAudio={recognizeAudio}
-                                        playlistId={playlist?.id}
+                                        playlistId={roomPlaylist?.id}
                                         openEditModal={setAudioFileView}
                                         handleDelete={deleteAudio}
                                         playing={playingAudioId === audio.id}
@@ -141,7 +131,6 @@ const LibraryPage = () => {
                 <AudioFileModal 
                     audioFile={audioFileView} 
                     onClose={() => setAudioFileView(null)} 
-                    updateAudio={updateAudio}
                 />
             </div>
 

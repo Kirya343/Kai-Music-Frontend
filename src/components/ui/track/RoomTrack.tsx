@@ -17,7 +17,7 @@ const RoomTrack = ({queueItem, selected, selectMode, toggleTrack, playing}: {
         playbackState,
         room,
         togglePlay,
-        playlist
+        roomPlaylist
     } = useRoomPlayback();
 
     const playTrack = playbackService.usePlayTrack();
@@ -38,11 +38,11 @@ const RoomTrack = ({queueItem, selected, selectMode, toggleTrack, playing}: {
 
     const actions: IKebabAction[] = []
 
-    if (playlist?.id) {
+    if (roomPlaylist?.id) {
         actions.push({
             icon: <TrashIcon/>,
             title: "deleteAudio",
-            func: async () => await playlistService.removeFromQueue(playlist?.id, [queueItem.id])
+            func: async () => await playlistService.removeFromQueue(roomPlaylist?.id, [queueItem.id])
         })
     }
 

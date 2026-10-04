@@ -1,5 +1,6 @@
 import { audioService } from "@audio/audioService";
 import { IAudio } from "@audio/audioTypes";
+import { useData } from "@common";
 import { useSearch } from "@common/utils/hooks/useSearch";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { AxiosProgressEvent } from "axios";
@@ -14,13 +15,8 @@ interface IUploadingAudio {
 
 export const useLibrary = () => {
 
-    const [audios, setAudios] = useState<IAudio[]>(() => {
-        const saved = localStorage.getItem("libraryAudios");
-
-        return saved ? JSON.parse(saved) : [];
-    });
+    const { audios } = useData();
     
-    const [loading, setLoading] = useState<boolean>(true);
     const [uploading, setUploading] = useState<IUploadingAudio[]>([]);
     const parentRef = useRef<HTMLDivElement>(null);
     const [visibleCount, setVisibleCount] = useState(50);
@@ -31,45 +27,17 @@ export const useLibrary = () => {
         return filteredList.slice(0, visibleCount);
     }, [filteredList, visibleCount]);
 
-    const syncLibrary = useCallback(async () => {
-        try {
-            const data = await audioService.loadLibrary();
-            setAudios(data)
-        } finally {
-            setLoading(false)
-        }
-    }, [])
-
     const deleteAudio = useCallback(async (audio: IAudio) => {
         const success = confirm(`Ary you sure deleting audio ${audio.name}`)
 
         if (success) {
             try {
                 await audioService.deleteAudio(audio.id)
-                setAudios(prev => prev?.filter(a => a.id !== audio.id) || []);
             } catch (e) {
                 console.error(e)
             }
         }
-    }, [setAudios])
-
-    const recognizeAudio = useCallback(async (audio: IAudio) => {
-        const updatedAudio: IAudio = await audioService.recognizeAudio(audio.id)
-
-        console.log("recognition result:", updatedAudio)
-
-        updateAudio(updatedAudio);
     }, [])
-
-    const updateAudio = useCallback((audio: IAudio) => {
-        setAudios(prev =>
-            prev?.map(item =>
-                item.id === audio.id
-                    ? audio
-                    : item
-            ) ?? ([audio])
-        );
-    }, [setAudios])
 
     const uploadAudios = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const files = e.target.files;
@@ -132,8 +100,6 @@ export const useLibrary = () => {
                 );
             }
         }
-
-        syncLibrary();
     };
 
     const rowVirtualizer = useVirtualizer({
@@ -170,24 +136,14 @@ export const useLibrary = () => {
     });
 
     useEffect(() => {
-        if (audios) localStorage.setItem("libraryAudios", JSON.stringify(audios));
-    }, [audios]);
-
-    useEffect(() => {
         setVisibleCount(50);
     }, [searchQuery]);
 
-    useEffect(() => {
-        syncLibrary()
-    }, []);
-
     return { 
         visibleAudios, 
-        deleteAudio, updateAudio, 
-        loading, setSearchQuery,
+        deleteAudio, setSearchQuery,
         searchQuery, uploadAudios,
         uploading, rowVirtualizer,
-        parentRef, filteredList,
-        recognizeAudio
+        parentRef, filteredList
     };
 }

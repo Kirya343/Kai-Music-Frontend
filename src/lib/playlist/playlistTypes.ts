@@ -13,6 +13,7 @@ export interface Playlist {
     title: string;
     mode: PlaybackMode;
     queue: IQueueItem[];
+    type: string
 }
 
 

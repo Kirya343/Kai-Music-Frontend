@@ -1,10 +1,19 @@
-import { createContext, useContext, useState } from "react";
-import { Playlist } from "../playlist";
-import { IAudio } from "@audio";
+import { createContext, Dispatch, SetStateAction, useCallback, useContext, useEffect, useState } from "react";
+import { Playlist, playlistService } from "../playlist";
+import { audioService, IAudio } from "@audio";
+import { IListeningRoom } from "@room";
+import { useAudioData } from "@audio/hooks";
+import { usePlaylistsData } from "../playlist/hooks";
+import { useRoomData } from "@room/hooks/useRoomData";
+import { useRoomPlaylistData } from "../playlist/hooks/useRoomPlaylistData";
 
 interface DataContextType {
     playlists: Playlist[];
-    tracks: IAudio[];
+    audios: IAudio[];
+    room: IListeningRoom | null,
+    setRoom: Dispatch<SetStateAction<IListeningRoom | null>>
+    roomPlaylist: Playlist | null;
+    setRoomPlaylist: Dispatch<SetStateAction<Playlist | null>>
 }
 
 const DataContext = createContext<DataContextType | null>(null);
@@ -19,17 +28,24 @@ export const useData = () => {
 
 export const DataProvider = ({ children }: { children?: React.ReactNode }) => {
 
-    const [audios, setAudios] = useState<IAudio[]>(() => {
-        const saved = localStorage.getItem("libraryAudios");
+    const { audios, syncAudios } = useAudioData();
+    const { playlists, syncPlaylists } = usePlaylistsData();
+    const { room, setRoom } = useRoomData();
+    const { roomPlaylist, setRoomPlaylist } = useRoomPlaylistData();
 
-        return saved ? JSON.parse(saved) : [];
-    });
-
-
+    useEffect(() => {
+        syncPlaylists()
+        syncAudios()
+    }, []);
 
     return (
         <DataContext.Provider value={{
-            audios
+            audios,
+            playlists,
+            room,
+            setRoom,
+            roomPlaylist,
+            setRoomPlaylist
          }}>
             {children}
         </DataContext.Provider>

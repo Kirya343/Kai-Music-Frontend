@@ -6,10 +6,7 @@ import CirclePlusIcon from "@/components/icons/CirclePlusIcon";
 import LoadingSpinnerIcon from "@/components/icons/LoadingSpinnerIcon";
 import { useState } from "react";
 import PlaylistCreateModal from "@/components/pages/playlists/PlaylistCreateModal/PlaylistCreateModal";
-import ActionMenu, { IKebabAction } from "@/components/ui/ActionMenu/ActionMenu";
-import TrashIcon from "@/components/icons/TrashIcon";
-import PlaylistCard from "@/components/ui/library/PlaylistCard/PlaylistCard";
-import LibraryPlaylist from "@/components/ui/library/LibraryPlaylist";
+import LibraryPlaylist from "@/components/ui/playlist/LibraryPlaylist";
 
 const PlaylistsPage = () => {
 

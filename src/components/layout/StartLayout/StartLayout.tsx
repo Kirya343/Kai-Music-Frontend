@@ -31,13 +31,7 @@ const StartLayout = () => {
                         transition={{ duration: 0.7, delay: 1 }}
                         className={styles.content}
                     >
-                        <AuthProvider>
-                            <WebSocketProvider>
-                                <RoomPlaybackProvider>
-                                    <Outlet />
-                                </RoomPlaybackProvider>
-                            </WebSocketProvider>
-                        </AuthProvider>
+                        <Outlet />
 
                     </motion.div>
                 )}

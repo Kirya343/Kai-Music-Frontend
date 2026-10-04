@@ -28,6 +28,7 @@ const RoomReturnModal = () => {
             await roomService.joinRoom(room.code);
         } finally {
             navigate("/room");
+            setRoom(null);
         }
     }
 
@@ -42,7 +43,7 @@ const RoomReturnModal = () => {
     return room?.code && (
         <Modal
             isOpen={true} 
-            onClose={() => {}}
+            onClose={() => setRoom(null)}
             title={`You have left room ${room.title}`}
         >
             <div className={styles.body}>

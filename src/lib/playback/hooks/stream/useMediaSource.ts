@@ -20,10 +20,34 @@ export const useMediaSource = () => {
 
     const unsyncedStateRef = useRef<IPlaybackState | null>(null);
 
+    const cleanupAudio = useCallback(() => {
+        console.log("Очищаем playback")
+
+        const audio = audioRef.current;
+
+        if (audio) {
+            audio.pause();
+            audio.removeAttribute('src');
+            audio.load();
+        }
+
+        if (objectUrlRef.current) {
+            URL.revokeObjectURL(objectUrlRef.current);
+        }
+
+        audioRef.current = null;
+        mediaSourceRef.current = null;
+        objectUrlRef.current = null;
+
+        resetBuffer();
+    }, []);
+
     const initMediaSource = useCallback((entryId: number) => {
         if (mediaSourceRef.current) {
             return;
         }
+
+        cleanupAudio();
 
         currentEntryIdRef.current = entryId;
 
@@ -82,28 +106,6 @@ export const useMediaSource = () => {
         addEventListener();
     }, [updateBufferedRanges]);
 
-    const cleanupAudio = useCallback(() => {
-        console.log("Очищаем playback")
-
-        const audio = audioRef.current;
-
-        if (audio) {
-            audio.pause();
-            audio.removeAttribute('src');
-            audio.load();
-        }
-
-        if (objectUrlRef.current) {
-            URL.revokeObjectURL(objectUrlRef.current);
-        }
-
-        audioRef.current = null;
-        mediaSourceRef.current = null;
-        objectUrlRef.current = null;
-
-        resetBuffer();
-    }, []);
-
     const pausePlayback = useCallback(() => {
         const audio = audioRef.current;
 
@@ -160,7 +162,7 @@ export const useMediaSource = () => {
 
     const playIfBuffered = useCallback((entryId: number) => {
 
-        console.log('Попытка начать проигрывание', entryId);
+        //console.log('Попытка начать проигрывание', entryId);
 
         const audio = audioRef.current;
         const state = unsyncedStateRef.current;
@@ -169,7 +171,7 @@ export const useMediaSource = () => {
             return;
         }
 
-        console.log('стейты правильные', entryId);
+        //console.log('стейты правильные', entryId);
 
         const ranges = bufferedRanges.get(entryId)
 
@@ -202,6 +204,8 @@ export const useMediaSource = () => {
 
         return () => {
             setBufferUpdateHandler(() => {});
+            pausePlayback();
+            cleanupAudio();
         };
     }, [])
 

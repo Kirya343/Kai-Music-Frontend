@@ -67,6 +67,8 @@ export function useStompClient(): UseStompClientResult {
             setConnected(true);
             setError(false);
 
+            console.log("Подключение")
+
             for (const handler of handlers.current) {
                 cleanups.current.get(handler)?.();
 
@@ -135,6 +137,8 @@ export function useStompClient(): UseStompClientResult {
     );
 
     useEffect(() => {
+
+        console.log(user)
         if (!user) return;
 
         connect();

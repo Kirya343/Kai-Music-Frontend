@@ -3,17 +3,19 @@ import { usePlaylists } from "@/lib/playlist/hooks/usePlaylists";
 import styles from "./TrackImportPlaylists.module.scss"
 import LoadingSpinnerIcon from "@/components/icons/LoadingSpinnerIcon";
 import { SearchInput } from "@/components/ui/SearchInput/SearchInput";
+import { Playlist } from "@/lib/playlist";
 
 const TrackImportPlaylists = ({
     seePlaylist,
-    importPlaylistId
+    importPlaylist
 }: {
     seePlaylist: (playlistId: number) => void;
-    importPlaylistId: number;
+    importPlaylist: Playlist;
 }) => {
     const {
         setSearchQuery,
-        searchQuery, filteredList
+        searchQuery, filteredList,
+        importToRoom
     } = usePlaylists();
 
     return (
@@ -35,6 +37,7 @@ const TrackImportPlaylists = ({
                         <SelectPlaylist
                             key={playlist.id}
                             playlist={playlist}
+                            importToRoom={() => importToRoom(importPlaylist, playlist)}
                             onClick={() => seePlaylist(playlist.id)}
                         />
                     ))}

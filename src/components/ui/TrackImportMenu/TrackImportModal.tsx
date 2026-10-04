@@ -17,8 +17,6 @@ const TrackImportModal = ({
     importPlaylist: Playlist; 
 }) => {
 
-    console.log("TrackImportModal")
-
     const [view, setView] = useState<"library" | "playlists" | number>("library");
 
     const seePlaylist = (id: number) => setView(id) 
@@ -26,7 +24,7 @@ const TrackImportModal = ({
     const renderView = () => {
         switch (view) {
             case "library": return <TrackImportLibrary importPlaylist={importPlaylist}/>
-            case "playlists": return <TrackImportPlaylists importPlaylistId={importPlaylist.id} seePlaylist={(id) => seePlaylist(id)}/>
+            case "playlists": return <TrackImportPlaylists importPlaylist={importPlaylist} seePlaylist={(id) => seePlaylist(id)}/>
             default: {
                 if (!importPlaylist) return null;
                     

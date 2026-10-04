@@ -169,6 +169,8 @@ export const useMediaSource = () => {
             return;
         }
 
+        console.log('стейты правильные', entryId);
+
         const ranges = bufferedRanges.get(entryId)
 
         if (!ranges) return;

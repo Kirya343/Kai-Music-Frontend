@@ -1,0 +1,16 @@
+@use "@/css/components/mixins/" as *;
+
+.btn {
+    width: fit-content;
+    padding: 10px 17px;
+    border-radius: 10px;
+    font-size: medium;
+    
+    @include dirty-glass(true);
+}
+
+.body {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+}

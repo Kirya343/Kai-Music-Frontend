@@ -1,15 +1,16 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useWebSocket } from "@websocket";
-import { AudioChunk, IAudio } from "@audio";
+import { AudioChunk } from "@audio";
 import { IListeningRoom } from "@room";
 import { IPlaybackState } from "@playback";
 import { PlaybackMode, Playlist } from "@/lib/playlist";
-import { useData } from "@common";
 
 export const useListeningRoomWS = () => {
     
     const { addOnConnectHandler } = useWebSocket();
 
+    const [roomPlaylist, setRoomPlaylist] = useState<Playlist | null>(null);
+    const [room, setRoom] = useState<IListeningRoom | null>(null);
     const [playbackMode, setPlaybackMode] = useState<PlaybackMode>(PlaybackMode.NORMAL);
 
     const onAudioChunkRef = useRef<((chunk: AudioChunk) => void) | null>(null);
@@ -27,6 +28,16 @@ export const useListeningRoomWS = () => {
 
     useEffect(() => {
         const unsubscribe = addOnConnectHandler((client) => {
+
+            const playlistSub = client.subscribe(`/user/queue/playlist.room`, (message) => {
+                setRoomPlaylist(JSON.parse(message.body));
+            });
+
+            const roomSub = client.subscribe(`/user/queue/room`, (message) => {
+                const room: IListeningRoom = JSON.parse(message.body);
+                
+                setRoom(room);
+            });
 
             const playbackModeSub = client.subscribe(`/user/queue/playback-mode`, (message) => {
                 setPlaybackMode(JSON.parse(message.body));
@@ -56,6 +67,8 @@ export const useListeningRoomWS = () => {
                 audioSub.unsubscribe();
                 playbackSub.unsubscribe();
                 playbackModeSub.unsubscribe();
+                playlistSub.unsubscribe();
+                roomSub.unsubscribe();
             }
         });
 
@@ -63,6 +76,8 @@ export const useListeningRoomWS = () => {
     }, [addOnConnectHandler]);
 
     return {
+        room,
+        roomPlaylist,
         playbackMode,
 
         setAudioChunkHandler,

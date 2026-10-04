@@ -14,9 +14,8 @@ const TrackImportPlaylist = ({
 }) => {
 
     const { 
-        loading, 
         setSearchQuery, searchQuery,
-        filteredList, pagePlaylist
+        filteredList, playlist
     } = usePlaylist(playlistId);
     
     const playlistAudioIds = useMemo(() => {
@@ -27,7 +26,7 @@ const TrackImportPlaylist = ({
 
     return (
         <div className={styles.page}>
-            <h2 className={styles.header}>Playlist <strong>{pagePlaylist?.title}</strong></h2>
+            <h2 className={styles.header}>Playlist <strong>{playlist?.title}</strong></h2>
             
             <div className={styles.sorting}>
 
@@ -43,13 +42,6 @@ const TrackImportPlaylist = ({
                 {searchQuery.length != 0 && <span>Found {filteredList.length} audios</span>}
             </div>
 
-            {loading && (
-                <div className={styles.synchronization}>
-                    <LoadingSpinnerIcon />
-                    <span>synchronization</span>
-                </div>
-            )}
-            
             <div className={styles.trackList}>
                 {filteredList.map((qi, idx) => (
                     <ImportingTrack

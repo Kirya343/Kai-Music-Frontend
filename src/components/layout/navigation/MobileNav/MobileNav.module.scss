@@ -6,6 +6,8 @@
     padding: 0.5rem 2rem;
     justify-content: center;
     gap: 2rem;
+    height: var(--mobile-nav-height);
+    z-index: 100;
 
     @include glass;
 }

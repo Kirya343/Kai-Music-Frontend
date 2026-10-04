@@ -37,9 +37,9 @@ export const useRoomPlayback = () => {
 
 export const RoomPlaybackProvider = ({ children }: { children?: React.ReactNode }) => {
 
-    const { room, roomPlaylist } = useData();
-
     const { 
+        room, 
+        roomPlaylist,
         playbackMode,
         
         setAudioChunkHandler,

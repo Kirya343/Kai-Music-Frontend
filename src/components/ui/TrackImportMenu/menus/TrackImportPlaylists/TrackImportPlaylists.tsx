@@ -12,7 +12,7 @@ const TrackImportPlaylists = ({
     importPlaylistId: number;
 }) => {
     const {
-        loading, setSearchQuery,
+        setSearchQuery,
         searchQuery, filteredList
     } = usePlaylists();
 
@@ -30,13 +30,6 @@ const TrackImportPlaylists = ({
                     {searchQuery.length != 0 && <span>Found {filteredList.length} playlists</span>}
                 </div>
 
-                {loading && (
-                    <div className={styles.synchronization}>
-                        <LoadingSpinnerIcon/>
-                        <span>synchronization</span>
-                    </div>
-                )}
-                
                 <div className={styles.list}>
                     {filteredList.map((playlist) => (
                         <SelectPlaylist

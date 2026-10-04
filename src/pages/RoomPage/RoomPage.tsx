@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { IRoomUpdate, useRoomPlayback, roomService } from "@room";
 import styles from "./RoomPage.module.scss";
 import AudioPlayerOpener from "@/components/ui/player/AudioPlayerOpener/AudioPlayerOpener";
@@ -14,7 +14,7 @@ import RoomTrack from "@/components/ui/track/RoomTrack";
 const RoomPage = () => {
     const [selectedTracks, setSelectedTracks] = useState<number[]>([]);
     const [selectMode, setSelectMode] = useState<boolean>(false);
-    const { room, playbackState, playlist } = useRoomPlayback();
+    const { room, playbackState, roomPlaylist } = useRoomPlayback();
 
     const { started } = useGlobal();
     const { error } = useWebSocket();
@@ -32,13 +32,13 @@ const RoomPage = () => {
     };
 
     const deleteFromRoom = async () => {
-        if (!playlist?.id) return;
+        if (!roomPlaylist?.id) return;
 
         for (const trackId of selectedTracks) {
             setSelectedTracks(prev => prev.filter(id => id !== trackId))
         }
 
-        await playlistService.removeFromQueue(playlist?.id, selectedTracks)
+        await playlistService.removeFromQueue(roomPlaylist?.id, selectedTracks)
     }
 
     const saveRoom = async () => {
@@ -52,6 +52,10 @@ const RoomPage = () => {
         }
     }
 
+    useEffect(() => {
+        console.log(importOpen)
+    }, [importOpen])
+
     return (
         <>
             <div className={styles.page}>
@@ -59,7 +63,7 @@ const RoomPage = () => {
                 <Loader loadingActive={!room}>
 
                     <div className={styles.header}>
-                        <div className={styles.room}>
+                        <div className={styles.title}>
                             <span>#{room?.id}</span>
                             {editMode ? (
                                 <>  
@@ -81,13 +85,13 @@ const RoomPage = () => {
                             )}
                         </div>
 
-                        <div className={styles.room}>
+                        <div className={styles.code}>
                             <span className={styles.roomName}>{room?.code || "Room code is unknown"}</span>
                         </div>
-                    </div>
 
-                    <div className={styles.members}>
-                        {room?.listeners} Listners
+                        <div className={styles.members}>
+                            {room?.listeners} Listners
+                        </div>
                     </div>
 
                     {error && (<div className={styles.error}>Error while connecting to room</div>)}
@@ -107,7 +111,7 @@ const RoomPage = () => {
                         </div>
 
                         <div className={styles.trackList}>
-                            {playlist?.queue.map(qi => (
+                            {roomPlaylist?.queue.map(qi => (
                                 <RoomTrack
                                     key={qi.id}
                                     queueItem={qi}
@@ -154,7 +158,7 @@ const RoomPage = () => {
                 {started && <AudioPlayerOpener />}
             </div>
 
-            {playlist && <TrackImportModal importPlaylist={playlist} isOpen={importOpen} onClose={() => setImportOpen(false)} />}
+            {roomPlaylist && <TrackImportModal importPlaylist={roomPlaylist} isOpen={importOpen} onClose={() => setImportOpen(false)} />}
         </>
     )
 }

@@ -1,6 +1,5 @@
 import { useLibrary } from "@audio/hooks/useLibrary";
 import styles from "./TrackImportLibrary.module.scss"
-import LoadingSpinnerIcon from "@/components/icons/LoadingSpinnerIcon";
 import ImportingTrack from "@/components/ui/track/ImportingTrack";
 import { useMemo } from "react";
 import { Playlist } from "@/lib/playlist";
@@ -8,7 +7,7 @@ import { Playlist } from "@/lib/playlist";
 const TrackImportLibrary = ({ importPlaylist }: { importPlaylist: Playlist }) => {
 
     const { 
-        visibleAudios, loading, 
+        visibleAudios,
         setSearchQuery, searchQuery,
         rowVirtualizer, parentRef,
         filteredList
@@ -35,13 +34,6 @@ const TrackImportLibrary = ({ importPlaylist }: { importPlaylist: Playlist }) =>
 
                 {searchQuery.length != 0 && <span>Found {filteredList.length} audios</span>}
             </div>
-
-            {loading && (
-                <div className={styles.synchronization}>
-                    <LoadingSpinnerIcon />
-                    <span>synchronization</span>
-                </div>
-            )}
             
             <div className={styles.trackList}>
                 <div

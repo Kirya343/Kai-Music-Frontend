@@ -17,6 +17,8 @@ const TrackImportModal = ({
     importPlaylist: Playlist; 
 }) => {
 
+    console.log("TrackImportModal")
+
     const [view, setView] = useState<"library" | "playlists" | number>("library");
 
     const seePlaylist = (id: number) => setView(id) 

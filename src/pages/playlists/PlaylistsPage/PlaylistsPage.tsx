@@ -11,15 +11,15 @@ import LibraryPlaylist from "@/components/ui/playlist/LibraryPlaylist";
 const PlaylistsPage = () => {
 
     const {
-        loading, setSearchQuery,
+        setSearchQuery,
         searchQuery, deletePlaylist,
-        updatePlaylist, filteredList,
+        filteredList,
         createPlaylist, importToRoom
     } = usePlaylists();
 
     const [isOpen, setOpen] = useState(false);
 
-    const { roomLoaded, playlist } = useRoomPlayback();
+    const { roomLoaded, roomPlaylist } = useRoomPlayback();
 
     return (
         <>
@@ -44,13 +44,6 @@ const PlaylistsPage = () => {
 
                     {searchQuery.length != 0 && <span>Found {filteredList.length} playlists</span>}
                 </div>
-
-                {loading && (
-                    <div className={styles.synchronization}>
-                        <LoadingSpinnerIcon/>
-                        <span>synchronization</span>
-                    </div>
-                )}
                 
                 <div className={styles.list}>
                     {filteredList.map((p) => (
@@ -58,7 +51,7 @@ const PlaylistsPage = () => {
                             key={p.id}
                             playlist={p}
                             deletePlaylist={() => deletePlaylist(p)}
-                            importToRoom={() => playlist && importToRoom(playlist, p)}
+                            importToRoom={() => roomPlaylist && importToRoom(roomPlaylist, p)}
                         />
                     ))}
                 </div>

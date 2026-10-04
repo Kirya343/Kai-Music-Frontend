@@ -15,7 +15,8 @@
     padding-top: var(--header-height);
 
     @include mobile {
-        padding-top: var(--mobile-header-height);
+        padding-top: 0;
+        padding-bottom: var(--mobile-nav-height);
     }
 }
 

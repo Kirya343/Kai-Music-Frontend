@@ -15,8 +15,8 @@ export const usePlaylistsData = () => {
 
     const syncPlaylists = useCallback(async () => {
         try {
-            const data: Playlist[] = await playlistService.loadPlaylists();
-            setPlaylists(data);
+            const res = await playlistService.loadPlaylists();
+            setPlaylists(res.data);
         } finally {
 
         }

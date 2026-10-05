@@ -46,9 +46,12 @@ const RoomPage = () => {
         const roomUpdate: IRoomUpdate = {
             title: newRoomName
         }
-        const res = await roomService.updateRoom(room.id, roomUpdate);
-        if (res.ok) {
+
+        try {
+            await roomService.updateRoom(room.id, roomUpdate);
             setEditMode(false)
+        } catch (e) {
+            console.error(e)
         }
     }
 

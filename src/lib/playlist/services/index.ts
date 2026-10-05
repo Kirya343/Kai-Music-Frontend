@@ -1,4 +1,4 @@
-import * as api from './playlistRequests';
+import * as api from './playlistApi';
 // import * as hooks from './hooks';
 
 export const playlistService = {

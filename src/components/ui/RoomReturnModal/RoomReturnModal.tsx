@@ -12,8 +12,8 @@ const RoomReturnModal = () => {
     useEffect(() => {
         async function loadRoom() {
             try {
-                const data = await roomService.loadCurrentRoom();
-                setRoom(data);
+                const res = await roomService.loadCurrentRoom();
+                setRoom(res.data);
             } catch (e) {
                 console.log(e)
             }

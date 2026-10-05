@@ -1,8 +1,7 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo } from "react";
 import { Playlist } from "../playlistTypes";
 import { playlistService } from "../services";
 import { useSearch } from "@common/utils/hooks/useSearch";
-import { audioService, IAudio } from "@audio";
 import { IQueueItem } from "@playback";
 import { useData } from "@common";
 

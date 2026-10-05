@@ -1,5 +1,5 @@
-import * as api from './api';
-import * as hooks from './hooks';
+import * as api from './playbackApi';
+import * as hooks from './playbackHooks';
 
 export const playbackService = {
     ...api,

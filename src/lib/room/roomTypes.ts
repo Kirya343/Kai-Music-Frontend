@@ -16,3 +16,9 @@ export interface IShortRoom {
 export interface IRoomUpdate {
     title: string;
 }
+
+export interface MainPageRequest {
+    publicRooms: IShortRoom[];
+    activeListners: number;
+    activeRooms: number;
+}

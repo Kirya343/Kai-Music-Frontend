@@ -1,6 +1,6 @@
 import { IShortUser, IUser } from "@user";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { userService } from ".";
+import { userService } from "..";
 
 
 export function useCurrentUser() {
@@ -25,9 +25,9 @@ export function useCurrentUser() {
     }, [isAuthenticated, user])
 
     const loadUser = useCallback(async (cancelled?: boolean) => {
-        userService.getCurrent().then(data => {
+        userService.getCurrent().then(response => {
             if (!cancelled) {
-                setUser(data);
+                setUser(response.data);
                 setLoading(false);
             }
         });

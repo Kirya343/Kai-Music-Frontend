@@ -1,2 +1,2 @@
-export * from "./permissionService";
+export * from "./service";
 export * from "./permissionTypes"

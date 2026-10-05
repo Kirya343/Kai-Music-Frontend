@@ -1,4 +1,4 @@
-import * as api from './api';
+import * as api from './permissionApi';
 /* import * as hooks from './hooks'; */
 
 export const permissionService = {

@@ -22,11 +22,11 @@ const MainPage = () => {
 
     useEffect(() => {
         async function loadPage() {
-            const data = await roomService.getRoomsPage();
-            setRooms(data.publicRooms)
+            const res = await roomService.getRoomsPage();
+            setRooms(res.data.publicRooms)
             setStat({
-                activeListners: data.activeListners,
-                activeRooms: data.activeRooms
+                activeListners: res.data.activeListners,
+                activeRooms: res.data.activeRooms
             })
         }
 

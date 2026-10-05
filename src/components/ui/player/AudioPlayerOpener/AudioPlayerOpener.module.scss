@@ -2,10 +2,9 @@
 
 .audioTracker {
     position: sticky;
-    bottom: 1rem;
-    margin: 0 10px;
-    margin-top: 15px;
-    width: calc(100% - 20px);
+    margin-top: 5px;
+    bottom: .3rem;
+    width: 100%;
     display: flex;
     padding: 10px;
     border-radius: 10px;
@@ -14,6 +13,7 @@
     cursor: pointer;
     transition: background-color 0.2s ease-in;
     border: 1px solid;
+    flex-shrink: 0;
 
     &:hover {
         background-color: #251818;

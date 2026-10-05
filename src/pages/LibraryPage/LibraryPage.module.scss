@@ -1,71 +1,107 @@
 @use "@/css/components/mixins/" as *;
 
-.library {
+.page {
     display: flex;
     flex-direction: column;
+    gap: 1rem;
     flex: 1;
-    gap: 0.5rem;
-    position: relative;
 
-    @include mobile {
-        padding: 0 0.5rem;
-    }
+    min-height: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.header {
+    text-align: center;
+}
+
+.synchronization {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
 }
 
 .trackList {
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
+    contain: layout paint;
 
     @include mobile {
         width: 100%;
     }
 }
 
-.topPanel {
+.track {
+    content-visibility: auto;
+    contain-intrinsic-size: 80px;
+}
+
+.sorting {
+    width: 100%;
     display: flex;
-    gap: 1rem;
     justify-content: center;
+    align-items: center;
+    gap: 1rem;
 
     @include mobile {
         gap: 0.5rem;
+        flex-direction: column;
     }
 
-    .action {
-        padding: 10px 20px;
-        aspect-ratio: 1.5;
+    .row {
         display: flex;
+        flex-direction: row;
+        gap: 1rem;
+        width: 100%;
         justify-content: center;
-        border-radius: 10px;
-        cursor: pointer;
-        font-size: 17px;
-        font-weight: 600;
-        letter-spacing: 1px;
-        position: relative;
-        border: 1px solid;
-
-        @include glass(true);
 
         @include mobile {
-            padding: 10px 5px;
-            font-size: 15px;
-
-            svg {
-                width: 27px;
-            }
-        }
-
-        svg {
-            position: absolute;
-            top: 40%;
-            translate: 0 -50%;
-        }
-
-        .subtitle {
-            margin-top: auto;
-            height: fit-content;
+            gap: 0.6rem;
         }
     }
+
+    button, label {
+        border: 2px solid;
+        padding: 8px 15px;
+        height: 40px;
+        border-radius: 100px;
+
+        svg {
+            height: 20px;
+            width: 20px;
+        }
+
+        @include glass(true);
+    }
+
+    .upload {
+        display: flex;
+        align-items: center;
+        gap: .5rem;
+        padding: 8px;
+        padding-right: 12px;
+
+        @include mobile {
+            padding-right: 8px;
+            
+            span {
+                display: none;
+            }
+        }
+    }
+}
+
+.search {
+    border: 2px solid;
+    padding: 8px 15px;
+    max-width: 500px;
+    width: 100%;
+    border-radius: 100px;
+    color: #cac9c8;
+
+    @include glass;
 }
 
 .uploadingStat {
@@ -77,7 +113,9 @@
     display: flex;
     flex-direction: column;
     max-height: 150px;
-
+    overflow: auto;
+    min-height: 0;
+    gap: 1px
 }
 
 .uploadItem {
@@ -126,12 +164,6 @@
             }
         }
     }
-}
-
-.header {
-    text-align: center;
-    font-weight: 400;
-    margin: 0.5rem 0;
 }
 
 input.uploadAudio {

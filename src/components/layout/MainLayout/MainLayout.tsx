@@ -1,7 +1,9 @@
 import Audio from "@/components/ui/player/Audio/Audio";
 import { Outlet } from "react-router-dom";
 import styles from "./MainLayout.module.scss"
-import Header from "../../ui/Header/Header";
+import Header from "../navigation/Header/Header";
+import MobileNav from "../navigation/MobileNav/MobileNav";
+import RoomReturnModal from "@/components/ui/RoomReturnModal/RoomReturnModal";
 
 const MainLayout = () => {
 
@@ -14,6 +16,9 @@ const MainLayout = () => {
             </main>
 
             <Audio />
+            <MobileNav />
+
+            <RoomReturnModal />
         </>
     )
 }

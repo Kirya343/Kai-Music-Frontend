@@ -1,10 +1,6 @@
-import { PlaybackMode } from "@/components/ui/player/PlaybackModeToggle";
 import { IAudio } from "../audio";
-import { IQueueItem } from "../playback/playbackTypes";
 
 export interface IListeningRoom extends IShortRoom{
-    mode: PlaybackMode;
-    queue: IQueueItem[];
     audio: IAudio;
 }
 
@@ -14,8 +10,15 @@ export interface IShortRoom {
     ownerId: number;
     code: string;
     listeners: number;
+    playlistId: number;
 }
 
 export interface IRoomUpdate {
     title: string;
+}
+
+export interface MainPageRequest {
+    publicRooms: IShortRoom[];
+    activeListners: number;
+    activeRooms: number;
 }

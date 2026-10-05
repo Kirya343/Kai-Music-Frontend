@@ -4,8 +4,6 @@ import { useCallback, useRef, useState } from "react";
 export function useAudioBuffer() {
 
     const sourceBufferRef = useRef<SourceBuffer | null>(null);
-    const isInitializedRef = useRef(false);
-    const initializedChunkRef = useRef<AudioChunk | null>(null)
     const [bufferedRanges, setBufferedRanges] = useState<Map<number, TimeRange[]>>(new Map());
     const onBufferUpdateRef = useRef<((entryId: number) => void) | null>(null);
 
@@ -39,59 +37,34 @@ export function useAudioBuffer() {
         onBufferUpdateRef.current?.(entryId)
     }, [bufferedRanges]);
 
-    const appendChunk = useCallback((chunk: AudioChunk) => {
+    const appendChunks = useCallback((chunks: AudioChunk[]) => {
         const sourceBuffer = sourceBufferRef.current;
 
-        if (!sourceBuffer || sourceBuffer.updating) {
+        if (!sourceBuffer || sourceBuffer.updating || chunks.length === 0) {
             return false;
         }
 
-        const buffer = chunk.bytes.buffer.slice(
-            chunk.bytes.byteOffset,
-            chunk.bytes.byteOffset + chunk.bytes.byteLength
-        ) as ArrayBuffer;
+        const totalSize = chunks.reduce(
+            (size, chunk) => size + chunk.bytes.byteLength,
+            0
+        );
+
+        const buffer = new Uint8Array(totalSize);
+
+        let offset = 0;
+
+        for (const chunk of chunks) {
+            buffer.set(chunk.bytes, offset);
+            offset += chunk.bytes.byteLength;
+        }
 
         sourceBuffer.appendBuffer(buffer);
 
         return true;
     }, []);
 
-    const processInitializationChunk = useCallback((optionalChunk?: AudioChunk) => {
-        const sourceBuffer = sourceBufferRef.current;
-
-        let chunk = null;
-
-        if (optionalChunk) {
-            initializedChunkRef.current = optionalChunk
-            chunk = optionalChunk
-        } else {
-            chunk = initializedChunkRef.current
-        }
-
-        if (!sourceBuffer || !chunk) {
-            return;
-        }
-
-        if (sourceBuffer.updating) {
-            return;
-        }
-
-        const success = appendChunk(chunk)
-
-        if (success) {
-
-            isInitializedRef.current = true;
-
-            console.log("Initialization chunk добавлен");
-        } else {
-            console.error("Ошибка добавления initialization chunk");
-        }
-    }, [appendChunk]);
-
     const resetBuffer = useCallback(() => {
         sourceBufferRef.current = null;
-        initializedChunkRef.current = null;
-        isInitializedRef.current = false;
         setBufferedRanges(new Map());
     }, []);
 
@@ -99,8 +72,7 @@ export function useAudioBuffer() {
         updateBufferedRanges, setBufferUpdateHandler,
         bufferedRanges, onBufferUpdateRef,
         sourceBufferRef,
-        appendChunk,
-        processInitializationChunk,
+        appendChunks,
         setBufferedRanges,
         resetBuffer
     }

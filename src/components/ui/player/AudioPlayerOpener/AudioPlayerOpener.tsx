@@ -2,20 +2,24 @@ import { useRoomPlayback } from "@room";
 import { useEffect, useRef } from "react";
 
 import styles from "./AudioPlayerOpener.module.scss"
-import PlayIcon from "@/components/icons/PlayIcon";
+import PlayIcon from "@/components/icons/player/PlayIcon";
 import PauseIcon from "@/components/icons/PauseIcon";
-import RightIcon from "@/components/icons/RightIcon";
+import RightIcon from "@/components/icons/arrows/RightIcon";
+import { playbackService } from "@playback/services";
 
 const AudioPlayerOpener = () => {
 
     const { 
-        playbackState, playNext, audioInfo, 
+        playbackState, playingAudio, 
         fullPlayerOpen, setFullPlayerOpen, 
-        duration, togglePlay 
+        togglePlay 
     } = useRoomPlayback();
+
+    const playTrack = playbackService.usePlayTrack();
 
     const headerRef = useRef<HTMLDivElement | null>(null);
     const textRef = useRef<HTMLDivElement | null>(null);
+    const duration = playingAudio?.duration || 0
 
     useEffect(() => {
         const header = headerRef.current;
@@ -28,13 +32,13 @@ const AudioPlayerOpener = () => {
         } else {
             text.classList.remove(styles.animate);
         }
-    }, [audioInfo, fullPlayerOpen]);
+    }, [playingAudio, fullPlayerOpen]);
 
-    return audioInfo && playbackState && (
+    return playingAudio && playbackState && (
         <div className={styles.audioTracker} onClick={() => setFullPlayerOpen(true)}>
             <div ref={headerRef} className={styles.header}>
                 <div ref={textRef} className={styles.headerText}>
-                    {audioInfo?.title ?? audioInfo?.name}
+                    {playingAudio?.title ?? playingAudio?.name}
                 </div>
             </div>
             <div 
@@ -51,7 +55,7 @@ const AudioPlayerOpener = () => {
                 <button onClick={togglePlay}>
                     {playbackState.pause ? <PlayIcon /> : <PauseIcon />}
                 </button>
-                <button onClick={playNext}>
+                <button onClick={() => playTrack("next")}>
                     <RightIcon />
                 </button>
             </div>

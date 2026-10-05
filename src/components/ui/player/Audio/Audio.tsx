@@ -4,26 +4,29 @@ import { PlaybackModeToggle } from "../PlaybackModeToggle";
 import VolumeSlider from "../VolumeSlider/VolumeSlider";
 import { countPosition } from "@common";
 import PauseIcon from "@/components/icons/PauseIcon";
-import PlayIcon from "@/components/icons/PlayIcon";
-import LeftIcon from "@/components/icons/LeftIcon";
-import RightIcon from "@/components/icons/RightIcon";
+import PlayIcon from "@/components/icons/player/PlayIcon";
+import LeftIcon from "@/components/icons/arrows/LeftIcon";
+import RightIcon from "@/components/icons/arrows/RightIcon";
 import styles from "./Audio.module.scss";
-import PlusIcon from "@/components/icons/PlusIcon";
-import DownIcon from "@/components/icons/DownIcon";
+import PlusIcon from "@/components/icons/player/PlusIcon";
+import DownIcon from "@/components/icons/arrows/DownIcon";
+import { playbackService } from "@playback/services";
 
 const Audio = () => {
-    const { 
-        playNext, playPrev, duration, 
+    const {  
         updateMessage, 
-        fullPlayerOpen, audioInfo,
+        fullPlayerOpen, playingAudio,
         setFullPlayerOpen,
         togglePlay, seek,
         bufferedRanges,
         playbackState
     } = useRoomPlayback();
 
+    const playTrack = playbackService.usePlayTrack();
+
     const headerRef = useRef<HTMLDivElement | null>(null);
     const textRef = useRef<HTMLDivElement | null>(null);
+    const duration = playingAudio?.duration || 0
 
     useEffect(() => {
         const header = headerRef.current;
@@ -36,7 +39,7 @@ const Audio = () => {
         } else {
             text.classList.remove(styles.animate);
         }
-    }, [audioInfo, fullPlayerOpen]);
+    }, [playingAudio, fullPlayerOpen]);
 
     return playbackState ? (
         <>
@@ -51,7 +54,7 @@ const Audio = () => {
                     <img src="/image/player.gif" />
                     <div ref={headerRef} className={styles.header}>
                         <div ref={textRef} className={styles.headerText}>
-                            {audioInfo?.title ?? audioInfo?.name}
+                            {playingAudio?.title ?? playingAudio?.name}
                         </div>
                     </div>
                     <div className={styles.tracker}>
@@ -98,13 +101,16 @@ const Audio = () => {
                     </div>
                     <div className={styles.navigation}>
                         <PlaybackModeToggle />
-                        <button onClick={playPrev}>
+                        <button 
+                            onClick={() => playTrack("prev")}
+                        >
                             <LeftIcon />
                         </button>
                         <button onClick={togglePlay}>
                             {playbackState.pause ? <PlayIcon /> : <PauseIcon />}
                         </button>
-                        <button onClick={playNext}>
+                        <button 
+                            onClick={() => playTrack("next")}>
                             <RightIcon />
                         </button>
                         <button><PlusIcon/></button>

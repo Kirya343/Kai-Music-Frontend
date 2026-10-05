@@ -11,30 +11,27 @@ const StartLayout = () => {
 
     const { started, setStarted } = useGlobal();
 
+    const start = () => {
+        setTimeout(() => {
+            setStarted(true);
+        }, 600);
+    };
+
+    start()
+
     return (
         <div className={clsx(styles.layout, started && styles.started)}>
             <AnimatePresence>
-                {!started && (
-                    <div className={styles.startWrapper} onClick={() => setStarted(true)}>
-                        <h2 className={styles.start}>Click anywhere<br/> to start</h2>
-                    </div>
-                )}
 
                 {started && (
                     <motion.div
                         key="content"
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
-                        transition={{ duration: 0.7 }}
+                        transition={{ duration: 0.7, delay: 1 }}
                         className={styles.content}
                     >
-                        <AuthProvider>
-                            <WebSocketProvider>
-                                <RoomPlaybackProvider>
-                                    <Outlet />
-                                </RoomPlaybackProvider>
-                            </WebSocketProvider>
-                        </AuthProvider>
+                        <Outlet />
 
                     </motion.div>
                 )}

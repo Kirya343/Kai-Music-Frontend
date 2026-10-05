@@ -1,0 +1,36 @@
+@use "@/css/components/mixins/" as *;
+
+.nav {
+    display: flex;
+    border-top: 1px solid;
+    padding: 0.5rem 2rem;
+    justify-content: center;
+    gap: 2rem;
+    height: var(--mobile-nav-height);
+    z-index: 100;
+
+    @include glass;
+}
+
+.link {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.3rem;
+    transition: all 0.2s ease-in;
+    position: relative;
+
+    &:global(.active) {
+        color: var(--orange);
+    }
+
+    .linkIcon {
+        width: 35px;
+        height: 35px;
+    }
+
+    .subtitle {
+        font-size: 0.7rem;
+        white-space: nowrap;
+    }
+}

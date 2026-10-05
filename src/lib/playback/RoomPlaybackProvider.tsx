@@ -1,21 +1,19 @@
-import { createContext, Dispatch, SetStateAction, useCallback, useContext, useEffect, useRef, useState } from "react";
+import { createContext, Dispatch, SetStateAction, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import { IAudio, TimeRange } from "@audio";
-import { IListeningRoom, useListeningRoomWS, useAudioStream } from "@room";
+import { useListeningRoomWS, useAudioStream, IShortRoom } from "@room";
 import { countPosition } from "@common";
-import { IPlaybackState, IQueueItemCreate } from "@playback";
+import { IPlaybackState } from "@playback";
+import { PlaybackMode, Playlist } from "../playlist";
+import { playbackService } from "./services";
 
 interface RoomPlaybackContextType {
+    room: IShortRoom | null;
+    roomPlaylist: Playlist | null;
+    playingAudio: IAudio | null;
+    playbackMode: PlaybackMode;
+
     playbackState: IPlaybackState | null;
-    room: IListeningRoom | null;
-    updateTrackPosition: (state: IPlaybackState) => void;
-    addToQueue: (list: IQueueItemCreate[]) => void;
-    removeFromQueue: (list: number[]) => void;
-    loadRoom: () => void;
-    playNext: () => void;
-    playPrev: () => void;
     roomLoaded: boolean;
-    duration: number;
-    audioInfo: IAudio | null;
     fullPlayerOpen: boolean;
     setFullPlayerOpen: Dispatch<SetStateAction<boolean>>;
     updateMessage: string;
@@ -40,27 +38,35 @@ export const useRoomPlayback = () => {
 export const RoomPlaybackProvider = ({ children }: { children?: React.ReactNode }) => {
 
     const { 
-        updateTrackPosition, 
-        playNext, playPrev, 
-        audioInfo, room, 
-        addToQueue, removeFromQueue, 
-        loadRoom, setAudioChunkHandler,
-        setPlaybackStateCallback
+        room, 
+        roomPlaylist,
+        playbackMode,
+        
+        setAudioChunkHandler,
+        setPlaybackStateCallback,
     } = useListeningRoomWS();
 
     const { 
         handleAudioChunk, 
-        resumePlayback, pausePlayback, 
+        pausePlayback, 
         audioRef, bufferedRanges,
-        startNewPlaybackStream,
+        startNewAudio,
 
         playbackState, setPlaybackState,
 
         unsyncedStateRef
     } = useAudioStream();
 
+    const playingAudio = useMemo<IAudio | null>(() => {
+        const queueItem = roomPlaylist?.queue.find(qi => qi.id === playbackState?.entryId)
+
+        if (!queueItem?.audio) return null;
+
+        return queueItem.audio;
+    }, [roomPlaylist, playbackState])
+
     const roomLoaded: boolean = !!room;
-    const duration = Number(audioInfo?.duration);
+
     const prevRoomRef = useRef<number | null>(null);
     const debounceTimeoutRef = useRef<number | null>(null);
 
@@ -100,8 +106,14 @@ export const RoomPlaybackProvider = ({ children }: { children?: React.ReactNode 
     // Обновление позиции и паузы от сервера
     useEffect(() => {
         setPlaybackStateCallback((state: IPlaybackState) => {
-            startNewPlaybackStream();
-            setPlaybackState(state);
+            setPlaybackState(prev => {
+
+                if (prev?.entryId !== state.entryId) {
+                    startNewAudio(state.entryId);
+                }
+
+                return state;
+            });
             unsyncedStateRef.current = state;
 
             writeUpdateMessage(state);
@@ -112,46 +124,14 @@ export const RoomPlaybackProvider = ({ children }: { children?: React.ReactNode 
         };
     }, [
         setPlaybackStateCallback,
-        startNewPlaybackStream,
+        startNewAudio,
         setPlaybackState
     ]);
 
-    useEffect(() => {
-        const audio = audioRef.current;
-        const state = unsyncedStateRef.current;
-
-        if (!audio || !bufferedRanges || state === null || !playbackState?.entryId) {
-            return;
-        }
-
-        const ranges = bufferedRanges.get(playbackState?.entryId)
-
-        if (!ranges) return;
-
-        const isBuffered = ranges.some(
-            range =>
-                state.position >= range.start &&
-                state.position <= range.end
-        );
-
-        if (!isBuffered) {
-            return;
-        }
-
-        audio.currentTime = state.position;
-        unsyncedStateRef.current = null;
-
-        if (!state.pause) {
-            console.log("start playing")
-            setPlaybackState(prev => ({...prev!, pause: false}))
-            resumePlayback();
-        }
-    }, [bufferedRanges, playbackState?.entryId]);
-
     // Play / Pause кнопка
-    const togglePlay = useCallback(() => {
+    const togglePlay = useCallback(async () => {
 
-        if (!playbackState) return;
+        if (!playbackState || !room?.id) return;
 
         const newPaused = !playbackState?.pause
 
@@ -159,12 +139,12 @@ export const RoomPlaybackProvider = ({ children }: { children?: React.ReactNode 
             pausePlayback()
         }
 
-        updateTrackPosition({...playbackState, pause: newPaused});
-    }, [playbackState, updateTrackPosition]);
+        await playbackService.updateTrackPosition(room.id, {...playbackState, pause: newPaused});
+    }, [playbackState, room?.id]);
 
     const seek = useCallback((position: number) => {
 
-        if (!playbackState?.entryId) return;
+        if (!playbackState?.entryId || !room?.id) return;
 
         try {
             pausePlayback();
@@ -180,14 +160,14 @@ export const RoomPlaybackProvider = ({ children }: { children?: React.ReactNode 
             }
 
             // ставим новый таймаут на 300 мс
-            debounceTimeoutRef.current = setTimeout(() => {
+            debounceTimeoutRef.current = setTimeout(async () => {
                 if (playbackState) {
-                    updateTrackPosition(newState);
+                    await playbackService.updateTrackPosition(room.id, newState);
                 }
                 debounceTimeoutRef.current = null;
             }, 100);
         }
-    }, [playbackState, updateTrackPosition, pausePlayback]);
+    }, [playbackState, pausePlayback, room?.id]);
 
     useEffect(() => {
         setAudioChunkHandler((chunk) => {
@@ -201,14 +181,14 @@ export const RoomPlaybackProvider = ({ children }: { children?: React.ReactNode 
     }, [setAudioChunkHandler]);
 
     useEffect(() => {
-        if (!("mediaSession" in navigator) || !room || !playbackState || !room?.audio) {
+        if (!("mediaSession" in navigator) || !playbackState || !playingAudio || !room?.id) {
             return;
         }
 
         navigator.mediaSession.metadata = new MediaMetadata({
-            title: room?.audio.title || "",
-            artist: room?.audio.artist || "",
-            album: room?.audio.album || "",
+            title: playingAudio.title || "",
+            artist: playingAudio.artist || "",
+            album: playingAudio.album || "",
             artwork: [
                 {
                     src: "/images/face.webp",
@@ -219,21 +199,19 @@ export const RoomPlaybackProvider = ({ children }: { children?: React.ReactNode 
         });
 
         navigator.mediaSession.setActionHandler("play", () => {
-            const state: IPlaybackState = {...playbackState, pause: false};
-            updateTrackPosition(state)
+            togglePlay()
         });
 
         navigator.mediaSession.setActionHandler("pause", () => {
-            const state: IPlaybackState = {...playbackState, pause: true};
-            updateTrackPosition(state)
+            togglePlay()
         });
 
-        navigator.mediaSession.setActionHandler("nexttrack", () => {
-            playNext();
+        navigator.mediaSession.setActionHandler("nexttrack", async () => {
+            await playbackService.playTrack(room?.id, "next");
         });
 
-        navigator.mediaSession.setActionHandler("previoustrack", () => {
-            playPrev();
+        navigator.mediaSession.setActionHandler("previoustrack", async () => {
+            await playbackService.playTrack(room?.id, "prev");
         });
 
         navigator.mediaSession.setActionHandler("seekbackward", () => {
@@ -252,8 +230,8 @@ export const RoomPlaybackProvider = ({ children }: { children?: React.ReactNode 
 
         navigator.mediaSession.setPositionState({
             playbackRate: 1,
-            position: Math.min(playbackState?.position || 0, room?.audio.duration),
-            duration: room?.audio.duration
+            position: Math.min(playbackState?.position || 0, playingAudio.duration),
+            duration: playingAudio.duration
         })
 
         return () => {
@@ -266,30 +244,24 @@ export const RoomPlaybackProvider = ({ children }: { children?: React.ReactNode 
             navigator.mediaSession.setActionHandler("seekto", null);
         };
     }, [
-        room,
+        playingAudio,
         playbackState,
-        updateTrackPosition,
-        playNext,
-        playPrev,
+        room?.id,
         seek
     ]);
     
     return (
         <RoomPlaybackContext.Provider value={{ 
+            room,
+            roomPlaylist,
+            playingAudio,
+            playbackMode,
+
             playbackState, 
-            room, 
-            updateTrackPosition, 
-            addToQueue, 
-            removeFromQueue, 
-            loadRoom,
-            playNext, 
-            playPrev,
-            roomLoaded,
-            duration, 
+            roomLoaded, 
             fullPlayerOpen, 
             setFullPlayerOpen,
             updateMessage,
-            audioInfo,
             audioRef, 
             togglePlay,
             bufferedRanges,

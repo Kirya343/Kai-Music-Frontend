@@ -1,0 +1,228 @@
+import { useCallback, useEffect, useRef, useState } from "react";
+import { useAudioBuffer } from "./useAudioBuffer";
+import { IPlaybackState } from "@playback";
+
+export const useMediaSource = () => {
+
+    const { 
+        sourceBufferRef, updateBufferedRanges, setBufferUpdateHandler,
+        bufferedRanges, appendChunks,
+        resetBuffer
+    } = useAudioBuffer();
+
+    const currentEntryIdRef = useRef<number | null>(null)
+    const audioRef = useRef<HTMLAudioElement | null>(null);
+    const mediaSourceRef = useRef<MediaSource | null>(null);
+    const objectUrlRef = useRef<string | null>(null);
+
+    // audio state
+    const [playbackState, setPlaybackState] = useState<IPlaybackState | null>(null);
+
+    const unsyncedStateRef = useRef<IPlaybackState | null>(null);
+
+    const cleanupAudio = useCallback(() => {
+        console.log("Очищаем playback")
+
+        const audio = audioRef.current;
+
+        if (audio) {
+            audio.pause();
+            audio.removeAttribute('src');
+            audio.load();
+        }
+
+        if (objectUrlRef.current) {
+            URL.revokeObjectURL(objectUrlRef.current);
+        }
+
+        audioRef.current = null;
+        mediaSourceRef.current = null;
+        objectUrlRef.current = null;
+
+        resetBuffer();
+    }, []);
+
+    const initMediaSource = useCallback((entryId: number) => {
+        if (mediaSourceRef.current) {
+            return;
+        }
+
+        cleanupAudio();
+
+        currentEntryIdRef.current = entryId;
+
+        const audio = new Audio();
+        const mediaSource = new MediaSource();
+
+        audio.autoplay = false;
+        audio.controls = false;
+
+        const objectUrl = URL.createObjectURL(mediaSource);
+
+        audio.src = objectUrl;
+        const saved = localStorage.getItem("audioVolume");
+        audio.volume = saved ? Number(saved) : 1;
+
+        audioRef.current = audio;
+        mediaSourceRef.current = mediaSource;
+        objectUrlRef.current = objectUrl;
+
+        mediaSource.addEventListener('sourceopen', () => {
+            console.log('MediaSource opened');
+
+            if (!sourceBufferRef.current) {
+                const sourceBuffer = mediaSource.addSourceBuffer(
+                    'audio/mp4; codecs="mp4a.40.2"'
+                );
+
+                sourceBufferRef.current = sourceBuffer;
+
+                sourceBuffer.addEventListener('updateend', () => {
+                    const currentEntryId = currentEntryIdRef.current;
+
+                    if (!currentEntryId) {
+                        return;
+                    }
+
+                    updateBufferedRanges(entryId);
+                });
+
+                sourceBuffer.addEventListener('error', event => {
+                    console.log(
+                        'SourceBuffer error:',
+                        event
+                    );
+                });
+            }
+
+            mediaSource.addEventListener('error', event => {
+                console.log(
+                    'MediaSource error:',
+                    event
+                );
+            });
+        });
+
+        addEventListener();
+    }, [updateBufferedRanges]);
+
+    const pausePlayback = useCallback(() => {
+        const audio = audioRef.current;
+
+        if (!audio) {
+            return;
+        }
+
+        audio.pause();
+    }, []);
+
+    const resumePlayback = useCallback(async () => {
+        const audio = audioRef.current;
+
+        if (!audio) {
+            return;
+        }
+
+        try {
+            await audio.play();
+        } catch (error) {
+            if (
+                error instanceof DOMException &&
+                error.name === 'AbortError'
+            ) {
+                return;
+            }
+
+            console.log(
+                'Ошибка запуска audio:',
+                error
+            );
+        }
+    }, []);
+    
+    // События пользователя
+    const addEventListener = useCallback(() => {
+        const audio = audioRef.current;
+
+        if (!audio) return;
+
+        const handleTimeUpdate = () => {
+            if (unsyncedStateRef.current !== null) {
+                //console.log("unsyncedStateRef.current", unsyncedStateRef.current)
+                return;
+            }
+            setPlaybackState(prev => ({...prev!, position: audio.currentTime}));
+        }
+        audio.addEventListener("timeupdate", handleTimeUpdate);
+
+        return () => {
+            audio.removeEventListener("timeupdate", handleTimeUpdate);
+        };
+    }, [setPlaybackState]);
+
+    const playIfBuffered = useCallback((entryId: number) => {
+
+        //console.log('Попытка начать проигрывание', entryId);
+
+        const audio = audioRef.current;
+        const state = unsyncedStateRef.current;
+
+        if (!audio || !bufferedRanges || state === null) {
+            return;
+        }
+
+        //console.log('стейты правильные', entryId);
+
+        const ranges = bufferedRanges.get(entryId)
+
+        if (!ranges) return;
+
+        const isBuffered = ranges.some(
+            range =>
+                state.position >= range.start &&
+                state.position <= range.end
+        );
+
+        if (!isBuffered) {
+            return;
+        }
+
+        audio.currentTime = state.position;
+        unsyncedStateRef.current = null;
+
+        if (!state.pause) {
+            console.log("start playing")
+            setPlaybackState(prev => ({...prev!, pause: false}))
+            resumePlayback();
+        }
+    }, [bufferedRanges]);
+
+    useEffect(() => {
+        setBufferUpdateHandler((entryId: number) => {
+            playIfBuffered(entryId)
+        })
+
+        return () => {
+            setBufferUpdateHandler(() => {});
+            pausePlayback();
+            cleanupAudio();
+        };
+    }, [])
+
+    return {
+        audioRef,
+        mediaSourceRef,
+        initMediaSource,
+        cleanupAudio,
+        pausePlayback,
+        resumePlayback,
+        appendChunks,
+        sourceBufferRef, 
+        bufferedRanges,
+        currentEntryIdRef,
+
+        playbackState, setPlaybackState,
+
+        unsyncedStateRef
+    }
+}

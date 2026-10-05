@@ -1,0 +1,25 @@
+@use "@/css/components/mixins/" as *;
+
+.playlistCard {
+
+    border: 1px solid;
+    border-radius: 1rem;
+    padding: 1rem;
+
+    position: relative;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    @include glass;
+
+    .title {
+        font-size: 1.4rem;
+        font-weight: 600;
+    }
+
+    .actions {
+        display: flex;
+    }
+}

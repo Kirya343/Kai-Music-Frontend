@@ -47,8 +47,6 @@ export const useMediaSource = () => {
             return;
         }
 
-        cleanupAudio();
-
         currentEntryIdRef.current = entryId;
 
         const audio = new Audio();

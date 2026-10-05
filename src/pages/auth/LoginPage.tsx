@@ -1,4 +1,4 @@
-import { apiFetchJson } from "@common"
+import { api } from "@common"
 import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import clsx from "clsx";
@@ -40,15 +40,10 @@ const LoginPage = () => {
             email,
             password
         }
-        const res = await apiFetchJson("/auth/login", { 
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(data)
-        });
-        setMessage(res);
-        if (res.success == true) {
+        const res = await api.post("/auth/login", data);
+        
+        setMessage(res.data);
+        if (res.data.success == true) {
             setTimeout(() => {
                 navigate(`/login/success?redirect=${encodeURIComponent(redirect)}`)
             }, 1500);

@@ -1,7 +1,7 @@
 import { useCallback, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@auth";
-import { apiFetch } from "@common";
+import { api } from "@common";
 
 const LogoutPage = () => {
 
@@ -11,7 +11,7 @@ const LogoutPage = () => {
 
     const logout = useCallback(async () => {
         try {
-            await apiFetch("/auth/logout", { method: "POST" });
+            await api.post("/auth/logout");
         } catch (e) {
             console.error("Logout failed", e);
         } finally {

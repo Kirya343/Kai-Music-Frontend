@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "@auth";
-import { apiFetchJson } from "@common";
+import { api } from "@common";
 
 const RegisterPage = () => {
 
@@ -30,19 +30,13 @@ const RegisterPage = () => {
         // Добавляем redirect к ссылке OAuth encodeURIComponent(redirect)
         const data = { email, name, password }
 
-        const res = await apiFetchJson("/auth/register", { 
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(data)
-        });
+        const res = await api.post("/auth/register", data);
 
-        if (res) {
-            setMessage(res)
+        if (res.data) {
+            setMessage(res.data)
         }
 
-        if (res.success == true) {
+        if (res.data.success == true) {
             loadUser();
             navigate(`/login/success?redirect=${encodeURIComponent(redirect)}`)
         }

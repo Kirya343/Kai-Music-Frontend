@@ -5,7 +5,7 @@ import { Client, Frame } from "@stomp/stompjs";
 
 import { API_BASE } from "@/config";
 import { useAuth } from "@auth";
-import { refreshToken } from "@common";
+import { api } from "@common";
 
 interface UseStompClientResult {
     client: Client | null;
@@ -97,9 +97,9 @@ export function useStompClient(): UseStompClientResult {
                 return;
             }
 
-            const tokenRefreshed = await refreshToken();
-
-            if (!tokenRefreshed?.ok) {
+            try {
+                await api.post("/auth/refresh", null, {})
+            } catch (e) {
                 setError(true);
                 return;
             }

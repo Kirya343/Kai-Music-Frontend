@@ -1,0 +1,40 @@
+@use "@/css/components/mixins/" as *;
+
+.sorting {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+
+    @include mobile {
+        gap: 0.5rem;
+        flex-direction: column;
+    }
+
+    .row {
+        display: flex;
+        flex-direction: row;
+        gap: 1rem;
+        width: 100%;
+        justify-content: center;
+
+        @include mobile {
+            gap: 0.6rem;
+        }
+    }
+
+    button, label {
+        border: 2px solid;
+        padding: 8px 15px;
+        height: 40px;
+        border-radius: 100px;
+
+        svg {
+            height: 20px;
+            width: 20px;
+        }
+
+        @include glass(true);
+    }
+}

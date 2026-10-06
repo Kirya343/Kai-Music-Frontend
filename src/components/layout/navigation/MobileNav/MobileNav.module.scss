@@ -8,6 +8,7 @@
     gap: 2rem;
     height: var(--mobile-nav-height);
     z-index: 100;
+    position: sticky;
 
     @include glass;
 }

@@ -1,0 +1,33 @@
+@use "@/css/components/mixins/" as *;
+
+.layout {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+
+    overflow: hidden;
+    gap: .5rem;
+
+    @include mobile {
+        gap: .5rem;
+    }
+}
+
+.page {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+
+    gap: .5rem;
+
+    overflow: hidden;
+}
+
+.header {
+    text-align: center;
+    padding: 1rem 0;
+
+    @include mobile {
+        padding: .5rem 0;
+    }
+}

@@ -15,8 +15,8 @@ export const useAudioData = () => {
 
     const syncAudios = useCallback(async () => {
         try {
-            const data = await audioService.loadLibrary();
-            setAudios(data)
+            const res = await audioService.loadLibrary();
+            setAudios(res.data)
         } finally {
 
         }

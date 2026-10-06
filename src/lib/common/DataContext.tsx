@@ -1,7 +1,6 @@
-import { createContext, Dispatch, SetStateAction, useContext, useEffect } from "react";
+import { createContext, useContext, useEffect } from "react";
 import { Playlist } from "../playlist";
 import { IAudio } from "@audio";
-import { IListeningRoom } from "@room";
 import { useAudioData } from "@audio/hooks";
 import { usePlaylistsData } from "../playlist/hooks";
 

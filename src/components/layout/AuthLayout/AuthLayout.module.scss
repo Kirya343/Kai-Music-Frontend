@@ -14,6 +14,13 @@
     gap: 1rem;
 }
 
+.logo img {
+    width: 100px;
+    height: 100px;
+    border-radius: 1rem;
+    border: 3px solid #666666
+}
+
 .message {
     border: 1px solid #858585;
     background-color: #6666667a;
@@ -42,30 +49,19 @@
         padding: 0.8rem 0.5rem;
         background-color: transparent;
         border-radius: var(--radius);
-        border: 1px solid rgb(139, 139, 139);
+        border: 1px solid var(--border-color);
         color: var(--text-color);
         font-size: 0.9rem;
-        outline: 2px solid #fff;
-        transition: all 0.2s ease;
 
         &:focus {
-            outline-color: rgb(139, 139, 139);
-            @include shadow;
+            outline-color: var(--primary);
+            outline-offset: 0;
+            outline-style: solid;
 
             &::placeholder {
                 color: var(--neon-green-l1);
                 font-weight: 400;
             }
-        }
-    }
-
-    button {
-        transition: 
-            background-color 0.2s ease,
-            transform 0.1s ease;
-
-        &:hover {
-            background-color: #5e5e5e78;
         }
     }
 }

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "@auth";
 import { api } from "@common";
+import AuthLayout from "@/components/layout/AuthLayout";
 
 const RegisterPage = () => {
 
@@ -29,15 +30,17 @@ const RegisterPage = () => {
         // Добавляем redirect к ссылке OAuth encodeURIComponent(redirect)
         const data = { email, name, password }
 
-        const res = await api.post("/auth/register", data);
+        try {
+            const res = await api.post("/auth/register", data);
+            setMessage(res.data);
 
-        if (res.data) {
-            setMessage(res.data)
-        }
-
-        if (res.data.success == true) {
-            loadUser();
-            navigate(`/login/success?redirect=${encodeURIComponent(redirect)}`)
+            if (res.data.success == true) {
+                setTimeout(() => {
+                    navigate(`/login/success?redirect=${encodeURIComponent(redirect)}`)
+                }, 1500);
+            }
+        } catch (e) {
+            setMessage({ success: false, message: String(e)});
         }
     };
 
@@ -90,15 +93,11 @@ const RegisterPage = () => {
     }
 
     return (
-        <div className="login-body">
-            <div className="form-wrap" role="main">
-                <div className="logo">
-                    <img src="/image/logo.png"/>
-                </div>
-
-                {message?.message && <div className={'message' + message?.success ? "success" : "error"}>{message?.message}</div>}
-
-                <div className="inputs">
+        <AuthLayout
+            title={"Register"}
+            message={message}
+            inputs={(
+                <>
                     <input 
                         type="text"
                         placeholder="Your name" 
@@ -124,14 +123,10 @@ const RegisterPage = () => {
                         onChange={(e) => setPasswordConfirm(e.target.value)}
                     />
                     <button className="btn" onClick={register}>Sign Up</button>
-                </div>
-
-                <div className="links">
-                    <Link to="/login">Sign In</Link>{/*  &nbsp;|&nbsp;
-                    <a href="#">Забыли пароль?</a> */}
-                </div>
-            </div>
-        </div>
+                </>
+            )}
+            links={(<Link to="/login">Sign In</Link>)}
+        />
     );
 };
 

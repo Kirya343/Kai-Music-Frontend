@@ -1,7 +1,6 @@
 @use "@/css/components/mixins/" as *;
 @use './variables';
 @use './components';
-@use './pages';
 
 *, *::before, *::after {
     box-sizing: border-box;

@@ -15,7 +15,7 @@ const AuthLayout = ({ title, message, inputs, links }: AuthlayoutProps) => {
 
             <div className={styles.formWrap} role="main">
                 
-                <div className="logo">
+                <div className={styles.logo}>
                     <img src="/image/logo.png"/>
                 </div>
 

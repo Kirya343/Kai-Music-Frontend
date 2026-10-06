@@ -40,30 +40,20 @@ const LoginPage = () => {
             email,
             password
         }
-        const res = await api.post("/auth/login", data);
-        
-        setMessage(res.data);
-        if (res.data.success == true) {
-            setTimeout(() => {
-                navigate(`/login/success?redirect=${encodeURIComponent(redirect)}`)
-            }, 1500);
+
+        try {
+            const res = await api.post("/auth/login", data);
+            setMessage(res.data);
+
+            if (res.data.success == true) {
+                setTimeout(() => {
+                    navigate(`/login/success?redirect=${encodeURIComponent(redirect)}`)
+                }, 1500);
+            }
+        } catch (e) {
+            setMessage({ success: false, message: String(e)});
         }
     };
-
-    useEffect(() => {
-        const handleMessage = (event: MessageEvent) => {
-            console.log(event)
-            if (event.data?.type === 'oauthSuccess') {
-                setMessage({success: false, message: "Successfuly signed in"});
-                navigate((event.data.isNewUser ? "/register/oauth" : "/login/success") + `?redirect=${encodeURIComponent(redirect)}` || '/');
-            } else if (event.data?.type === 'oauthFailure') {
-                setMessage({success: false, message: "Unable to sign in"});
-            }
-        };
-
-        window.addEventListener('message', handleMessage);
-        return () => window.removeEventListener('message', handleMessage);
-    }, [navigate]);
 
     return (
         <AuthLayout

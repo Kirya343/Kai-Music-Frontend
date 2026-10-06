@@ -1,5 +1,4 @@
-import CheckmarkIcon from "@/components/icons/CheckmarkIcon"
-import PlusIcon from "@/components/icons/player/PlusIcon"
+import { CheckmarkIcon, PlusIcon } from "@/assets/icons";
 import { playlistService } from "@/lib/playlist"
 import { IAudio } from "@audio"
 import Track from "./Track/Track"

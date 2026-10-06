@@ -1,7 +1,4 @@
-import RepeatAllIcon from "@/components/icons/playbackmode/RepeatAllIcon";
-import NoRepeatIcon from "@/components/icons/playbackmode/NoRepeatIcon";
-import RepeatOneIcon from "@/components/icons/playbackmode/RepeatOneIcon";
-import ShuffleIcon from "@/components/icons/playbackmode/ShuffleIcon";
+import { RepeatAllIcon, NoRepeatIcon, RepeatOneIcon, ShuffleIcon } from "@/assets/icons";
 import { useRoomPlayback } from "@room";
 import { PlaybackMode, playlistService } from "@/lib/playlist";
 

@@ -3,13 +3,8 @@ import { useEffect, useRef } from "react";
 import { PlaybackModeToggle } from "../PlaybackModeToggle";
 import VolumeSlider from "../VolumeSlider/VolumeSlider";
 import { countPosition } from "@common";
-import PauseIcon from "@/components/icons/PauseIcon";
-import PlayIcon from "@/components/icons/player/PlayIcon";
-import LeftIcon from "@/components/icons/arrows/LeftIcon";
-import RightIcon from "@/components/icons/arrows/RightIcon";
 import styles from "./Audio.module.scss";
-import PlusIcon from "@/components/icons/player/PlusIcon";
-import DownIcon from "@/components/icons/arrows/DownIcon";
+import { PlusIcon, DownIcon, RightIcon, LeftIcon, PlayIcon, PauseIcon } from "@/assets/icons";
 import { playbackService } from "@playback/services";
 
 const Audio = () => {

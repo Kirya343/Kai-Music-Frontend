@@ -21,6 +21,13 @@
     border: 3px solid #666666
 }
 
+.messageConteiner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 32px;
+}
+
 .message {
     border: 1px solid #858585;
     background-color: #6666667a;

@@ -2,7 +2,7 @@
 
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import styles from "./ActionMenu.module.scss";
-import EllipsisVerticalIcon from "@/components/icons/EllipsisVerticalIcon";
+import { EllipsisVerticalIcon } from "@/assets/icons";
 import clsx from "clsx";
 import { ReactNode } from "react";
 

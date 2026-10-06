@@ -2,14 +2,10 @@ import { useRoomPlayback } from "@room";
 import { IAudio } from "@audio";
 import { useMemo, useState } from "react";
 import styles from "./LibraryPage.module.scss"
-import CheckmarkIcon from "@/components/icons/CheckmarkIcon";
-import CrossIcon from "@/components/icons/CrossIcon";
 import AudioFileModal from "@/components/pages/library/AudioFileModal/AudioFileModal";
-import AudioPlayerOpener from "@/components/ui/player/AudioPlayerOpener/AudioPlayerOpener";
 import { useLibrary } from "@audio/hooks/useLibrary";
-import CirclePlusIcon from "@/components/icons/CirclePlusIcon";
+import { CirclePlusIcon, CheckmarkIcon, CrossIcon } from "@/assets/icons";
 import LibraryTrack from "@/components/ui/track/LibraryTrack";
-import PageLayout from "@/components/layout/PageLayout/PageLayout";
 import SearchableLayout from "@/components/layout/LibraryLayout/SearchableLayout";
 
 const LibraryPage = () => {
@@ -45,7 +41,7 @@ const LibraryPage = () => {
             search={{searchQuery, setSearchQuery, filteredList}}
             extraActions={[
                 <label htmlFor="uploadAudio" className={styles.upload}>
-                    <CirclePlusIcon solid />
+                    <CirclePlusIcon />
                     <span>Upload new</span>
                 </label>
             ]}

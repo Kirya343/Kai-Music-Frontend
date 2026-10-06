@@ -2,9 +2,7 @@ import { useRoomPlayback } from "@room";
 import { useEffect, useRef } from "react";
 
 import styles from "./AudioPlayerOpener.module.scss"
-import PlayIcon from "@/components/icons/player/PlayIcon";
-import PauseIcon from "@/components/icons/PauseIcon";
-import RightIcon from "@/components/icons/arrows/RightIcon";
+import { RightIcon, PlayIcon, PauseIcon } from "@/assets/icons";
 import { playbackService } from "@playback/services";
 
 const AudioPlayerOpener = () => {

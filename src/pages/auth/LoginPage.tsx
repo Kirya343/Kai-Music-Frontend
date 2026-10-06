@@ -11,7 +11,7 @@ const LoginPage = () => {
     const redirect = params.get("redirect") || `/`;
     const [email, setEmail] = useState<string>('');
     const [password, setPassword] = useState<string>('');
-    const [message, setMessage] = useState<{message: string, success: boolean} | null>(null);
+    const [message, setMessage] = useState<{message: string, success: boolean} | "loading" | null>(null);
 
     function validateEmail(name: string) {
         if (!name) {
@@ -42,6 +42,7 @@ const LoginPage = () => {
         }
 
         try {
+            setMessage("loading")
             const res = await api.post("/auth/login", data);
             setMessage(res.data);
 

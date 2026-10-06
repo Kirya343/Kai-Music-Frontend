@@ -3,7 +3,7 @@ import { useState } from "react";
 import TrackImportLibrary from "./menus/TrackImportLibrary/TrackImportLibrary";
 import TrackImportPlaylists from "./menus/TrackImportPlaylists/TrackImportPlaylists";
 import TrackImportPlaylist from "./menus/TrackImportPlaylist/TrackImportPlaylist";
-import LeftArrowIcon from "@/components/icons/arrows/LeftArrowIcon";
+import { ArrowIcon } from "@/assets/icons"
 import clsx from "clsx";
 import { Playlist } from "@/lib/playlist";
 
@@ -37,7 +37,7 @@ const TrackImportModal = ({
         <div className={styles.layout}>
             <div className={styles.page}>
                 <div className={styles.header}>
-                    <button onClick={() => onClose()} className={styles.closeBtn}><LeftArrowIcon/></button>
+                    <button onClick={() => onClose()} className={styles.closeBtn}><ArrowIcon direction="left"/></button>
                     <h2 className={styles.header}>Add tracks</h2>
                 </div>
 

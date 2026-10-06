@@ -5,7 +5,7 @@ import AudioPlayerOpener from "@/components/ui/player/AudioPlayerOpener/AudioPla
 import { useGlobal } from "@common";
 import { useWebSocket } from "@websocket";
 import ActionMenu from "@/components/ui/ActionMenu/ActionMenu";
-import CheckBoxIcon from "@/components/icons/CheckBoxIcon";
+import { CheckBoxIcon } from "@/assets/icons";
 import Loader from "@/components/ui/Loader/Loader";
 import { playlistService } from "@/lib/playlist";
 import TrackImportModal from "@/components/ui/TrackImportMenu/TrackImportModal";
@@ -54,11 +54,7 @@ const RoomPage = () => {
             console.error(e)
         }
     }
-
-    useEffect(() => {
-        console.log(importOpen)
-    }, [importOpen])
-
+    
     return (
         <>
             <div className={styles.page}>

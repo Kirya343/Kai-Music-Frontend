@@ -1,7 +1,7 @@
 import { Playlist } from "@/lib/playlist";
 import PlaylistCard from "./PlaylistCard/PlaylistCard";
 import { IKebabAction } from "../ActionMenu/ActionMenu";
-import TrashIcon from "@/components/icons/TrashIcon";
+import { TrashIcon } from "@/assets/icons";
 import { useNavigate } from "react-router-dom";
 
 const LibraryPlaylist = ({

@@ -1,9 +1,7 @@
-import { Playlist, useRoomPlayback } from "@/lib/playlist";
+import { useRoomPlayback } from "@/lib/playlist";
 import styles from "./PlaylistsPage.module.scss"
-import AudioPlayerOpener from "@/components/ui/player/AudioPlayerOpener/AudioPlayerOpener";
 import { usePlaylists } from "@/lib/playlist/hooks/usePlaylists";
-import CirclePlusIcon from "@/components/icons/CirclePlusIcon";
-import LoadingSpinnerIcon from "@/components/icons/LoadingSpinnerIcon";
+import { CirclePlusIcon } from "@/assets/icons";
 import { useState } from "react";
 import PlaylistCreateModal from "@/components/pages/playlists/PlaylistCreateModal/PlaylistCreateModal";
 import LibraryPlaylist from "@/components/ui/playlist/LibraryPlaylist";
@@ -20,7 +18,7 @@ const PlaylistsPage = () => {
 
     const [isOpen, setOpen] = useState(false);
 
-    const { roomLoaded, roomPlaylist } = useRoomPlayback();
+    const { roomPlaylist } = useRoomPlayback();
 
     return (
         <PageLayout title="Playlists">
@@ -29,7 +27,7 @@ const PlaylistsPage = () => {
 
                 <div className={styles.row}>
                     <button className={styles.upload} onClick={() => setOpen(true)}>
-                        <CirclePlusIcon solid />
+                        <CirclePlusIcon />
                         <span>Create new</span>
                     </button>
 

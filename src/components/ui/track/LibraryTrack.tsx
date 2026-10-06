@@ -1,8 +1,4 @@
-import CheckmarkIcon from "@/components/icons/CheckmarkIcon"
-import PenIcon from "@/components/icons/PenIcon"
-import PlusIcon from "@/components/icons/player/PlusIcon"
-import ShazamIcon from "@/components/icons/ShazamIcon"
-import TrashIcon from "@/components/icons/TrashIcon"
+import { PenIcon, PlusIcon, ShazamIcon, TrashIcon } from "@/assets/icons";
 import { playlistService } from "@/lib/playlist"
 import { audioService, IAudio } from "@audio"
 import Track from "./Track/Track"
@@ -24,8 +20,6 @@ const LibraryTrack = ({
     openEditModal: (audio: IAudio) => void,
     handleDelete: (audio: IAudio) => void
 }) => {
-
-    const actions = [];
 
     const extraActions = [
             {

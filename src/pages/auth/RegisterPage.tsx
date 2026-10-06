@@ -15,7 +15,7 @@ const RegisterPage = () => {
     const [email, setEmail] = useState<string>('');
     const [password, setPassword] = useState<string>('');
     const [passwordConfirm, setPasswordConfirm] = useState<string>('');
-    const [message, setMessage] = useState<{message: string, success: boolean} | null>(null);
+    const [message, setMessage] = useState<{message: string, success: boolean} | "loading" | null>(null);
 
     useEffect(() => {
         loadUser();
@@ -31,6 +31,7 @@ const RegisterPage = () => {
         const data = { email, name, password }
 
         try {
+            setMessage("loading")
             const res = await api.post("/auth/register", data);
             setMessage(res.data);
 

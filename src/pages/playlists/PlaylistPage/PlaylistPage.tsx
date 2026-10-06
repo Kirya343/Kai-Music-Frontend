@@ -1,15 +1,12 @@
 import styles from "./PlaylistPage.module.scss"
 import { usePlaylist } from "@/lib/playlist/hooks/usePlaylist";
-import LoadingSpinnerIcon from "@/components/icons/LoadingSpinnerIcon";
 import { useMemo, useState } from "react";
 import { useRoomPlayback } from "@/lib/playlist";
 import { IAudio } from "@audio";
 import AudioFileModal from "@/components/pages/library/AudioFileModal/AudioFileModal";
 import PlaylistTrack from "@/components/ui/track/PlaylistTrack";
 import { useParams } from "react-router-dom";
-import TrackImportModal from "@/components/ui/TrackImportMenu/TrackImportModal";
-import CirclePlusIcon from "@/components/icons/CirclePlusIcon";
-import PageLayout from "@/components/layout/PageLayout/PageLayout";
+import { CirclePlusIcon } from "@/assets/icons";
 import SearchableLayout from "@/components/layout/LibraryLayout/SearchableLayout";
 
 const PlaylistPage = ({}: {}) => {
@@ -42,7 +39,7 @@ const PlaylistPage = ({}: {}) => {
             search={{searchQuery, setSearchQuery, filteredList}}
             extraActions={[
                 <button className={styles.upload} onClick={() => setImportOpen(true)}>
-                    <CirclePlusIcon solid />
+                    <CirclePlusIcon />
                     <span>Create new</span>
                 </button>
             ]}

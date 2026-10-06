@@ -3,6 +3,7 @@ import react from '@vitejs/plugin-react'
 import path from 'path'
 import { fileURLToPath } from 'url'
 import svgr from "vite-plugin-svgr";
+import { visualizer } from "rollup-plugin-visualizer";
 
 // Получаем путь к текущей папке
 const __filename = fileURLToPath(import.meta.url)
@@ -15,6 +16,12 @@ export default defineConfig({
             jsxRuntime: 'automatic'
         }),
         svgr(),
+        visualizer({
+            open: true,
+            filename: "stats.html",
+            gzipSize: true,
+            brotliSize: true,
+        }),
     ],
     resolve: {
         alias: {

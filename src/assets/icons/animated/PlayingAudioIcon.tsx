@@ -5,7 +5,7 @@ const PlayingAudioIcon = ({playing}: {playing: boolean}) => {
     return (
         <svg 
             xmlns="http://www.w3.org/2000/svg" 
-            view-box="0 0 40 40"
+            viewBox="0 0 40 40"
             fill="none"
             width="15"
             className={clsx(styles.icon, playing && styles.playing)}

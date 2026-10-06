@@ -3,11 +3,11 @@ import { IShortRoom, useRoomPlayback, roomService } from "@room";
 import { useEffect, useState } from "react";
 import AudioPlayerOpener from "@/components/ui/player/AudioPlayerOpener/AudioPlayerOpener";
 import clsx from "clsx";
-import DoorIcon from "@/components/icons/navigation/DoorIcon";
-import CirclePlusIcon from "@/components/icons/CirclePlusIcon";
-import MusicNoteIcon from "@/components/icons/MusicNoteIcon";
-import UserGroupIcon from "@/components/icons/UserGroupIcon";
-import DiscIcon from "@/components/icons/DiscIcon";
+import { 
+    CirclePlusIcon, MusicNoteIcon,
+    UserGroupIcon,
+    DiscIcon, DoorIcon
+} from "@/assets/icons";
 import JoinRoomModal from "@/components/pages/main/JoinRoomModal/JoinRoomModal";
 import { useNavigate } from "react-router-dom";
 import PageLayout from "@/components/layout/PageLayout/PageLayout";
@@ -63,16 +63,12 @@ const MainPage = () => {
                         <h2>Community Buzz</h2>
 
                         <div className={styles.statItem}>
-                            <div className={styles.icon}>
-                                <UserGroupIcon/>
-                            </div>
+                            <UserGroupIcon className={styles.icon}/>
                             <span>Currently Listening: <br/><strong>{stat?.activeListners ? stat?.activeListners : 0} people</strong></span>
                         </div>
 
                         <div className={styles.statItem}>
-                            <div className={styles.icon}>
-                                <DiscIcon className={styles.disc}/>
-                            </div>
+                            <DiscIcon className={styles.icon}/>
 
                             <span>Total Rooms Active: <br/><strong>{stat?.activeRooms}</strong></span>
                         </div>

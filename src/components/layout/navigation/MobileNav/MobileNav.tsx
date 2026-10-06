@@ -2,10 +2,8 @@ import { NavLink } from "react-router-dom";
 import styles from "./MobileNav.module.scss"
 import { useRoomPlayback } from "@playback";
 import { useAuth } from "@auth";
-import DoorIcon from "@/components/icons/navigation/DoorIcon";
-import LibraryIcon from "@/components/icons/navigation/LibraryIcon";
-import PlaylistIcon from "@/components/icons/navigation/PlaylistIcon";
-import HomeIcon from "@/components/icons/navigation/HomeIcon";
+import { PlaylistIcon, DoorIcon, LibraryIcon, HomeIcon } from "@/assets/icons";
+
 import { ReactNode } from "react";
 
 interface ILink {

@@ -6,7 +6,7 @@ const LoadingSpinnerIcon = ({
     return (
         <svg 
             xmlns="http://www.w3.org/2000/svg" 
-            view-box="0 0 32 32"
+            viewBox="0 0 32 32"
             fill="currentColor"
             width={18}
             className={`${className} spin`}

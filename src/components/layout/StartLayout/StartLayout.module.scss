@@ -37,11 +37,22 @@
     }
 }
 
+@keyframes contentEnter {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
 .content {
     flex: 1;
     display: flex;
     flex-direction: column;
     min-height: 0;
+    animation: contentEnter 0.7s ease 1s both;
 }
 
 .startWrapper {

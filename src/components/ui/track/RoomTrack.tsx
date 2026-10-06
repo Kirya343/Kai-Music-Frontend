@@ -1,6 +1,6 @@
 import { playlistService, useRoomPlayback } from "@/lib/playlist";
 import Track from "./Track/Track";
-import TrashIcon from "@/components/icons/TrashIcon";
+import { TrashIcon } from "@/assets/icons";
 import { IKebabAction } from "../ActionMenu/ActionMenu";
 import { playbackService } from "@playback/services";
 import { IQueueItem } from "@playback";

@@ -1,10 +1,9 @@
 import { IAudio } from "@audio"
 import styles from "./Track.module.scss"
-import MusicNoteIcon from "@/components/icons/MusicNoteIcon"
+import { MusicNoteIcon, PlayingAudioIcon } from "@/assets/icons"
 import { countPosition } from "@common"
 import { ReactNode } from "react"
 import clsx from "clsx"
-import PlayingAudioIcon from "@/components/icons/animated/PlayingAudioIcon"
 import { useRoomPlayback } from "@room"
 import ActionMenu, { IKebabAction } from "../../ActionMenu/ActionMenu"
 

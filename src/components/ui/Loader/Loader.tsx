@@ -1,6 +1,6 @@
 import { ReactNode } from "react";
 import styles from "./Loader.module.scss";
-import LoadingSpinnerIcon from "@/components/icons/LoadingSpinnerIcon";
+import { LoadingSpinnerIcon } from "@/assets/icons";
 
 const Loader = ({
     loadingActive,

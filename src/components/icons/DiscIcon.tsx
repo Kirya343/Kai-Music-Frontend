@@ -2,7 +2,7 @@ const DiscIcon = ({className}: {className?: string}) => {
     return (
         <svg 
             xmlns="http://www.w3.org/2000/svg" 
-            viewBox="0 0 468.402 468.402"
+            view-box="0 0 468.402 468.402"
             fill="currentColor"
             width={30}
             className={className}

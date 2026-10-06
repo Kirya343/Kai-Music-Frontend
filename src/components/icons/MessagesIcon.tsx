@@ -2,7 +2,7 @@ const MessagesIcon = ({className, size}: {className?: string, size?: number}) =>
     return (
         <svg 
             xmlns="http://www.w3.org/2000/svg" 
-            viewBox="0 0 576 512"
+            view-box="0 0 576 512"
             fill="currentColor"
             className={className}
             width={size || 24}

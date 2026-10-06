@@ -22,7 +22,7 @@ const ArrowIcon = (props: Props) => {
     return (
         <svg 
             xmlns="http://www.w3.org/2000/svg" 
-            viewBox="0 0 640 640"
+            view-box="0 0 640 640"
             fill="currentColor"
             width={17}
             className={props.className}

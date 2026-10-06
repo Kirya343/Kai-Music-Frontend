@@ -3,7 +3,7 @@ const ShazamIcon = ({className}: {className?: string}) => {
         <svg 
             className={className}
             xmlns="http://www.w3.org/2000/svg" 
-            viewBox="0 0 32 32"
+            view-box="0 0 32 32"
             fill="currentColor"
             width={20}
             height={20}

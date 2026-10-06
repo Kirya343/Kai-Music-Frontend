@@ -2,7 +2,7 @@ const LeftIcon = ({ className = "" }: { className?: string }) => {
     return (
         <svg
             className={className}
-            viewBox="0 0 600 600"
+            view-box="0 0 600 600"
             width={16}
             height={16}
             xmlns="http://www.w3.org/2000/svg"

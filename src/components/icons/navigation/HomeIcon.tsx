@@ -2,7 +2,7 @@ const HomeIcon = ({className}: {className?: string}) => {
     return (
         <svg 
             className={className} 
-            viewBox="3.5 3.5 17 17"
+            view-box="3.5 3.5 17 17"
             fill="none" 
             xmlns="http://www.w3.org/2000/svg"
         >

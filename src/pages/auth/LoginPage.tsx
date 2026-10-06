@@ -2,12 +2,12 @@ import { api } from "@common"
 import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import clsx from "clsx";
+import AuthLayout from "@/components/layout/AuthLayout";
 
 const LoginPage = () => {
 
     const params = new URLSearchParams(window.location.search);
     const navigate = useNavigate();
-    const error = params.get("error") || "";
     const redirect = params.get("redirect") || `/`;
     const [email, setEmail] = useState<string>('');
     const [password, setPassword] = useState<string>('');
@@ -66,20 +66,11 @@ const LoginPage = () => {
     }, [navigate]);
 
     return (
-        <div className="login-body">
-
-            <div className="form-wrap" role="main">
-                <div className="logo">
-                    <img src="/image/logo.png"/>
-                </div>
-
-                {message?.message && 
-                    <div className={clsx("message", message?.success ? "success" : "error")}>
-                        {message?.message}
-                    </div>
-                }
-
-                <div className="inputs">
+        <AuthLayout
+            title={"Login"}
+            message={message}
+            inputs={(
+                <>
                     <input 
                         type="text"
                         placeholder="Email" 
@@ -93,14 +84,10 @@ const LoginPage = () => {
                         onChange={(e) => setPassword(e.target.value)}
                     />
                     <button className="btn" onClick={handleLogin}>Sign In</button>
-                </div>
-
-                <div className="links">
-                    <Link to="/register">Sign Up</Link>{/*  &nbsp;|&nbsp;
-                    <a href="#">Забыли пароль?</a> */}
-                </div>
-            </div>
-        </div>
+                </>
+            )}
+            links={(<Link to="/register">Luo Tili</Link>)}
+        />
     );
 };
 

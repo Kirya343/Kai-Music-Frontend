@@ -1,0 +1,87 @@
+@use "@/css/components/mixins/" as *;
+
+.body {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.formWrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+}
+
+.message {
+    border: 1px solid #858585;
+    background-color: #6666667a;
+    padding: 5px 10px;
+    border-radius: 8px;
+
+    &.success {
+        border-color: rgb(76, 165, 76);
+        background-color: #4f854a7a;
+    }
+
+    &.error {
+        border-color: rgb(177, 44, 44);
+        background-color: #a351517a;
+    }
+}
+
+.inputs {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    align-items: flex-end;
+
+    input {
+        width: 100%;
+        padding: 0.8rem 0.5rem;
+        background-color: transparent;
+        border-radius: var(--radius);
+        border: 1px solid rgb(139, 139, 139);
+        color: var(--text-color);
+        font-size: 0.9rem;
+        outline: 2px solid #fff;
+        transition: all 0.2s ease;
+
+        &:focus {
+            outline-color: rgb(139, 139, 139);
+            @include shadow;
+
+            &::placeholder {
+                color: var(--neon-green-l1);
+                font-weight: 400;
+            }
+        }
+    }
+
+    button {
+        transition: 
+            background-color 0.2s ease,
+            transform 0.1s ease;
+
+        &:hover {
+            background-color: #5e5e5e78;
+        }
+    }
+}
+
+.links {
+    * {
+        padding: 10px 15px;
+        border-radius: 3px;
+        transition: 
+            background-color 0.2s ease,
+            border-radius 0.3s ease-out,
+            transform 0.1s ease;
+
+        &:hover {
+            background-color: #5e5e5e78;
+            border-radius: 10px;
+        }
+    }
+}

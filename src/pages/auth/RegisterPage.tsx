@@ -5,10 +5,9 @@ import { api } from "@common";
 
 const RegisterPage = () => {
 
-    const {loadUser} = useAuth();
+    const { loadUser } = useAuth();
     const params = new URLSearchParams(window.location.search);
     const redirect = params.get("redirect") || `/`;
-    const error = params.get("error") || "";
     const navigate = useNavigate();
 
     const [name, setName] = useState<string>('');

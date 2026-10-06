@@ -10,6 +10,7 @@ import UserGroupIcon from "@/components/icons/UserGroupIcon";
 import DiscIcon from "@/components/icons/DiscIcon";
 import JoinRoomModal from "@/components/pages/main/JoinRoomModal/JoinRoomModal";
 import { useNavigate } from "react-router-dom";
+import PageLayout from "@/components/layout/PageLayout/PageLayout";
 
 const MainPage = () => {
 
@@ -50,7 +51,7 @@ const MainPage = () => {
     }
 
     return (
-        <>
+        <PageLayout>
             <div className={styles.layout}>
                 <div className={styles.page}>
                     <div className={styles.welcome}>
@@ -114,12 +115,12 @@ const MainPage = () => {
                         </div>
                     </section>
                 </div>
-
-                {roomLoaded && <AudioPlayerOpener />}
             </div>
 
+            {roomLoaded && <AudioPlayerOpener />}
+
             <JoinRoomModal isOpen={isOpen} setOpen={setOpen}/>
-        </>
+        </PageLayout>
     )
 }
 

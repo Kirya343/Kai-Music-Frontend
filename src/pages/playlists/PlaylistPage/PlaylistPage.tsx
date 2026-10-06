@@ -9,6 +9,8 @@ import PlaylistTrack from "@/components/ui/track/PlaylistTrack";
 import { useParams } from "react-router-dom";
 import TrackImportModal from "@/components/ui/TrackImportMenu/TrackImportModal";
 import CirclePlusIcon from "@/components/icons/CirclePlusIcon";
+import PageLayout from "@/components/layout/PageLayout/PageLayout";
+import SearchableLayout from "@/components/layout/LibraryLayout/SearchableLayout";
 
 const PlaylistPage = ({}: {}) => {
 
@@ -35,51 +37,35 @@ const PlaylistPage = ({}: {}) => {
 
 
     return (
-        <>
-            <div className={styles.page}>
-                <h2 className={styles.header}>Playlist <strong>{playlist?.title}</strong></h2>
-                
-                <div className={styles.sorting}>
-
-                    <div className={styles.row}>
-                        <button className={styles.upload} onClick={() => setImportOpen(true)}>
-                            <CirclePlusIcon solid />
-                            <span>Create new</span>
-                        </button>
-
-                        <input 
-                            value={searchQuery}
-                            onChange={(e) => setSearchQuery(e.target.value)}
-                            className={styles.search}
-                            placeholder="Search audios..."
-                        />
-                    </div>
-
-                    {searchQuery.length != 0 && <span>Found {filteredList.length} audios</span>}
-                </div>
-                
-                <div className={styles.trackList}>
-                    {filteredList.map((qi, idx) => (
-                        <PlaylistTrack
-                            queueItem={qi}
-                            id={idx + 1}
-                            isInPlaylist={false}
-                            playlistId={playlist?.id}
-                            openEditModal={setAudioFileView}
-                            handleRemove={removeAudio}
-                            playing={playingAudioId === qi.audio.id}
-                        />
-                    ))}
-                </div>
-
-                <AudioFileModal
-                    audioFile={audioFileView} 
-                    onClose={() => setAudioFileView(null)} 
-                />
+        <SearchableLayout
+            title={playlist?.title || ""}
+            search={{searchQuery, setSearchQuery, filteredList}}
+            extraActions={[
+                <button className={styles.upload} onClick={() => setImportOpen(true)}>
+                    <CirclePlusIcon solid />
+                    <span>Create new</span>
+                </button>
+            ]}
+        >
+            <div className={styles.trackList}>
+                {filteredList.map((qi, idx) => (
+                    <PlaylistTrack
+                        queueItem={qi}
+                        id={idx + 1}
+                        isInPlaylist={false}
+                        playlistId={playlist?.id}
+                        openEditModal={setAudioFileView}
+                        handleRemove={removeAudio}
+                        playing={playingAudioId === qi.audio.id}
+                    />
+                ))}
             </div>
 
-            {playlist && <TrackImportModal importPlaylist={playlist} isOpen={importOpen} onClose={() => setImportOpen(false)} />}
-        </>
+            <AudioFileModal
+                audioFile={audioFileView} 
+                onClose={() => setAudioFileView(null)} 
+            />
+        </SearchableLayout>
     )
 }
 

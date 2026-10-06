@@ -5,6 +5,7 @@ export const useSearch = <T extends { id: number }>(list: T[]) => {
     const [searchQuery, setSearchQuery] = useState<string>("")
 
     const filteredList = useMemo<T[]>(() => {
+
         if (!list) {
             return [];
         }

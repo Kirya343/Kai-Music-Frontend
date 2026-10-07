@@ -6,6 +6,7 @@ import { useState } from "react";
 import PlaylistCreateModal from "@/components/pages/playlists/PlaylistCreateModal/PlaylistCreateModal";
 import LibraryPlaylist from "@/components/ui/playlist/LibraryPlaylist";
 import PageLayout from "@/components/layout/PageLayout/PageLayout";
+import SearchableLayout from "@/components/layout/LibraryLayout/SearchableLayout";
 
 const PlaylistsPage = () => {
 
@@ -21,27 +22,16 @@ const PlaylistsPage = () => {
     const { roomPlaylist } = useRoomPlayback();
 
     return (
-        <PageLayout title="Playlists">
-
-            <div className={styles.sorting}>
-
-                <div className={styles.row}>
-                    <button className={styles.upload} onClick={() => setOpen(true)}>
-                        <CirclePlusIcon />
-                        <span>Create new</span>
-                    </button>
-
-                    <input 
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                        className={styles.search}
-                        placeholder="Search audios..."
-                    />
-                </div>
-
-                {searchQuery.length != 0 && <span>Found {filteredList.length} playlists</span>}
-            </div>
-            
+        <SearchableLayout
+            title="Playlists"
+            search={{searchQuery, setSearchQuery, filteredList}}
+            extraActions={[
+                <button className={styles.upload} onClick={() => setOpen(true)}>
+                    <CirclePlusIcon />
+                    <span>Create new</span>
+                </button>
+            ]}
+        >
             <div className={styles.list}>
                 {filteredList.map((p) => (
                     <LibraryPlaylist
@@ -58,7 +48,7 @@ const PlaylistsPage = () => {
                 onClose={() => setOpen(false)}
                 createPlaylist={createPlaylist}
             />
-        </PageLayout>
+        </SearchableLayout>
     )
 }
 

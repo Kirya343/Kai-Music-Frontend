@@ -17,7 +17,7 @@ export default defineConfig({
         }),
         svgr(),
         visualizer({
-            open: true,
+            open: false,
             filename: "stats.html",
             gzipSize: true,
             brotliSize: true,

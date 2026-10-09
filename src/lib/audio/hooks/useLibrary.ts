@@ -21,7 +21,7 @@ export const useLibrary = () => {
     const parentRef = useRef<HTMLDivElement>(null);
     const [visibleCount, setVisibleCount] = useState(50);
 
-    const { filteredList, searchQuery, setSearchQuery} = useSearch(audios);
+    const { filteredList, searchQuery, setSearchQuery} = useSearch(audios.data);
 
     const visibleAudios = useMemo(() => {
         return filteredList.slice(0, visibleCount);

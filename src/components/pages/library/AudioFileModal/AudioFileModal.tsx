@@ -1,8 +1,14 @@
 import { IAudio, IAudioUpdate, audioService } from "@audio";
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import styles from "./AudioFileModal.module.scss"
 import Modal from "@/components/ui/Modal/Modal";
 
+/**
+ * AudioFileModal is modal to view and edit data of audiofiles
+ * 
+ * @param audioFile data to edit 
+ * @param onClose void to close modal 
+ */
 const AudioFileModal = ({ 
     audioFile, onClose
 }: { 
@@ -10,27 +16,22 @@ const AudioFileModal = ({
     onClose: () => void
 }) => {
 
+    // turns on/off editMode, that switches view to readonly and editable 
     const [editMode, setEditMode] = useState<boolean>(false);
-    const [title, setTitle] = useState<string | null>(null);
-    const [album, setAlbum] = useState<string | null>("");
-    const [artist, setArtist] = useState<string | null>("");
-    const [coverUrl, setCoverUrl] = useState<string | null>("");
 
-    useEffect(() => {
-        setTitle(audioFile?.title || null)
-        setAlbum(audioFile?.album || null)
-        setArtist(audioFile?.artist || null)
-        setCoverUrl(audioFile?.coverUrl || null)
-        setEditMode(false);
-    }, [audioFile])
+    // data to edit
+    const [title, setTitle] = useState<string>(audioFile?.title || "");
+    const [album, setAlbum] = useState<string>(audioFile?.album || "");
+    const [artist, setArtist] = useState<string>(audioFile?.artist || "");
+    const [coverUrl, setCoverUrl] = useState<string>(audioFile?.coverUrl || "");
 
     const save = async () => {
         if (!audioFile) return;
         const audioUpdate: IAudioUpdate = {
-            title: title || "",
-            album: album || "",
-            artist: artist || "",
-            coverUrl: coverUrl || ""
+            title: title,
+            album: album,
+            artist: artist,
+            coverUrl: coverUrl
         }
         await audioService.updateAudio(audioFile.id, audioUpdate);
     }

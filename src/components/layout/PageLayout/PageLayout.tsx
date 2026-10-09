@@ -7,6 +7,12 @@ interface PageLayoutProps {
     children: React.ReactNode;
 }
 
+/**
+ * PageLayout if layout for simple pages with header to keep same style
+ * 
+ * @param title is string title for page
+ * @param children is page content
+ */
 const PageLayout = ({ title, children }: PageLayoutProps) => {
 
     const { roomLoaded } = useRoomPlayback();

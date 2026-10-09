@@ -5,8 +5,18 @@ import { useAuth } from "@auth";
 import { PlaylistIcon, DoorIcon, LibraryIcon, HomeIcon } from "@/assets/icons";
 
 import { ReactNode } from "react";
+import { useGlobal } from "@common";
 
-interface ILink {
+
+/**
+ * interface for NavigationLink conponents
+ * 
+ * @param to link url
+ * @param icon react-svg icon from local pack
+ * @param title link title
+ * @param condition condition to display link
+ */
+interface INavigationLink {
     to: string,
     icon: ReactNode,
     title: string,
@@ -15,14 +25,16 @@ interface ILink {
 
 const MobileNav = () => {
 
-    const isMobile = window.innerWidth < 768;
-
+    const { isMobile } = useGlobal();
     const { isAuthenticated } = useAuth();
     const { room } = useRoomPlayback();
 
+    /**
+     * disabling on not mobile displays
+     */
     if (!isMobile) return null;
 
-    const links: ILink[] = [
+    const links: INavigationLink[] = [
         { to: "/", icon: <HomeIcon className={styles.linkIcon} />, title: "Home", condition: true },
         { to: "/room", icon: <DoorIcon className={styles.linkIcon} />, title: "Room", condition: !!room },
         { to: "/library", icon: <LibraryIcon className={styles.linkIcon} />, title: "Library", condition: isAuthenticated },
@@ -31,12 +43,16 @@ const MobileNav = () => {
 
     return (
         <nav className={styles.nav}>
-            {links.map(l => <Link key={l.title} link={l} />)}
+            {links.map(l => <NavigationLink key={l.title} link={l} />)}
         </nav>
     );
 }
 
-const Link = ({ link }: { link: ILink }) => {
+
+/**
+ *  NavigationLink is conponent to display navigation links
+ */
+const NavigationLink = ({ link }: { link: INavigationLink }) => {
     return link.condition && (
         <NavLink to={link.to} className={styles.link}>
             {link.icon}

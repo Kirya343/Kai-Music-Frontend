@@ -5,6 +5,9 @@ import Header from "../navigation/Header/Header";
 import MobileNav from "../navigation/MobileNav/MobileNav";
 import RoomReturnModal from "@/components/ui/RoomReturnModal/RoomReturnModal";
 
+/**
+ * MainLayout if layout for the entire application to keep same style
+ */
 const MainLayout = () => {
 
     return (

@@ -2,25 +2,41 @@ import { useState } from "react";
 import styles from "./PlaylistCreateModal.module.scss"
 import Modal from "@/components/ui/Modal/Modal";
 import { CreatePlaylist } from "@/lib/playlist";
+import { useData } from "@common";
 
+/**
+ * PlaylistCreateModal is modal to create playlist
+ * it collects data from user and use it to create playlist
+ * 
+ * @param isOpen boolean to view modal 
+ * @param setOpen void to switch view
+ */
 const PlaylistCreateModal = ({ 
-    isOpen, onClose,
-    createPlaylist
+    isOpen, onClose
 }: { 
     isOpen: boolean;
     onClose: () => void;
-    createPlaylist: (playlist: CreatePlaylist) => void;
 }) => {
 
+    const { playlists } = useData();
+
+    // new playlist title
     const [title, setTitle] = useState<string>("");
 
+    /**
+     * void that creates tries to create playlist
+     * 
+     * doesn't work if title is empty
+     * 
+     * if playlist creating is successfull, closes modal
+     */
     const create = () => {
         if (title.length === 0) return;
 
         const playlist: CreatePlaylist = { title }
 
         try {
-            createPlaylist(playlist)
+            playlists.createPlaylist(playlist)
         } finally {
             setTitle("")
             onClose()

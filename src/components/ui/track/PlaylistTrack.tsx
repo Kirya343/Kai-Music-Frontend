@@ -17,11 +17,11 @@ const PlaylistTrack = ({
     queueItem: IQueueItem, 
     id: number,
     playing: boolean,
-    playlistId?: number,
+    playlistId: number,
     isInPlaylist: boolean,
     className?: string,
     openEditModal: (audio: IAudio) => void,
-    handleRemove: (queueItem: IQueueItem) => void
+    handleRemove: (playlistId: number, queueItem: IQueueItem) => void
 }) => {
 
     const actions = [];
@@ -40,7 +40,7 @@ const PlaylistTrack = ({
             {
                 icon: <TrashIcon/>,
                 title: "Remove from playlist",
-                func: () => handleRemove(queueItem)
+                func: () => handleRemove(playlistId, queueItem)
             }
         ]
 

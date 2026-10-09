@@ -13,6 +13,15 @@ interface SearchableLayoutProps<T extends { id: number }> {
     },
     children: ReactNode
 }
+
+/**
+ * SearchableLayout if layout for pages where is filterable list of cards
+ * 
+ * @param title is page title
+ * @param extraActions are buttons that placed near the search-input
+ * @param search is data of search and methods to update filters
+ * @param children is main content of page
+ */
 const SearchableLayout = <T extends { id: number }>({
     title,
     extraActions,

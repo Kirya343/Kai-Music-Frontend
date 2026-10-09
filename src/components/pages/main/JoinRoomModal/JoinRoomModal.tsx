@@ -4,6 +4,12 @@ import styles from "./JoinRoomModal.module.scss"
 import Modal from "@/components/ui/Modal/Modal";
 import { useNavigate } from "react-router-dom";
 
+/**
+ * JoinRoomModal is modal for join to any room
+ * 
+ * @param isOpen boolean to view modal 
+ * @param setOpen void to switch view
+ */
 const JoinRoomModal = ({ 
     isOpen, setOpen
 }: { 
@@ -11,14 +17,20 @@ const JoinRoomModal = ({
     setOpen: Dispatch<SetStateAction<boolean>>
 }) => {
 
-    const [code, setCode] = useState<string>("");
     const navigate = useNavigate();
 
+    // room code to join
+    const [code, setCode] = useState<string>("");
+
+    /**
+     * void to join room, tries to join, then navigates to room if joining was successful
+     */
     const joinRoom = async () => {
         try {
             await roomService.joinRoom(code);
-        } finally {
             navigate("/room");
+        } catch (e) {
+            console.error(e)
         }
     }
 

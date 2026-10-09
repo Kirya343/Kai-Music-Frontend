@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "@auth";
 import { api } from "@common";
-import AuthLayout from "@/components/layout/AuthLayout";
+import AuthLayout from "@/components/layout/AuthLayout/AuthLayout";
 
 const RegisterPage = () => {
 

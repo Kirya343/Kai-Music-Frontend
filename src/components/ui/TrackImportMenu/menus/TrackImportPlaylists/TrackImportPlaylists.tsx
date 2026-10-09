@@ -1,8 +1,9 @@
 import SelectPlaylist from "@/components/ui/playlist/SelectPlaylist";
-import { usePlaylists } from "@/lib/playlist/hooks/usePlaylists";
 import styles from "./TrackImportPlaylists.module.scss"
 import { SearchInput } from "@/components/ui/SearchInput/SearchInput";
 import { Playlist } from "@/lib/playlist";
+import { useData } from "@common";
+import { useSearch } from "@common/utils/hooks/useSearch";
 
 const TrackImportPlaylists = ({
     seePlaylist,
@@ -11,11 +12,10 @@ const TrackImportPlaylists = ({
     seePlaylist: (playlistId: number) => void;
     importPlaylist: Playlist;
 }) => {
-    const {
-        setSearchQuery,
-        searchQuery, filteredList,
-        importToRoom
-    } = usePlaylists();
+    
+    const { playlists } = useData();
+    
+    const { filteredList, searchQuery, setSearchQuery} = useSearch(playlists.data);
 
     return (
         <>
@@ -36,7 +36,7 @@ const TrackImportPlaylists = ({
                         <SelectPlaylist
                             key={playlist.id}
                             playlist={playlist}
-                            importToRoom={() => importToRoom(importPlaylist, playlist)}
+                            importToRoom={() => playlists.importToRoom(importPlaylist, playlist)}
                             onClick={() => seePlaylist(playlist.id)}
                         />
                     ))}

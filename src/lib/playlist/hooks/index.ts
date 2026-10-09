@@ -1,3 +1,3 @@
-export * from "./usePlaylist";
-export * from "./usePlaylists"
+export * from "./usePlaylistPage";
+export * from "./usePlaylistsPage"
 export * from "./usePlaylistsData"

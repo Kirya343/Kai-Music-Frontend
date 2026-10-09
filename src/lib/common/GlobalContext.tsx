@@ -3,6 +3,7 @@ import { createContext, Dispatch, SetStateAction, useContext, useState } from "r
 interface GlobalContextType {
     started: boolean;
     setStarted: Dispatch<SetStateAction<boolean>>;
+    isMobile: boolean
 }
 
 const GlobalContext = createContext<GlobalContextType | null>(null);
@@ -19,10 +20,13 @@ export const GlobalProvider = ({ children }: { children?: React.ReactNode }) => 
 
     const [started, setStarted] = useState<boolean>(false);
 
+    const isMobile = window.innerWidth < 768;
+
     return (
         <GlobalContext.Provider value={{
             started,
-            setStarted
+            setStarted,
+            isMobile
          }}>
             {children}
         </GlobalContext.Provider>

@@ -1,8 +1,11 @@
 import ImportingTrack from "@/components/ui/track/ImportingTrack";
 import styles from "./TrackImportPlaylist.module.scss"
-import { usePlaylist } from "@/lib/playlist/hooks/usePlaylist";
+import { usePlaylistPage } from "@/lib/playlist/hooks/usePlaylistPage";
 import { useMemo } from "react";
 import { Playlist } from "@/lib/playlist";
+import { useData } from "@common";
+import { IQueueItem } from "@playback";
+import { useSearch } from "@common/utils/hooks/useSearch";
 
 const TrackImportPlaylist = ({
     playlistId,
@@ -12,10 +15,15 @@ const TrackImportPlaylist = ({
     importPlaylist: Playlist
 }) => {
 
-    const { 
-        setSearchQuery, searchQuery,
-        filteredList, playlist
-    } = usePlaylist(playlistId);
+    const { playlists } = useData();
+    
+    const playlist = useMemo<Playlist | null>(() => {
+        if (!playlistId) return null;
+
+        return playlists.data.find(p => p.id === playlistId) || null
+    }, [playlists.data])
+    
+    const { filteredList, searchQuery, setSearchQuery } = useSearch(playlist?.queue || []);
     
     const playlistAudioIds = useMemo(() => {
         return new Set(

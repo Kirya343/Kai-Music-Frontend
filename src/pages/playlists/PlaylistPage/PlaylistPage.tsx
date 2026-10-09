@@ -1,13 +1,15 @@
 import styles from "./PlaylistPage.module.scss"
-import { usePlaylist } from "@/lib/playlist/hooks/usePlaylist";
+import { usePlaylistPage } from "@/lib/playlist/hooks/usePlaylistPage";
 import { useMemo, useState } from "react";
-import { useRoomPlayback } from "@/lib/playlist";
+import { Playlist, useRoomPlayback } from "@/lib/playlist";
 import { IAudio } from "@audio";
 import AudioFileModal from "@/components/pages/library/AudioFileModal/AudioFileModal";
 import PlaylistTrack from "@/components/ui/track/PlaylistTrack";
 import { useParams } from "react-router-dom";
 import { CirclePlusIcon } from "@/assets/icons";
 import SearchableLayout from "@/components/layout/LibraryLayout/SearchableLayout";
+import { useSearch } from "@common/utils/hooks/useSearch";
+import { useData } from "@common";
 
 const PlaylistPage = ({}: {}) => {
 
@@ -20,11 +22,15 @@ const PlaylistPage = ({}: {}) => {
 
     const { roomPlaylist, playbackState } = useRoomPlayback();
 
-    const { 
-        setSearchQuery, searchQuery,
-        filteredList, playlist,
-        removeAudio
-    } = usePlaylist(playlistId);
+    const { playlists } = useData();
+        
+    const playlist = useMemo<Playlist | null>(() => {
+        if (!playlistId) return null;
+
+        return playlists.data.find(p => p.id === playlistId) || null
+    }, [playlists.data])
+    
+    const { filteredList, searchQuery, setSearchQuery } = useSearch(playlist?.queue || []);
 
     const playingAudioId = useMemo(() => {
         return roomPlaylist?.queue.find(
@@ -32,6 +38,7 @@ const PlaylistPage = ({}: {}) => {
         )?.audio.id;
     }, [roomPlaylist?.queue, playbackState?.entryId]);
 
+    if (!playlist) return null;
 
     return (
         <SearchableLayout
@@ -50,9 +57,9 @@ const PlaylistPage = ({}: {}) => {
                         queueItem={qi}
                         id={idx + 1}
                         isInPlaylist={false}
-                        playlistId={playlist?.id}
+                        playlistId={playlist.id}
                         openEditModal={setAudioFileView}
-                        handleRemove={removeAudio}
+                        handleRemove={playlists.removeAudio}
                         playing={playingAudioId === qi.audio.id}
                     />
                 ))}

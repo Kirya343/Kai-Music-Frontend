@@ -57,5 +57,5 @@ export const useAudioData = () => {
         return unsubscribe;
     }, [addOnConnectHandler]);
     
-    return { audios, syncAudios}
+    return { data: audios, syncAudios}
 }

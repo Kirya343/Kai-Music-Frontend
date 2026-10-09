@@ -3,6 +3,7 @@ import styles from "./AuthLayout.module.scss"
 import type { ReactNode } from "react";
 import { LoadingSpinnerIcon } from "@/assets/icons";
 
+
 interface AuthlayoutProps {
     title: string;
     message: { message: string, success: boolean} | "loading" | null;
@@ -10,6 +11,14 @@ interface AuthlayoutProps {
     links: ReactNode;
 }
 
+/**
+ * AuthLayout if layout for auth-pages to keep same style
+ * 
+ * @param title is page title
+ * @param message is that returns by API
+ * @param inputs is form of inputs that are needed for action (ex: Register or Login)
+ * @param links is place for quick lincks to other pages (ex: switch Login to Register)
+ */
 const AuthLayout = ({ title, message, inputs, links }: AuthlayoutProps) => {
     return (
        <div className={styles.body}>

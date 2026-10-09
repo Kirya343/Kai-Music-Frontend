@@ -2,6 +2,9 @@ import { RepeatAllIcon, NoRepeatIcon, RepeatOneIcon, ShuffleIcon } from "@/asset
 import { useRoomPlayback } from "@room";
 import { PlaybackMode, playlistService } from "@/lib/playlist";
 
+/**
+ * PlaybackModeToggle is component that switches playbackMode of playlist that playing at the moment
+ */
 export const PlaybackModeToggle = () => {
 
     const { roomPlaylist, playbackMode } = useRoomPlayback();

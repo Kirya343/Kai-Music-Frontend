@@ -5,7 +5,7 @@ import { countPosition } from "@common"
 import { ReactNode } from "react"
 import clsx from "clsx"
 import { useRoomPlayback } from "@room"
-import ActionMenu, { IKebabAction } from "../../ActionMenu/ActionMenu"
+import KebabMenu, { IKebabAction } from "../../KebabMenu/KebabMenu"
 
 /**
  * The universal element for any AudioTracks
@@ -102,7 +102,7 @@ const Track = ({
                 {actions?.map(act => (
                     <button onClick={act.func} key={act.title}>{act.icon}</button>
                 ))}
-                {extraActions && <ActionMenu actions={extraActions}/>}
+                {extraActions && <KebabMenu actions={extraActions}/>}
             </div>
         </div>
     )

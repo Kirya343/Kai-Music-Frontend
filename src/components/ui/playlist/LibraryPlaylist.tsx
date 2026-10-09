@@ -1,9 +1,16 @@
 import { Playlist } from "@/lib/playlist";
 import PlaylistCard from "./PlaylistCard/PlaylistCard";
-import { IKebabAction } from "../ActionMenu/ActionMenu";
+import { IKebabAction } from "../KebabMenu/KebabMenu";
 import { TrashIcon } from "@/assets/icons";
 import { useNavigate } from "react-router-dom";
 
+/**
+ * LibraryPlaylist is modification of PlaylistCard, that displays on PlaylistsPage
+ * 
+ * @param playlist is playlist to display 
+ * @param deletePlaylist is void to delete playlist
+ * @param importToRoom is void to import playlist audios to currentRoom 
+ */
 const LibraryPlaylist = ({
     playlist,
     deletePlaylist,

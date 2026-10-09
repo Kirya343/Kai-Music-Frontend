@@ -3,7 +3,7 @@ import { usePlaylistPage } from "@/lib/playlist/hooks/usePlaylistPage";
 import { useMemo, useState } from "react";
 import { Playlist, useRoomPlayback } from "@/lib/playlist";
 import { IAudio } from "@audio";
-import AudioFileModal from "@/components/pages/library/AudioFileModal/AudioFileModal";
+import AudioFileModal from "@/components/ui/modals/AudioFileModal/AudioFileModal";
 import PlaylistTrack from "@/components/ui/track/PlaylistTrack";
 import { useParams } from "react-router-dom";
 import { CirclePlusIcon } from "@/assets/icons";

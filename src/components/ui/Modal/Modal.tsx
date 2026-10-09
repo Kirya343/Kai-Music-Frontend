@@ -10,6 +10,15 @@ interface ModalProps {
     children: ReactNode;
 }
 
+/**
+ * Modal is a parent component for creating modals on his base
+ * 
+ * @param isOpen controls - should modal be visible? 
+ * @param onClose void that closes modal
+ * @param title is string title to display in modal header
+ * @param id is the unuque id for every modal
+ * @param children is content of inheritance modal
+ */
 const Modal = ({
     isOpen,
     onClose,

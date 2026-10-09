@@ -8,7 +8,7 @@ import {
     UserGroupIcon,
     DiscIcon, DoorIcon
 } from "@/assets/icons";
-import JoinRoomModal from "@/components/pages/main/JoinRoomModal/JoinRoomModal";
+import JoinRoomModal from "@/components/ui/modals/JoinRoomModal/JoinRoomModal";
 import { useNavigate } from "react-router-dom";
 import PageLayout from "@/components/layout/PageLayout/PageLayout";
 

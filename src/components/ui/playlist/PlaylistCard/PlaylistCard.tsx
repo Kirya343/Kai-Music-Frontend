@@ -1,14 +1,29 @@
 import { Playlist } from "@/lib/playlist"
-import ActionMenu, { IKebabAction } from "../../ActionMenu/ActionMenu"
+import KebabMenu, { IKebabAction } from "@/components/ui/KebabMenu/KebabMenu"
 import styles from "./PlaylistCard.module.scss"
 import { ReactNode } from "react";
 
+/**
+ * PlaylistCard is universal component to inherit from it and modify it
+ * 
+ * @param title is string title that doesn't display
+ * @param func is void that works on action click
+ * @param icon is react-svg icon that describes the action and displays on  button
+ */
 interface IPlaylistAction {
     title: string;
     func: () => void;
     icon?: ReactNode;
 }
 
+/**
+ * PlaylistCard is universal component to inherit from it and modify it
+ * 
+ * @param playlist is Playlist to display on this card 
+ * @param actions is actions-list to disaplay as buttons on this card
+ * @param extraActions is actions-list to fill the KebabMenu on the card
+ * @param onClick is void that works on card clicking
+ */
 const PlaylistCard = ({
     playlist,
     actions,
@@ -31,7 +46,7 @@ const PlaylistCard = ({
                 {actions?.map(act => (
                     <button onClick={act.func} key={act.title}>{act.icon}</button>
                 ))}
-                {extraActions && <ActionMenu actions={extraActions}/>}
+                {extraActions && <KebabMenu actions={extraActions}/>}
             </div>
         </article>
     )

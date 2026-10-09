@@ -5,6 +5,12 @@ import styles from "./AudioPlayerOpener.module.scss"
 import { RightIcon, PlayIcon, PauseIcon } from "@/assets/icons";
 import { playbackService } from "@playback/services";
 
+/**
+ * AudioPlayerOpener is component that display on bottom of pages and displays
+ * current playing audio
+ * 
+ * on click opens AudioPlayer
+ */
 const AudioPlayerOpener = () => {
 
     const { 

@@ -4,7 +4,7 @@ import styles from "./RoomPage.module.scss";
 import AudioPlayerOpener from "@/components/ui/player/AudioPlayerOpener/AudioPlayerOpener";
 import { useGlobal } from "@common";
 import { useWebSocket } from "@websocket";
-import ActionMenu from "@/components/ui/ActionMenu/ActionMenu";
+import KebabMenu from "@/components/ui/KebabMenu/KebabMenu";
 import { CheckBoxIcon } from "@/assets/icons";
 import Loader from "@/components/ui/Loader/Loader";
 import { playlistService } from "@/lib/playlist";
@@ -98,7 +98,7 @@ const RoomPage = () => {
                     <div className={styles.queue}>
                         <div className={styles.header}>
                             <h3>Playback queue</h3>
-                            <ActionMenu
+                            <KebabMenu
                                 actions={[
                                     {
                                         icon: <CheckBoxIcon/>,

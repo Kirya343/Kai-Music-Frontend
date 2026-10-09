@@ -1,11 +1,18 @@
 "use client"
 
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
-import styles from "./ActionMenu.module.scss";
+import styles from "./KebabMenu.module.scss";
 import { EllipsisVerticalIcon } from "@/assets/icons";
 import clsx from "clsx";
 import { ReactNode } from "react";
 
+/**
+ * IKebabAction is interface for kebab-menu-action
+ * 
+ * @param title is displayable title
+ * @param func is void that uses on click to action
+ * @param icon is react-svg icon that should describe action
+ */
 export interface IKebabAction {
     title: string,
     func: () => void,
@@ -13,14 +20,23 @@ export interface IKebabAction {
     access?: boolean
 };
 
-interface ActionMenuProps {
+interface KebabMenuProps {
     actions: IKebabAction[];
     className?: string;
 }
 
-const ActionMenu = ({ actions, className }: ActionMenuProps) => {
+/**
+ * KebabMenu is component that creates kebab-menu with any actions
+ * 
+ * @param actions is list of actions for menu
+ * @param className is className to design open-button
+ */
+const KebabMenu = ({ actions, className }: KebabMenuProps) => {
     const filtered = actions.filter((action) => action.access ?? true);
 
+    /**
+     * menu doesn't display without actions
+     */
     if (filtered.length === 0) {
         return null;
     }
@@ -64,4 +80,4 @@ const ActionMenu = ({ actions, className }: ActionMenuProps) => {
     );
 };
 
-export default ActionMenu;
+export default KebabMenu;

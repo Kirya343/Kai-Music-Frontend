@@ -2,13 +2,18 @@ import { useEffect, useState } from "react";
 import styles from "./RoomReturnModal.module.scss"
 import { useNavigate } from "react-router-dom";
 import { IShortRoom, roomService } from "@room";
-import Modal from "../Modal/Modal";
+import Modal from "../../Modal/Modal";
 
+/**
+ * RoomReturnModal is component that helps to return to room that was before 
+ * user left application
+ */
 const RoomReturnModal = () => {
 
     const [room, setRoom] = useState<IShortRoom | null>(null);
     const navigate = useNavigate();
 
+    // loads room
     useEffect(() => {
         async function loadRoom() {
             try {
@@ -22,16 +27,22 @@ const RoomReturnModal = () => {
         loadRoom()
     }, [])
 
+    /**
+     * void that tries to join room
+     */
     const joinRoom = async () => {
         if (!room?.code) return;
         try {
             await roomService.joinRoom(room.code);
-        } finally {
             navigate("/room");
-            setRoom(null);
+        } catch (e) {
+            console.error(e);
         }
     }
 
+    /**
+     * void that tries leave room
+     */
     const leaveRoom = async () => {
         try {
             await roomService.leaveRoom();

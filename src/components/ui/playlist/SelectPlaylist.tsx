@@ -1,7 +1,14 @@
 import { Playlist } from "@/lib/playlist"
 import PlaylistCard from "./PlaylistCard/PlaylistCard"
-import { IKebabAction } from "../ActionMenu/ActionMenu";
+import { IKebabAction } from "../KebabMenu/KebabMenu";
 
+/**
+ * LibraryPlaylist is modification of SelectPlaylist, that displays in TrackImportPlaylists
+ * 
+ * @param playlist is playlist to display 
+ * @param onClick is void that works on card click
+ * @param importToRoom is void to import playlist audios to currentRoom 
+ */
 const SelectPlaylist = ({
     playlist,
     importToRoom,

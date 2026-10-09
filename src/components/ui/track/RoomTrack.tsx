@@ -1,7 +1,7 @@
 import { playlistService, useRoomPlayback } from "@/lib/playlist";
 import Track from "./Track/Track";
 import { TrashIcon } from "@/assets/icons";
-import { IKebabAction } from "../ActionMenu/ActionMenu";
+import { IKebabAction } from "../KebabMenu/KebabMenu";
 import { playbackService } from "@playback/services";
 import { IQueueItem } from "@playback";
 

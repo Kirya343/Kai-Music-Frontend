@@ -2,7 +2,7 @@ import { useRoomPlayback } from "@room";
 import { IAudio } from "@audio";
 import { useMemo, useState } from "react";
 import styles from "./LibraryPage.module.scss"
-import AudioFileModal from "@/components/pages/library/AudioFileModal/AudioFileModal";
+import AudioFileModal from "@/components/ui/modals/AudioFileModal/AudioFileModal";
 import { useLibrary } from "@audio/hooks/useLibrary";
 import { CirclePlusIcon, CheckmarkIcon, CrossIcon } from "@/assets/icons";
 import LibraryTrack from "@/components/ui/track/LibraryTrack";

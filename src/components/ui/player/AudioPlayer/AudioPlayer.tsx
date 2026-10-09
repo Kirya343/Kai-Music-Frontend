@@ -3,11 +3,17 @@ import { useEffect, useRef } from "react";
 import { PlaybackModeToggle } from "../PlaybackModeToggle";
 import VolumeSlider from "../VolumeSlider/VolumeSlider";
 import { countPosition } from "@common";
-import styles from "./Audio.module.scss";
+import styles from "./AudioPlayer.module.scss";
 import { PlusIcon, DownIcon, RightIcon, LeftIcon, PlayIcon, PauseIcon } from "@/assets/icons";
 import { playbackService } from "@playback/services";
 
-const Audio = () => {
+/**
+ * Audio is component that contains main player
+ * gives to user access to controll playback
+ */
+const AudioPlayer = () => {
+
+    // controls from RoomPlaybackContext
     const {  
         updateMessage, 
         fullPlayerOpen, playingAudio,
@@ -19,10 +25,12 @@ const Audio = () => {
 
     const playTrack = playbackService.usePlayTrack();
 
+    // variables to control the scrolling title
     const headerRef = useRef<HTMLDivElement | null>(null);
     const textRef = useRef<HTMLDivElement | null>(null);
     const duration = playingAudio?.duration || 0
 
+    // scrolling title control
     useEffect(() => {
         const header = headerRef.current;
         const text = textRef.current;
@@ -36,6 +44,7 @@ const Audio = () => {
         }
     }, [playingAudio, fullPlayerOpen]);
 
+    // axist only if playbackState is loaded
     return playbackState ? (
         <>
             <VolumeSlider visible={false}/>
@@ -118,4 +127,4 @@ const Audio = () => {
     ) : <></>
 };
 
-export default Audio;
+export default AudioPlayer;

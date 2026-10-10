@@ -8,7 +8,7 @@ import KebabMenu from "@/components/ui/KebabMenu/KebabMenu";
 import { CheckBoxIcon } from "@/assets/icons";
 import Loader from "@/components/ui/Loader/Loader";
 import { playlistService } from "@/lib/playlist";
-import TrackImportModal from "@/components/ui/TrackImportMenu/TrackImportModal";
+import TrackImportModal from "@/components/ui/modals/TrackImportModal/TrackImportModal";
 import RoomTrack from "@/components/ui/track/RoomTrack";
 
 const RoomPage = () => {

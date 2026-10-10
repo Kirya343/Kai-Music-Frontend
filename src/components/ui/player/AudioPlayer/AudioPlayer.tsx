@@ -44,7 +44,7 @@ const AudioPlayer = () => {
         }
     }, [playingAudio, fullPlayerOpen]);
 
-    // axist only if playbackState is loaded
+    // displays only if playbackState is loaded
     return playbackState ? (
         <>
             <VolumeSlider visible={false}/>

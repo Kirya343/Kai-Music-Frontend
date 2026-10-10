@@ -1,12 +1,11 @@
 import ImportingTrack from "@/components/ui/track/ImportingTrack";
 import styles from "./TrackImportPlaylist.module.scss"
-import { usePlaylistPage } from "@/lib/playlist/hooks/usePlaylistPage";
 import { useMemo } from "react";
 import { Playlist } from "@/lib/playlist";
 import { useData } from "@common";
-import { IQueueItem } from "@playback";
 import { useSearch } from "@common/utils/hooks/useSearch";
 
+/** Displays playlist with importable tracks */
 const TrackImportPlaylist = ({
     playlistId,
     importPlaylist
@@ -53,7 +52,7 @@ const TrackImportPlaylist = ({
                 {filteredList.map((qi, idx) => (
                     <ImportingTrack
                         audio={qi.audio}
-                        id={idx + 1}
+                        trackNumber={idx + 1}
                         isInPlaylist={playlistAudioIds.has(qi.audio.id)}
                         importPlaylistId={importPlaylist.id}
                         className={styles.track}

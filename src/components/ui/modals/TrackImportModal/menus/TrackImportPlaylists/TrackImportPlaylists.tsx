@@ -5,13 +5,20 @@ import { Playlist } from "@/lib/playlist";
 import { useData } from "@common";
 import { useSearch } from "@common/utils/hooks/useSearch";
 
+interface TrackImportPlaylistsProps { 
+
+    /** Opens menu with current playlist to select track to import from them */
+    seePlaylist: (playlistId: number) => void;
+
+    /** Playlist metadata to add the track to */
+    importPlaylist: Playlist;
+}
+
+/** Displays list of playlists to view playlist with importable tracks */
 const TrackImportPlaylists = ({
     seePlaylist,
     importPlaylist
-}: {
-    seePlaylist: (playlistId: number) => void;
-    importPlaylist: Playlist;
-}) => {
+}: TrackImportPlaylistsProps) => {
     
     const { playlists } = useData();
     

@@ -7,6 +7,12 @@ interface SearchInputProps {
     className?: string;
 }
 
+/**
+ * Component for universal search-input for SearchLauout or any page where search is needed
+ * 
+ * @param param0 
+ * @returns 
+ */
 export const SearchInput = ({
     value,
     onChange,

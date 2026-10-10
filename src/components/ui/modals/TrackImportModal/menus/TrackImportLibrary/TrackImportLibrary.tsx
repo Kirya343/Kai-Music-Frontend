@@ -4,6 +4,7 @@ import ImportingTrack from "@/components/ui/track/ImportingTrack";
 import { useMemo } from "react";
 import { Playlist } from "@/lib/playlist";
 
+/** Displays user library with importable tracks to playlist */
 const TrackImportLibrary = ({ importPlaylist }: { importPlaylist: Playlist }) => {
 
     const { 
@@ -58,7 +59,7 @@ const TrackImportLibrary = ({ importPlaylist }: { importPlaylist: Playlist }) =>
                             >
                                 <ImportingTrack
                                     audio={audio}
-                                    id={item.index + 1}
+                                    trackNumber={item.index + 1}
                                     isInPlaylist={playlistAudioIds.has(audio.id)}
                                     importPlaylistId={importPlaylist.id}
                                     className={styles.track}

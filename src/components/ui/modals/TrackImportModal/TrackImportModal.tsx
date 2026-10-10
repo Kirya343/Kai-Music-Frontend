@@ -7,15 +7,27 @@ import { ArrowIcon } from "@/assets/icons"
 import clsx from "clsx";
 import { Playlist } from "@/lib/playlist";
 
+/** Props for the TrackImportModal component */
+interface TrackImportModalProps { 
+    
+    /** Closes modal */
+    onClose: () => void;
+
+    /** Display modal */
+    isOpen: boolean;
+
+    /** Playlist metadata to add the track to */
+    importPlaylist: Playlist; 
+}
+
+/**
+ * Displays the modal for import track to playlist
+ */
 const TrackImportModal = ({ 
     importPlaylist,
     isOpen,
     onClose 
-}: { 
-    onClose: () => void;
-    isOpen: boolean;
-    importPlaylist: Playlist; 
-}) => {
+}: TrackImportModalProps) => {
 
     const [view, setView] = useState<"library" | "playlists" | number>("library");
 
@@ -37,13 +49,25 @@ const TrackImportModal = ({
         <div className={styles.layout}>
             <div className={styles.page}>
                 <div className={styles.header}>
-                    <button onClick={() => onClose()} className={styles.closeBtn}><ArrowIcon direction="left"/></button>
+                    <button onClick={() => onClose()} className={styles.closeBtn}>
+                        <ArrowIcon direction="left"/>
+                    </button>
                     <h2 className={styles.header}>Add tracks</h2>
                 </div>
 
                 <div className={styles.menusList}>
-                    <button onClick={() => setView("library")} className={clsx(styles.menu, view === "library" && styles.active)}>Tracks</button>
-                    <button onClick={() => setView("playlists")} className={clsx(styles.menu, view === "playlists" && styles.active)}>Playlists</button>
+                    <button 
+                        onClick={() => setView("library")} 
+                        className={clsx(styles.menu, view === "library" && styles.active)}
+                    >
+                        Tracks
+                    </button>
+                    <button 
+                        onClick={() => setView("playlists")} 
+                        className={clsx(styles.menu, view === "playlists" && styles.active)}
+                    >
+                        Playlists
+                    </button>
                 </div>
                 
                 {renderView()}

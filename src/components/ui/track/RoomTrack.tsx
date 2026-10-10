@@ -1,17 +1,36 @@
 import { playlistService, useRoomPlayback } from "@/lib/playlist";
-import Track from "./Track/Track";
+import Track, { ITrackAction } from "./Track/Track";
 import { TrashIcon } from "@/assets/icons";
-import { IKebabAction } from "../KebabMenu/KebabMenu";
 import { playbackService } from "@playback/services";
 import { IQueueItem } from "@playback";
 
-const RoomTrack = ({queueItem, selected, selectMode, toggleTrack, playing}: {
+/** Props for the RoomTrack component */
+interface RoomTrackProps {
+
+    /** Playlist queue item with audio metadata to display */
     queueItem: IQueueItem, 
+
+    /** Whether the track is currently selected. */
     selected: boolean, 
+
+    /** Display a checkbox for track selection. */
     selectMode: boolean,
+
+    /** Callback that toggles current track selection */
     toggleTrack: (id: number) => void,
+
+    /** Apply the playing style and display the playback indicator. */
     playing: boolean
-}) => {
+}
+
+/** Displays audio track in the RoomPage */
+const RoomTrack = ({
+    queueItem, 
+    selected, 
+    selectMode, 
+    toggleTrack, 
+    playing
+}: RoomTrackProps) => {
 
     const { 
         playbackState,
@@ -36,7 +55,7 @@ const RoomTrack = ({queueItem, selected, selectMode, toggleTrack, playing}: {
         }
     }
 
-    const actions: IKebabAction[] = []
+    const actions: ITrackAction[] = []
 
     if (roomPlaylist?.id) {
         actions.push({
@@ -51,10 +70,10 @@ const RoomTrack = ({queueItem, selected, selectMode, toggleTrack, playing}: {
         <Track
             onClick={() => handleTrackClick(queueItem.id)}
             audio={queueItem.audio}
-            id={queueItem.position + 1}
+            trackNumber={queueItem.position + 1}
             noBorder
             actions={actions}
-            props={{
+            visualProps={{
                 title: true,
                 artist: true
             }}

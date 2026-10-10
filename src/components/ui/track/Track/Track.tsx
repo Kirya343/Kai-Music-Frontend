@@ -2,69 +2,114 @@ import { IAudio } from "@audio"
 import styles from "./Track.module.scss"
 import { MusicNoteIcon, PlayingAudioIcon } from "@/assets/icons"
 import { countPosition } from "@common"
-import { ReactNode } from "react"
+import { HTMLAttributes, ReactNode } from "react"
 import clsx from "clsx"
 import { useRoomPlayback } from "@room"
-import KebabMenu, { IKebabAction } from "../../KebabMenu/KebabMenu"
+import KebabMenu, { IKebabAction } from "@/components/ui/KebabMenu/KebabMenu"
 
-/**
- * The universal element for any AudioTracks
- * 
- * Pro
- */
-interface ITrackAction {
+/** Defines an action button displayed on a track. */
+export interface ITrackAction {
+
+    /** Non-visible track title */
     title: string;
+
+    /** Callback executed then action is triggered */
     func: () => void;
-    icon?: ReactNode;
+
+    /** Icon displayed on button */
+    icon: ReactNode;
 }
 
+/**
+ * Controls the visibility of track metadata.
+ * Unspecified properties default to visible.
+ */
 interface TrackVisualParameters {
+    /** Show the audio ID. */
     id?: true;
+
+    /** Show the track title. */
     title?: true;
+
+    /** Show the artist name. */
     artist?: true;
+
+    /** Show the album name. */
     album?: true;
 
+    /** Show the track duration. */
     duration?: true;
 }
 
-interface TrackProps {
+/**
+ * Props for the Track component.
+ */
+interface TrackProps extends HTMLAttributes<HTMLDivElement> {
+    /** Audio metadata to display. */
     audio: IAudio;
+
+    /** Action buttons displayed alongside the track. */
     actions?: ITrackAction[];
+
+    /** Additional actions displayed in the kebab menu. */
     extraActions?: IKebabAction[];
-    id: number;
+
+    /** Position-based number displayed instead of the audio ID. */
+    trackNumber?: number;
+
+    /** Remove the track's border. */
     noBorder?: true;
-    props?: TrackVisualParameters;
 
-    onClick?: () => void;
+    /** Controls the visibility of individual metadata fields. */
+    visualProps?: TrackVisualParameters;
 
+    /** Display a checkbox for track selection. */
     selectionMode?: boolean;
+
+    /** Whether the track is currently selected. */
     selected?: boolean;
 
+    /** Apply the playing style and display the playback indicator. */
     playing?: boolean;
-    className?: string;
 }
 
+/**
+ * Displays an audio track with its metadata and optional actions.
+ *
+ * Supports customizable metadata visibility, selection mode,
+ * playback indication, and standard HTML div attributes.
+ */
 const Track = ({ 
     audio, 
     actions, 
     extraActions, 
-    id,
+    trackNumber,
     noBorder,
-    props,
+    visualProps,
 
-    onClick = () => {},
+    onClick,
 
     selectionMode = false,
     selected = false,
 
     playing = false,
-    className
+    className,
+
+    ...divProps
 }: TrackProps) => {
 
     const { playbackState } = useRoomPlayback();
 
     return (
-        <div className={clsx(styles.track, noBorder && styles.noBorder, playing && styles.playing, className)}>
+        <div 
+            {...divProps}
+            className={clsx(
+                styles.track, 
+                noBorder && styles.noBorder, 
+                playing && styles.playing, 
+                className
+            )}
+        >
             <div className={styles.body} onClick={onClick}>
 
                 {selectionMode && (
@@ -80,20 +125,20 @@ const Track = ({
                 </div>
 
                 <div className={styles.meta}>
-                    {(!props || props.title) && (
+                    {(!visualProps || visualProps.title) && (
                         <span className={styles.title}>
                             {playing && <PlayingAudioIcon playing={!playbackState?.pause} />}
 
-                            {(!props || props.id) && <span className={styles.id}>#{id ? id :audio.id}</span>} 
+                            {(!visualProps || visualProps.id) && <span className={styles.id}>#{trackNumber || audio.id}</span>} 
                             {audio?.title ?? audio?.name}
                         </span>
                     )}
-                    {(!props || props.artist) && (
+                    {(!visualProps || visualProps.artist) && (
                         <span className={styles.artist}>{audio?.artist || "Unknown artist"}</span>
                     )}
                     <span className={styles.info}>
-                        {(!props || props.album) && audio?.album && (<>{audio?.album} • </>)}
-                        {(!props || props.duration) && audio?.duration && (<>{countPosition(audio?.duration)}</>)}
+                        {(!visualProps || visualProps.album) && audio?.album && (<>{audio?.album} • </>)}
+                        {(!visualProps || visualProps.duration) && audio?.duration && (<>{countPosition(audio?.duration)}</>)}
                     </span>
                 </div>
             </div>

@@ -1,5 +1,5 @@
 import { TrashIcon, CheckmarkIcon, PenIcon, PlusIcon, ShazamIcon } from "@/assets/icons"
-import { playlistService } from "@/lib/playlist"
+import { playlistService } from "@playlist"
 import { audioService, IAudio } from "@audio"
 import Track, { ITrackAction } from "./Track/Track"
 import { IQueueItem } from "@playback"

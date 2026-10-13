@@ -1,5 +1,4 @@
-import { audioService } from "@audio/audioService";
-import { IAudio } from "@audio/audioTypes";
+import { audioService, IAudio } from "@audio";
 import { useWebSocket } from "@websocket";
 import { useCallback, useEffect, useState } from "react";
 

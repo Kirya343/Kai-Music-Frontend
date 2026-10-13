@@ -1,9 +1,8 @@
 import SelectPlaylist from "@/components/ui/playlist/SelectPlaylist";
 import styles from "./TrackImportPlaylists.module.scss"
 import { SearchInput } from "@/components/ui/SearchInput/SearchInput";
-import { Playlist } from "@/lib/playlist";
-import { useData } from "@common";
-import { useSearch } from "@common/utils/hooks/useSearch";
+import { Playlist } from "@playlist";
+import { useData, useSearch} from "@common";
 
 interface TrackImportPlaylistsProps { 
 

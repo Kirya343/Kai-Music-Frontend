@@ -5,7 +5,7 @@ import TrackImportPlaylists from "./menus/TrackImportPlaylists/TrackImportPlayli
 import TrackImportPlaylist from "./menus/TrackImportPlaylist/TrackImportPlaylist";
 import { ArrowIcon } from "@/assets/icons"
 import clsx from "clsx";
-import { Playlist } from "@/lib/playlist";
+import { Playlist } from "@playlist";
 
 /** Props for the TrackImportModal component */
 interface TrackImportModalProps { 

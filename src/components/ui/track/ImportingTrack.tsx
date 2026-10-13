@@ -1,5 +1,5 @@
 import { CheckmarkIcon, PlusIcon } from "@/assets/icons";
-import { playlistService } from "@/lib/playlist"
+import { playlistService } from "@playlist"
 import { IAudio } from "@audio"
 import Track from "./Track/Track"
 import { HTMLAttributes } from "react";

@@ -1,6 +1,6 @@
 import { useCallback, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "@auth";
+import { useAuth } from "@user";
 import { api } from "@common";
 
 const LogoutPage = () => {

@@ -1,9 +1,8 @@
 import { useRoomPlayback } from "@room";
-import { IAudio } from "@audio";
+import { IAudio, useLibrary } from "@audio";
 import { useMemo, useState } from "react";
 import styles from "./LibraryPage.module.scss"
 import AudioFileModal from "@/components/ui/modals/AudioFileModal/AudioFileModal";
-import { useLibrary } from "@audio/hooks/useLibrary";
 import { CirclePlusIcon, CheckmarkIcon, CrossIcon } from "@/assets/icons";
 import LibraryTrack from "@/components/ui/track/LibraryTrack";
 import SearchableLayout from "@/components/layout/LibraryLayout/SearchableLayout";
@@ -93,8 +92,8 @@ const LibraryPage = () => {
                             >
                                 <LibraryTrack
                                     audio={audio}
-                                    id={item.index + 1}
-                                    playlistId={roomPlaylist?.id}
+                                    trackNumber={item.index + 1}
+                                    importPlaylistId={roomPlaylist?.id}
                                     openEditModal={setAudioFileView}
                                     handleDelete={deleteAudio}
                                     playing={playingAudioId === audio.id}

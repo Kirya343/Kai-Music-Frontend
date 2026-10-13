@@ -3,7 +3,7 @@ import { useEffect, useRef } from "react";
 
 import styles from "./AudioPlayerOpener.module.scss"
 import { RightIcon, PlayIcon, PauseIcon } from "@/assets/icons";
-import { playbackService } from "@playback/services";
+import { playbackService } from "@playback";
 
 /**
  * AudioPlayerOpener is component that display on bottom of pages and displays

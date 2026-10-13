@@ -1,5 +1,14 @@
 import { useMemo, useState } from "react";
 
+/**
+ * Provides search and filtering functionality for a list of objects.
+ *
+ * Searches recursively through object values and sorts the list by ID
+ * in descending order when the search query is empty.
+ *
+ * @param list - List of objects to filter. Each object must have a numeric ID.
+ * @returns The search query, its state setter, and the filtered list.
+ */
 export const useSearch = <T extends { id: number }>(list: T[]) => {
 
     const [searchQuery, setSearchQuery] = useState<string>("")

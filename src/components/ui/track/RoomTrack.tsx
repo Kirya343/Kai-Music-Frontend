@@ -1,8 +1,7 @@
-import { playlistService, useRoomPlayback } from "@/lib/playlist";
+import { playlistService } from "@playlist";
 import Track, { ITrackAction } from "./Track/Track";
 import { TrashIcon } from "@/assets/icons";
-import { playbackService } from "@playback/services";
-import { IQueueItem } from "@playback";
+import { playbackService, IQueueItem, useRoomPlayback } from "@playback";
 
 /** Props for the RoomTrack component */
 interface RoomTrackProps {

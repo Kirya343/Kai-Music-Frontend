@@ -1,12 +1,11 @@
-import { useRoomPlayback } from "@/lib/playlist";
 import styles from "./PlaylistsPage.module.scss"
 import { CirclePlusIcon } from "@/assets/icons";
 import { useState } from "react";
 import PlaylistCreateModal from "@/components/ui/modals/PlaylistCreateModal/PlaylistCreateModal";
 import LibraryPlaylist from "@/components/ui/playlist/LibraryPlaylist";
 import SearchableLayout from "@/components/layout/LibraryLayout/SearchableLayout";
-import { useSearch } from "@common/utils/hooks/useSearch";
-import { useData } from "@common";
+import { useData, useSearch } from "@common";
+import { useRoomPlayback } from "@playback";
 
 const PlaylistsPage = () => {
 

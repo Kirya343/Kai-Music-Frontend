@@ -1,5 +1,5 @@
 import { createApi } from '@common';
-import { IUser } from '@user/userTypes';
+import { IUser } from '@user';
 
 const userApi = createApi("/user")
 

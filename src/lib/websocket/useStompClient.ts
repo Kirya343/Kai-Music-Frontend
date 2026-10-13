@@ -4,7 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { Client, Frame } from "@stomp/stompjs";
 
 import { API_BASE } from "@/config";
-import { useAuth } from "@auth";
+import { useAuth } from "@user";
 import { api } from "@common";
 
 interface UseStompClientResult {

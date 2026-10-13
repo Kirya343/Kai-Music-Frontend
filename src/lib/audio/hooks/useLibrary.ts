@@ -1,7 +1,5 @@
-import { audioService } from "@audio/audioService";
-import { IAudio } from "@audio/audioTypes";
-import { useData } from "@common";
-import { useSearch } from "@common/utils/hooks/useSearch";
+import { IAudio, audioService } from "@audio";
+import { useData, useSearch } from "@common";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { AxiosProgressEvent } from "axios";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";

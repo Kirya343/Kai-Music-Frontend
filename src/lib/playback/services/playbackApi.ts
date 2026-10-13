@@ -1,5 +1,5 @@
 import { createApi } from "@common";
-import { IPlaybackState } from "@playback/playbackTypes";
+import { IPlaybackState } from "@playback";
 
 const playbackApi = createApi("/playback")
 

@@ -1,9 +1,8 @@
 import ImportingTrack from "@/components/ui/track/ImportingTrack";
 import styles from "./TrackImportPlaylist.module.scss"
 import { useMemo } from "react";
-import { Playlist } from "@/lib/playlist";
-import { useData } from "@common";
-import { useSearch } from "@common/utils/hooks/useSearch";
+import { Playlist } from "@playlist";
+import { useData, useSearch } from "@common";
 
 /** Displays playlist with importable tracks */
 const TrackImportPlaylist = ({

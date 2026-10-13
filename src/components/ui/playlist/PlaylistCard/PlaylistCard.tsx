@@ -1,4 +1,4 @@
-import { Playlist } from "@/lib/playlist"
+import { Playlist } from "@playlist"
 import KebabMenu, { IKebabAction } from "@/components/ui/KebabMenu/KebabMenu"
 import styles from "./PlaylistCard.module.scss"
 import { ReactNode } from "react";

@@ -1,7 +1,7 @@
 
 import { ReactNode } from "react";
 import { DataProvider, GlobalProvider } from "@common";
-import { AuthProvider } from "@auth";
+import { AuthProvider } from "@user";
 import { WebSocketProvider } from "@websocket";
 import { RoomPlaybackProvider } from "@playback";
 

@@ -1,8 +1,8 @@
-import { useLibrary } from "@audio/hooks/useLibrary";
+import { useLibrary } from "@audio";
 import styles from "./TrackImportLibrary.module.scss"
 import ImportingTrack from "@/components/ui/track/ImportingTrack";
 import { useMemo } from "react";
-import { Playlist } from "@/lib/playlist";
+import { Playlist } from "@playlist";
 
 /** Displays user library with importable tracks to playlist */
 const TrackImportLibrary = ({ importPlaylist }: { importPlaylist: Playlist }) => {

@@ -1,7 +1,10 @@
-// apiClient.js
+// apiClient.ts
 import { API_BASE } from "@/config";
 import axios from "axios";
 
+/**
+ * Base Axios instance configured for API requests.
+ */
 const api = axios.create({
     baseURL: API_BASE || "https://music.workswap.org",
     withCredentials: true,
@@ -11,8 +14,20 @@ const api = axios.create({
     },
 });
 
+/**
+ * Shared promise for concurrent token refresh requests.
+ */
 let refreshPromise: Promise<void> | null = null;
 
+/**
+ * Configures automatic authentication token refresh on HTTP 401 responses.
+ *
+ * Concurrent requests share the same refresh operation.
+ * After a successful refresh, the original request is retried.
+ *
+ * @param instance - Axios instance to configure.
+ * @returns The configured Axios instance.
+ */
 const setupAuthInterceptor = (instance: typeof api) => {
     instance.interceptors.response.use(
         response => response,
@@ -51,6 +66,15 @@ const setupAuthInterceptor = (instance: typeof api) => {
 
 setupAuthInterceptor(api);
 
+/**
+ * Creates an Axios client scoped to a specific API endpoint.
+ *
+ * Inherits the base client's configuration and enables automatic
+ * authentication token refresh.
+ *
+ * @param prefix - API endpoint prefix (e.g., "/audio").
+ * @returns A configured Axios instance for the specified endpoint.
+ */
 export const createApi = (prefix: string) =>
     setupAuthInterceptor(
         axios.create({

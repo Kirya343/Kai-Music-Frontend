@@ -1,15 +1,14 @@
 import styles from "./PlaylistPage.module.scss"
-import { usePlaylistPage } from "@/lib/playlist/hooks/usePlaylistPage";
 import { useMemo, useState } from "react";
-import { Playlist, useRoomPlayback } from "@/lib/playlist";
+import { Playlist } from "@playlist";
 import { IAudio } from "@audio";
 import AudioFileModal from "@/components/ui/modals/AudioFileModal/AudioFileModal";
 import PlaylistTrack from "@/components/ui/track/PlaylistTrack";
 import { useParams } from "react-router-dom";
 import { CirclePlusIcon } from "@/assets/icons";
 import SearchableLayout from "@/components/layout/LibraryLayout/SearchableLayout";
-import { useSearch } from "@common/utils/hooks/useSearch";
-import { useData } from "@common";
+import { useData, useSearch } from "@common";
+import { useRoomPlayback } from "@playback";
 
 const PlaylistPage = ({}: {}) => {
 
@@ -55,9 +54,9 @@ const PlaylistPage = ({}: {}) => {
                 {filteredList.map((qi, idx) => (
                     <PlaylistTrack
                         queueItem={qi}
-                        id={idx + 1}
+                        trackNumber={idx + 1}
                         isInPlaylist={false}
-                        playlistId={playlist.id}
+                        currentPlaylistId={playlist.id}
                         openEditModal={setAudioFileView}
                         handleRemove={playlists.removeAudio}
                         playing={playingAudioId === qi.audio.id}

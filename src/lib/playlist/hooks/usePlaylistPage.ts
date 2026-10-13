@@ -1,9 +1,7 @@
-import { useCallback, useMemo } from "react";
-import { Playlist } from "../playlistTypes";
-import { playlistService } from "../services";
-import { useSearch } from "@common/utils/hooks/useSearch";
+import { useMemo } from "react";
+import { Playlist } from "@playlist";
+import { useSearch, useData } from "@common";
 import { IQueueItem } from "@playback";
-import { useData } from "@common";
 
 export const usePlaylistPage = (playlistId: number) => {
 

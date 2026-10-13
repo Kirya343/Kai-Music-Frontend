@@ -1,5 +1,5 @@
 import { PenIcon, PlusIcon, ShazamIcon, TrashIcon } from "@/assets/icons";
-import { playlistService } from "@/lib/playlist"
+import { playlistService } from "@playlist"
 import { audioService, IAudio } from "@audio"
 import Track from "./Track/Track"
 import { HTMLAttributes } from "react";
@@ -18,7 +18,7 @@ interface LibraryTrackProps extends HTMLAttributes<HTMLDivElement> {
     playing: boolean;
     
     /** ID of the playlist to add the track to. */
-    importPlaylistId: number;
+    importPlaylistId?: number;
 
     /** Opens the audio editing modal. */
     openEditModal: (audio: IAudio) => void;

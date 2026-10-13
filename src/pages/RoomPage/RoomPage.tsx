@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { IRoomUpdate, useRoomPlayback, roomService } from "@room";
 import styles from "./RoomPage.module.scss";
 import AudioPlayerOpener from "@/components/ui/player/AudioPlayerOpener/AudioPlayerOpener";
@@ -7,7 +7,7 @@ import { useWebSocket } from "@websocket";
 import KebabMenu from "@/components/ui/KebabMenu/KebabMenu";
 import { CheckBoxIcon } from "@/assets/icons";
 import Loader from "@/components/ui/Loader/Loader";
-import { playlistService } from "@/lib/playlist";
+import { playlistService } from "@playlist";
 import TrackImportModal from "@/components/ui/modals/TrackImportModal/TrackImportModal";
 import RoomTrack from "@/components/ui/track/RoomTrack";
 

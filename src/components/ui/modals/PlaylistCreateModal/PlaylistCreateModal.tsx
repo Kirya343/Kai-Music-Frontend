@@ -1,7 +1,7 @@
 import { useState } from "react";
 import styles from "./PlaylistCreateModal.module.scss"
 import Modal from "@/components/ui/Modal/Modal";
-import { CreatePlaylist } from "@/lib/playlist";
+import { CreatePlaylist } from "@playlist";
 import { useData } from "@common";
 
 /**

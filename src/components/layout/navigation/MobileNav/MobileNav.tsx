@@ -1,7 +1,7 @@
 import { NavLink } from "react-router-dom";
 import styles from "./MobileNav.module.scss"
 import { useRoomPlayback } from "@playback";
-import { useAuth } from "@auth";
+import { useAuth } from "@user";
 import { PlaylistIcon, DoorIcon, LibraryIcon, HomeIcon } from "@/assets/icons";
 
 import { ReactNode } from "react";

@@ -1,6 +1,6 @@
 // LoginSuccessPage.jsx
 import { useEffect } from "react";
-import { useAuth } from "@auth";
+import { useAuth } from "@user";
 import { useNavigate, useLocation } from "react-router-dom";
 
 const LoginSuccessPage = () => {

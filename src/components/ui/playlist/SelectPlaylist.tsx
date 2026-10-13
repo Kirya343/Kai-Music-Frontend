@@ -1,4 +1,4 @@
-import { Playlist } from "@/lib/playlist"
+import { Playlist } from "@playlist"
 import PlaylistCard from "./PlaylistCard/PlaylistCard"
 import { IKebabAction } from "../KebabMenu/KebabMenu";
 

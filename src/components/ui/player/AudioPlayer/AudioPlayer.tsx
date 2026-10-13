@@ -5,7 +5,7 @@ import VolumeSlider from "../VolumeSlider/VolumeSlider";
 import { countPosition } from "@common";
 import styles from "./AudioPlayer.module.scss";
 import { PlusIcon, DownIcon, RightIcon, LeftIcon, PlayIcon, PauseIcon } from "@/assets/icons";
-import { playbackService } from "@playback/services";
+import { playbackService } from "@playback";
 
 /**
  * Audio is component that contains main player

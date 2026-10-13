@@ -1,7 +1,7 @@
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { useRoomPlayback } from "@room";
 import styles from "./Header.module.scss"
-import { useAuth } from "@/lib/auth";
+import { useAuth } from "@user";
 import { PlaylistIcon, DoorIcon, LibraryIcon, UserIcon } from "@/assets/icons";
 import { useGlobal } from "@common";
 import { ReactNode } from "react";

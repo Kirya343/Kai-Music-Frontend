@@ -3,7 +3,7 @@ import { useWebSocket } from "@websocket";
 import { AudioChunk } from "@audio";
 import { IListeningRoom } from "@room";
 import { IPlaybackState } from "@playback";
-import { PlaybackMode, Playlist } from "@/lib/playlist";
+import { PlaybackMode, Playlist } from "@playlist";
 
 export const useListeningRoomWS = () => {
     

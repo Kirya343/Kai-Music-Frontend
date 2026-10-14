@@ -106,14 +106,19 @@ const AudioPlayer = () => {
                     <div className={styles.navigation}>
                         <PlaybackModeToggle />
                         <button 
+                            aria-label="Play Prev Track"
                             onClick={() => playTrack("prev")}
                         >
                             <LeftIcon />
                         </button>
-                        <button onClick={togglePlay}>
+                        <button
+                            aria-label={playbackState.pause ? "Resume Track" : "Pause Track"}
+                            onClick={togglePlay}
+                        >
                             {playbackState.pause ? <PlayIcon /> : <PauseIcon />}
                         </button>
                         <button 
+                            aria-label="Play Next Track"
                             onClick={() => playTrack("next")}>
                             <RightIcon />
                         </button>

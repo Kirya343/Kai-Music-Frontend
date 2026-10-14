@@ -189,6 +189,8 @@ export const useMediaSource = () => {
         const audio = audioRef.current;
         const state = unsyncedStateRef.current;
 
+        
+
         if (!audio || !bufferedRanges || state === null) {
             return;
         }
@@ -196,6 +198,8 @@ export const useMediaSource = () => {
         console.log('стейты правильные', entryId);
 
         const ranges = bufferedRanges.get(entryId)
+
+        console.log('ranges', ranges);
 
         if (!ranges) return;
 
@@ -206,6 +210,7 @@ export const useMediaSource = () => {
         );
 
         if (!isBuffered) {
+            console.warn('требуемая позиция не буферризированная', state.position);
             return;
         }
 
@@ -213,7 +218,7 @@ export const useMediaSource = () => {
         unsyncedStateRef.current = null;
 
         if (!state.pause) {
-            console.log("start playing")
+            console.log("start playing", entryId)
             setPlaybackState(prev => ({...prev!, pause: false}))
             resumePlayback();
         }

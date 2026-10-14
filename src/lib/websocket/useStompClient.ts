@@ -11,20 +11,21 @@ interface UseStompClientResult {
     client: Client | null;
     connected: boolean;
     error: boolean;
-    addOnConnectHandler(handler: (client: Client) => void): () => void;
+    addOnConnectHandler(handler: (client: Client, isReconnect: boolean) => void): () => void;
 }
 
 export function useStompClient(): UseStompClientResult {
     const { user } = useAuth();
 
     const clientRef = useRef<Client | null>(null);
+    const hasConnectedRef = useRef(false);
 
     const [client, setClient] = useState<Client | null>(null);
     const [connected, setConnected] = useState(false);
     const [error, setError] = useState(false);
 
     type Cleanup = () => void;
-    type OnConnectHandler = (client: Client) => void | Cleanup;
+    type OnConnectHandler = (client: Client, isReconnect: boolean) => void | Cleanup;
 
     const handlers = useRef(new Set<OnConnectHandler>());
     const cleanups = useRef(new Map<OnConnectHandler, Cleanup>());
@@ -61,6 +62,9 @@ export function useStompClient(): UseStompClientResult {
         });
 
         stompClient.onConnect = () => {
+            const isReconnect = hasConnectedRef.current;
+
+            hasConnectedRef.current = true;
             clientRef.current = stompClient;
 
             setClient(stompClient);
@@ -72,7 +76,7 @@ export function useStompClient(): UseStompClientResult {
             for (const handler of handlers.current) {
                 cleanups.current.get(handler)?.();
 
-                const cleanup = handler(stompClient);
+                const cleanup = handler(stompClient, isReconnect);
 
                 if (cleanup) {
                     cleanups.current.set(handler, cleanup);
@@ -120,7 +124,10 @@ export function useStompClient(): UseStompClientResult {
             handlers.current.add(handler);
 
             if (clientRef.current?.connected) {
-                const cleanup = handler(clientRef.current);
+                const cleanup = handler(
+                    clientRef.current,
+                    hasConnectedRef.current
+                );
 
                 if (cleanup) {
                     cleanups.current.set(handler, cleanup);

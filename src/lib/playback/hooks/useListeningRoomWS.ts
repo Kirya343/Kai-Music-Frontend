@@ -9,6 +9,8 @@ export const useListeningRoomWS = () => {
     
     const { addOnConnectHandler } = useWebSocket();
 
+    const currentRoomIdRef = useRef<number | null>(null);
+
     const [roomPlaylist, setRoomPlaylist] = useState<Playlist | null>(null);
     const [room, setRoom] = useState<IListeningRoom | null>(null);
     const [playbackMode, setPlaybackMode] = useState<PlaybackMode>(PlaybackMode.NORMAL);
@@ -27,7 +29,7 @@ export const useListeningRoomWS = () => {
         }, []);
 
     useEffect(() => {
-        const unsubscribe = addOnConnectHandler((client) => {
+        const unsubscribe = addOnConnectHandler((client, isReconnect) => {
 
             const playlistSub = client.subscribe(`/user/queue/playlist.room`, (message) => {
                 setRoomPlaylist(JSON.parse(message.body));
@@ -37,6 +39,7 @@ export const useListeningRoomWS = () => {
                 const room: IListeningRoom = JSON.parse(message.body);
                 
                 setRoom(room);
+                currentRoomIdRef.current = room.id
             });
 
             const playbackModeSub = client.subscribe(`/user/queue/playback-mode`, (message) => {
@@ -62,6 +65,15 @@ export const useListeningRoomWS = () => {
 
                 onAudioChunkRef.current?.(chunk);
             });
+
+            if (isReconnect && currentRoomIdRef.current !== null) {
+                client.publish({
+                    destination: "/app/room/reconnect",
+                    body: JSON.stringify({
+                        roomId: currentRoomIdRef.current
+                    })
+                });
+            }
 
             return () => {
                 audioSub.unsubscribe();

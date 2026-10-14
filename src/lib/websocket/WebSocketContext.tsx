@@ -9,7 +9,7 @@ interface WebSocketContextProps {
     client: Client | null;
     error: boolean;
     isReady: boolean;
-    addOnConnectHandler(handler: (client: Client) => void): () => void;
+    addOnConnectHandler(handler: (client: Client, isReconnect: boolean) => void): () => void;
 }
 
 const WebSocketContext = createContext<WebSocketContextProps | null>(null);

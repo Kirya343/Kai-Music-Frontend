@@ -91,6 +91,7 @@
     .status {
         position: absolute;
         right: .5rem;
+        width: 20px;
 
         &.success {
             *, &::before, &::after {

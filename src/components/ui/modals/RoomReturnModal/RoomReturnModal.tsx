@@ -15,6 +15,8 @@ const RoomReturnModal = () => {
 
     // loads room
     useEffect(() => {
+        navigate("/");
+
         async function loadRoom() {
             try {
                 const res = await roomService.loadCurrentRoom();
@@ -35,6 +37,7 @@ const RoomReturnModal = () => {
         try {
             await roomService.joinRoom(room.code);
             navigate("/room");
+            setRoom(null)
         } catch (e) {
             console.error(e);
         }

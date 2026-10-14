@@ -8,7 +8,8 @@
     "build": "vite build",
     "buildru": "vite build --mode ru-prod",
     "lint": "eslint .",
-    "preview": "vite preview --host 0.0.0.0"
+    "preview": "vite preview --host 0.0.0.0",
+    "test:e2e": "playwright test"
   },
   "dependencies": {
     "@capacitor/android": "^8.4.2",
@@ -35,6 +36,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
+    "@playwright/test": "^1.64.0",
     "@types/debug": "^4",
     "@types/node": "^25.6.0",
     "@types/react": "^19.1.10",

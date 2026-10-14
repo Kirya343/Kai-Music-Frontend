@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { IRoomUpdate, useRoomPlayback, roomService } from "@room";
 import styles from "./RoomPage.module.scss";
-import AudioPlayerOpener from "@/components/ui/player/AudioPlayerOpener/AudioPlayerOpener";
+import AudioMiniPlayer from "@/components/ui/player/AudioMiniPlayer/AudioMiniPlayer";
 import { useGlobal } from "@common";
 import { useWebSocket } from "@websocket";
 import KebabMenu from "@/components/ui/KebabMenu/KebabMenu";
@@ -154,7 +154,7 @@ const RoomPage = () => {
                     )}
                 </Loader>
 
-                {started && <AudioPlayerOpener />}
+                {started && <AudioMiniPlayer />}
             </div>
 
             {roomPlaylist && <TrackImportModal importPlaylist={roomPlaylist} isOpen={importOpen} onClose={() => setImportOpen(false)} />}

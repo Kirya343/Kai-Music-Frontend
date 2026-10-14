@@ -1,17 +1,17 @@
 import { useRoomPlayback } from "@room";
 import { useEffect, useRef } from "react";
 
-import styles from "./AudioPlayerOpener.module.scss"
+import styles from "./AudioMiniPlayer.module.scss"
 import { RightIcon, PlayIcon, PauseIcon } from "@/assets/icons";
 import { playbackService } from "@playback";
 
 /**
- * AudioPlayerOpener is component that display on bottom of pages and displays
+ * Component that display on bottom of pages and displays
  * current playing audio
  * 
  * on click opens AudioPlayer
  */
-const AudioPlayerOpener = () => {
+const AudioMiniPlayer = () => {
 
     const { 
         playbackState, playingAudio, 
@@ -39,12 +39,18 @@ const AudioPlayerOpener = () => {
     }, [playingAudio, fullPlayerOpen]);
 
     return playingAudio && playbackState && (
-        <div className={styles.audioTracker} onClick={() => setFullPlayerOpen(true)}>
+        <div 
+            className={styles.audioTracker} 
+            data-testid="mini-player" 
+            onClick={() => setFullPlayerOpen(true)}
+        >
+
             <div ref={headerRef} className={styles.header}>
                 <div ref={textRef} className={styles.headerText}>
                     {playingAudio?.title ?? playingAudio?.name}
                 </div>
             </div>
+
             <div 
                 className={styles.trackPosition}
                 style={{ 
@@ -56,15 +62,24 @@ const AudioPlayerOpener = () => {
             />
             
             <div className={styles.navigation} onClick={(e) => e.stopPropagation()}>
-                <button onClick={togglePlay}>
+
+                <button
+                    aria-label={playbackState.pause ? "Resume Track" : "Pause Track"}
+                    onClick={togglePlay}
+                >
                     {playbackState.pause ? <PlayIcon /> : <PauseIcon />}
                 </button>
-                <button onClick={() => playTrack("next")}>
+
+                <button 
+                    aria-label="Play Next Track"
+                    onClick={() => playTrack("next")}
+                >
                     <RightIcon />
                 </button>
+
             </div>
         </div>
     );
 }
 
-export default AudioPlayerOpener;
+export default AudioMiniPlayer;

@@ -1,7 +1,6 @@
 import styles from "./MainPage.module.scss";
-import { IShortRoom, useRoomPlayback, roomService } from "@room";
+import { IShortRoom, roomService } from "@room";
 import { useEffect, useState } from "react";
-import AudioPlayerOpener from "@/components/ui/player/AudioPlayerOpener/AudioPlayerOpener";
 import clsx from "clsx";
 import { 
     CirclePlusIcon, MusicNoteIcon,
@@ -13,8 +12,6 @@ import { useNavigate } from "react-router-dom";
 import PageLayout from "@/components/layout/PageLayout/PageLayout";
 
 const MainPage = () => {
-
-    const { roomLoaded } = useRoomPlayback();
 
     const [rooms, setRooms] = useState<IShortRoom[] | null>(null);
     const [isOpen, setOpen] = useState<boolean>(false);
@@ -112,8 +109,6 @@ const MainPage = () => {
                     </section>
                 </div>
             </div>
-
-            {roomLoaded && <AudioPlayerOpener />}
 
             <JoinRoomModal isOpen={isOpen} setOpen={setOpen}/>
         </PageLayout>

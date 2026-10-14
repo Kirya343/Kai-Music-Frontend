@@ -5,8 +5,11 @@ import { IPlaybackState } from "@playback";
 export const useMediaSource = () => {
 
     const { 
-        sourceBufferRef, updateBufferedRanges, setBufferUpdateHandler,
-        bufferedRanges, appendChunks,
+        sourceBufferRef, 
+        updateBufferedRanges, 
+        setBufferUpdateHandler,
+        bufferedRanges, 
+        appendChunks,
         resetBuffer
     } = useAudioBuffer();
 
@@ -20,6 +23,12 @@ export const useMediaSource = () => {
 
     const unsyncedStateRef = useRef<IPlaybackState | null>(null);
 
+    /**
+     * Cleanups audio element
+     * 
+     * stops audio,
+     * cleans up buffer and mediaResource
+     */
     const cleanupAudio = useCallback(() => {
         console.log("Очищаем playback")
 
@@ -42,6 +51,9 @@ export const useMediaSource = () => {
         resetBuffer();
     }, []);
 
+    /**
+     * Inits media resource, when came new entryId
+     */
     const initMediaSource = useCallback((entryId: number) => {
         if (mediaSourceRef.current) {
             return;
@@ -104,6 +116,9 @@ export const useMediaSource = () => {
         addEventListener();
     }, [updateBufferedRanges]);
 
+    /**
+     * Pauses playing audio
+     */
     const pausePlayback = useCallback(() => {
         const audio = audioRef.current;
 
@@ -114,6 +129,9 @@ export const useMediaSource = () => {
         audio.pause();
     }, []);
 
+    /**
+     * Resumes playing audio
+     */
     const resumePlayback = useCallback(async () => {
         const audio = audioRef.current;
 
@@ -138,7 +156,9 @@ export const useMediaSource = () => {
         }
     }, []);
     
-    // События пользователя
+    /**
+     * Adds listners to HTMLAudioElement events
+     */
     const addEventListener = useCallback(() => {
         const audio = audioRef.current;
 
@@ -158,9 +178,13 @@ export const useMediaSource = () => {
         };
     }, [setPlaybackState]);
 
+    /**
+     * Starts playing audio if last playbackState isn't paused and 
+     * audio is loaded on current position
+     */
     const playIfBuffered = useCallback((entryId: number) => {
 
-        //console.log('Попытка начать проигрывание', entryId);
+        console.log('Попытка начать проигрывание', entryId);
 
         const audio = audioRef.current;
         const state = unsyncedStateRef.current;
@@ -169,7 +193,7 @@ export const useMediaSource = () => {
             return;
         }
 
-        //console.log('стейты правильные', entryId);
+        console.log('стейты правильные', entryId);
 
         const ranges = bufferedRanges.get(entryId)
 

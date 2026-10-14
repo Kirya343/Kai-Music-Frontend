@@ -53,15 +53,18 @@
 
     input {
         width: 100%;
-        padding: 0.8rem 0.5rem;
+        padding: 10px 8px;
         background-color: transparent;
         border-radius: var(--radius);
-        border: 1px solid var(--border-color);
+        border: 1px solid;
         color: var(--text-color);
         font-size: 0.9rem;
+        transition: all 0.2s ease;
+
+        @include glass;
 
         &:focus {
-            outline-color: var(--primary);
+            outline-color: var(--orange) !important;
             outline-offset: 0;
             outline-style: solid;
 

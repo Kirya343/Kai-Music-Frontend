@@ -36,10 +36,12 @@ const SearchableLayout = <T extends { id: number }>({
                 <div className={styles.row}>
                     {extraActions}
 
-                    <SearchInput value={search.searchQuery} onChange={(value) => search.setSearchQuery(value)}/>
+                    <SearchInput 
+                        value={search.searchQuery} 
+                        onChange={(value) => search.setSearchQuery(value)}
+                        foundCount={search.filteredList.length}
+                    />
                 </div>
-
-                {search.searchQuery.length != 0 && <span>Found {search.filteredList.length} audios</span>}
             </div>
 
             {children}

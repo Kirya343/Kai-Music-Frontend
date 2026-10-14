@@ -2,6 +2,11 @@ import { audioService, IAudio } from "@audio";
 import { useWebSocket } from "@websocket";
 import { useCallback, useEffect, useState } from "react";
 
+/**
+ * Manages the list of user's audio tracks, initializes it from localStorage,
+ * synchronizes it with the server, and provides methods for managing
+ * audio data.
+ */
 export const useAudioData = () => {
 
     const { addOnConnectHandler } = useWebSocket();
@@ -12,15 +17,36 @@ export const useAudioData = () => {
         return saved ? JSON.parse(saved) : [];
     });
 
+    /**
+     * synchronizes list of audios with the server  
+     */
     const syncAudios = useCallback(async () => {
         try {
             const res = await audioService.loadLibrary();
             setAudios(res.data)
         } finally {
-
+            
         }
     }, [])
 
+    /**
+     * deletes audio from server
+     */
+    const deleteAudio = useCallback(async (audio: IAudio) => {
+        const success = confirm(`Ary you sure deleting audio ${audio.name}`)
+
+        if (success) {
+            try {
+                await audioService.deleteAudio(audio.id)
+            } catch (e) {
+                console.error(e)
+            }
+        }
+    }, [])
+
+    /**
+     * updates audio metadata on server
+     */
     const updateAudio = useCallback((audio: IAudio) => {
         setAudios(prev => {
             const exists = prev.some(a => a.id === audio.id);
@@ -37,6 +63,7 @@ export const useAudioData = () => {
         });
     }, [setAudios]);
 
+    // updates audio-list in localstorage
     useEffect(() => {
         if (audios) localStorage.setItem("audios", JSON.stringify(audios));
     }, [audios]);
@@ -56,5 +83,5 @@ export const useAudioData = () => {
         return unsubscribe;
     }, [addOnConnectHandler]);
     
-    return { data: audios, syncAudios}
+    return { data: audios, syncAudios, deleteAudio, updateAudio}
 }

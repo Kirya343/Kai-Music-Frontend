@@ -1,11 +1,15 @@
 @use "./breakpoints" as *;
 
 @mixin glass($hover: false) {
+    position: relative;
+
     background-color: var(--glass-background);
-    border-color: var(--glass-border);
+    border: 1px solid var(--glass-border);
     backdrop-filter: blur(3px);
-    //-webkit-backdrop-filter: blur(3px);
-    transition: 
+
+    box-shadow: 0 0px 0 #757575;
+
+    transition:
         outline-color 0.1s ease,
         background-color 0.2s ease;
 
@@ -34,7 +38,6 @@
 
         &:hover {
             background-color: var(--glass-background-hover);
-            
         }
     }
 }
@@ -52,7 +55,8 @@
 
     @if $hover {
         cursor: pointer;
-        transition: background-color 0.15s ease-out;
+        transition: 
+            background-color 0.15s ease-out;
         
         &:hover {
             background-color: rgb(150, 150, 150);

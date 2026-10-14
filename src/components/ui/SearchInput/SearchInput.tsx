@@ -5,26 +5,29 @@ interface SearchInputProps {
     value: string;
     onChange: (value: string) => void;
     className?: string;
+    foundCount?: number;
 }
 
 /**
  * Component for universal search-input for SearchLauout or any page where search is needed
- * 
- * @param param0 
- * @returns 
  */
 export const SearchInput = ({
     value,
     onChange,
-    className
+    className,
+    foundCount
 }: SearchInputProps) => {
     return (
-        <input
-            type="search"
-            value={value}
-            onChange={event => onChange(event.target.value)}
-            placeholder="Search..."
-            className={clsx(className, styles.searchInput)}
-        />
+        <div className={styles.wrapper}>
+            <input
+                type="search"
+                value={value}
+                onChange={event => onChange(event.target.value)}
+                placeholder="Search..."
+                className={clsx(className, styles.searchInput)}
+            />
+
+            <span className={styles.foundCount}>Found {foundCount}</span>
+        </div>
     );
 };

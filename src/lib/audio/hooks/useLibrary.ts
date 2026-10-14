@@ -11,32 +11,37 @@ interface IUploadingAudio {
     success?: boolean
 }
 
+/**
+ * Controls data for audio library
+ * 
+ * Creates voids and states
+ * 
+ * @returns data to view the library tracks and voids to filter the list
+ */
 export const useLibrary = () => {
 
     const { audios } = useData();
     
+    /** List of current uploads */
     const [uploading, setUploading] = useState<IUploadingAudio[]>([]);
+
+    /** 
+     * HTML element reference. 
+     * Should be placed on the element, that can be scrolled to contain the tracks list 
+     */
     const parentRef = useRef<HTMLDivElement>(null);
+
+    /** Count of visibple items on page */
     const [visibleCount, setVisibleCount] = useState(50);
 
-    const { filteredList, searchQuery, setSearchQuery} = useSearch(audios.data);
+    const { filteredList, searchQuery, setSearchQuery } = useSearch(audios.data);
 
+    /** Audios that should be currently visible */
     const visibleAudios = useMemo(() => {
         return filteredList.slice(0, visibleCount);
     }, [filteredList, visibleCount]);
 
-    const deleteAudio = useCallback(async (audio: IAudio) => {
-        const success = confirm(`Ary you sure deleting audio ${audio.name}`)
-
-        if (success) {
-            try {
-                await audioService.deleteAudio(audio.id)
-            } catch (e) {
-                console.error(e)
-            }
-        }
-    }, [])
-
+    /** Uploads audios on server */
     const uploadAudios = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const files = e.target.files;
 
@@ -100,6 +105,7 @@ export const useLibrary = () => {
         }
     };
 
+    /** ReactVirtualizer optimizes the tracks list */
     const rowVirtualizer = useVirtualizer({
         count: visibleAudios.length,
         getScrollElement: () => parentRef.current,
@@ -138,8 +144,7 @@ export const useLibrary = () => {
     }, [searchQuery]);
 
     return { 
-        visibleAudios, 
-        deleteAudio, setSearchQuery,
+        visibleAudios, setSearchQuery,
         searchQuery, uploadAudios,
         uploading, rowVirtualizer,
         parentRef, filteredList

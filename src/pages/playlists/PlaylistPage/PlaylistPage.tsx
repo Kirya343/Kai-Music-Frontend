@@ -6,7 +6,7 @@ import AudioFileModal from "@/components/ui/modals/AudioFileModal/AudioFileModal
 import PlaylistTrack from "@/components/ui/track/PlaylistTrack";
 import { useParams } from "react-router-dom";
 import { CirclePlusIcon } from "@/assets/icons";
-import SearchableLayout from "@/components/layout/LibraryLayout/SearchableLayout";
+import SearchableLayout from "@/components/layout/SearchableLayout/SearchableLayout";
 import { useData, useSearch } from "@common";
 import { useRoomPlayback } from "@playback";
 

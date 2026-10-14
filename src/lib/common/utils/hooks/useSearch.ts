@@ -11,8 +11,10 @@ import { useMemo, useState } from "react";
  */
 export const useSearch = <T extends { id: number }>(list: T[]) => {
 
+    /** Search query to filter the items list */
     const [searchQuery, setSearchQuery] = useState<string>("")
 
+    /** Filtered items-list by search query */
     const filteredList = useMemo<T[]>(() => {
 
         if (!list) {

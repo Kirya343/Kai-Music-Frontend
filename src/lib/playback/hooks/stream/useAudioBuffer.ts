@@ -12,6 +12,11 @@ export function useAudioBuffer() {
             onBufferUpdateRef.current = callback;
         }, []);
 
+    /**
+     * Callback that updates bufferedRanges
+     * 
+     * @param entryId - ID of the current entry
+     */
     const updateBufferedRanges = useCallback((entryId: number) => {
         const sourceBuffer = sourceBufferRef.current;
 
@@ -37,6 +42,9 @@ export function useAudioBuffer() {
         onBufferUpdateRef.current?.(entryId)
     }, [bufferedRanges]);
 
+    /**
+     * Append chunks to the buffer
+     */
     const appendChunks = useCallback((chunks: AudioChunk[]) => {
         const sourceBuffer = sourceBufferRef.current;
 
@@ -63,6 +71,9 @@ export function useAudioBuffer() {
         return true;
     }, []);
 
+    /**
+     * Resets the source buffer
+     */
     const resetBuffer = useCallback(() => {
         sourceBufferRef.current = null;
         setBufferedRanges(new Map());

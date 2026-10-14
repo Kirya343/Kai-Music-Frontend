@@ -1,12 +1,43 @@
 @use "@/css/components/mixins/" as *;
 
-.searchInput {
-    border: 2px solid;
-    padding: 8px 15px;
+.wrapper {
+    position: relative;
     max-width: 500px;
     width: 100%;
+
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding-right: .5rem;
+
+    border: 2px solid;
+    width: 100%;
     border-radius: 100px;
-    color: #cac9c8;
+
+    overflow: hidden;
 
     @include glass;
+}
+
+.searchInput {
+    padding: 8px 15px;
+    width: 100%;
+    border-radius: 0;
+    border: none;
+    color: #cac9c8;
+    background-color: transparent;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    
+    &:focus {
+        outline: none;
+    }
+}
+
+.foundCount {
+    font-size: 0.9rem;
+    color: var(--text-color-l1);
+    
+    white-space: nowrap;
 }

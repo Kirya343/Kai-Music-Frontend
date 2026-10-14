@@ -44,6 +44,12 @@ interface IAudiosData {
 
     /** Synchronizes audio tracks with the server. */
     syncAudios: () => void;
+
+    /** Deletes audio */
+    deleteAudio: (audio: IAudio) => void;
+
+    /** Updates audio metadata */
+    updateAudio: (audio: IAudio) => void;
 }
 
 /**
@@ -65,7 +71,6 @@ export const useData = () => {
     }
     return ctx;
 }
-
 
 /**
  * Provides access to application-wide data through DataContext.

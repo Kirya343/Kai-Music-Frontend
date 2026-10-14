@@ -31,9 +31,9 @@ const AuthLayout = ({ title, message, inputs, links }: AuthlayoutProps) => {
 
                 <h1>{title}</h1>
 
-                <div className={styles.messageConteiner}>
-                    {message && (
-                        message === "loading" ? (
+                {message && (
+                    <div className={styles.messageConteiner}>
+                        {message === "loading" ? (
                             <div className={clsx(styles.messageConteiner)}>
                                 <LoadingSpinnerIcon/>
                             </div>
@@ -41,9 +41,9 @@ const AuthLayout = ({ title, message, inputs, links }: AuthlayoutProps) => {
                             <div className={clsx(styles.message, message?.success ? styles.success : styles.error)}>
                                 {message?.message}
                             </div>
-                        )
-                    )}
-                </div>
+                        )}
+                    </div>
+                )}
 
                 <div className={styles.inputs}>
                     {inputs}

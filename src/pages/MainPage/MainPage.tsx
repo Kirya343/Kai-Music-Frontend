@@ -68,9 +68,9 @@ const MainPage = () => {
                         </div>
 
                         <div className={styles.statItem}>
-                            <DiscIcon className={styles.icon}/>
+                            <DiscIcon className={clsx(styles.icon, "spin")}/>
 
-                            <span>Total Rooms Active: <br/><strong>{stat?.activeRooms}</strong></span>
+                            <span>Total Rooms Active: <br/><strong>{stat?.activeRooms || 0}</strong></span>
                         </div>
                     </div>
                 </div>
@@ -104,7 +104,7 @@ const MainPage = () => {
                                     <div className={styles.meta}>
                                         <span className={styles.roomName}>{r.title}</span>
                                         <span className={styles.audioName}>Audio name</span>
-                                        <span className={styles.listnersCount}>- {r.listeners} lisners</span>
+                                        <span className={styles.listnersCount}>- {r.listeners || 0} listeners</span>
                                     </div>
                                 </div>
                             ))}

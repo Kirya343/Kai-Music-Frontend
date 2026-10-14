@@ -5,13 +5,15 @@ import styles from "./LibraryPage.module.scss"
 import AudioFileModal from "@/components/ui/modals/AudioFileModal/AudioFileModal";
 import { CirclePlusIcon, CheckmarkIcon, CrossIcon } from "@/assets/icons";
 import LibraryTrack from "@/components/ui/track/LibraryTrack";
-import SearchableLayout from "@/components/layout/LibraryLayout/SearchableLayout";
+import SearchableLayout from "@/components/layout/SearchableLayout/SearchableLayout";
+import { useData } from "@common";
 
 const LibraryPage = () => {
 
+    const { audios } = useData();
+
     const { 
-        visibleAudios, 
-        deleteAudio, 
+        visibleAudios,
         setSearchQuery,
         searchQuery, uploadAudios,
         uploading, filteredList,
@@ -20,7 +22,7 @@ const LibraryPage = () => {
 
     const [audioFileView, setAudioFileView] = useState<IAudio | null>(null);
     
-    const { roomPlaylist, playbackState, roomLoaded } = useRoomPlayback();
+    const { roomPlaylist, playbackState } = useRoomPlayback();
 
     const playlistAudioIds = useMemo(() => {
         return new Set(
@@ -95,7 +97,7 @@ const LibraryPage = () => {
                                     trackNumber={item.index + 1}
                                     importPlaylistId={roomPlaylist?.id}
                                     openEditModal={setAudioFileView}
-                                    handleDelete={deleteAudio}
+                                    handleDelete={audios.deleteAudio}
                                     playing={playingAudioId === audio.id}
                                 />
                             </div>

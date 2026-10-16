@@ -75,6 +75,7 @@ export function useAudioBuffer() {
      * Resets the source buffer
      */
     const resetBuffer = useCallback(() => {
+        console.log("Очищаем буфер")
         sourceBufferRef.current = null;
         setBufferedRanges(new Map());
     }, []);

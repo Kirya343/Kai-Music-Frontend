@@ -50,4 +50,4 @@ export const deleteAudio = (audioId: number) => audioApi.delete<void>(`/${audioI
  *
  * @param audioId - ID of the audio track to recognize.
  */
-export const recognizeAudio = (audioId: number) => audioApi.delete<void>(`/recognize/${audioId}`)
+export const recognizeAudio = (audioId: number) => audioApi.post<void>(`/recognize/${audioId}`)

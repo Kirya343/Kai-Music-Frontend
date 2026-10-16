@@ -199,7 +199,8 @@ export const useMediaSource = () => {
 
         const ranges = bufferedRanges.get(entryId)
 
-        console.log('ranges', ranges);
+        console.log('bufferedRanges', bufferedRanges);
+        console.log(`ranges of ${entryId}`, ranges);
 
         if (!ranges) return;
 
